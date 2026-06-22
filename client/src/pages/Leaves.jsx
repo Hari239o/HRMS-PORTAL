@@ -173,25 +173,25 @@ const Leaves = () => {
     <div className="space-y-8 animate-in fade-in duration-500 pb-10 max-w-7xl mx-auto">
       
       {/* Enterprise Header Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-[#0f172a] p-8 shadow-2xl border border-slate-800">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-transparent pointer-events-none"></div>
-        <div className="absolute right-0 top-0 w-64 h-64 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none -mr-20 -mt-20"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-indigo-600 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-indigo-500">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 blur-3xl rounded-full pointer-events-none -mr-20 -mt-20"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
             <h2 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
               Requests Center
             </h2>
-            <p className="text-slate-400 mt-2 text-sm font-medium">Enterprise portal for time-off and grievance management.</p>
+            <p className="text-indigo-100 mt-2 text-sm font-medium">Enterprise portal for time-off and grievance management.</p>
           </div>
           
-          <div className="flex bg-slate-900/80 backdrop-blur-md p-1 rounded-xl border border-slate-700 self-stretch sm:self-auto shadow-inner">
+          <div className="flex bg-indigo-700/50 backdrop-blur-md p-1 rounded-xl border border-indigo-500/50 self-stretch sm:self-auto shadow-inner">
             <button 
               onClick={() => { setActiveTab('leaves'); setSearchQuery(''); setStatusFilter('All'); }}
               className={`flex-1 sm:flex-none px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                 activeTab === 'leaves' 
-                  ? 'bg-indigo-500 text-white shadow-md' 
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  ? 'bg-white text-indigo-700 shadow-md' 
+                  : 'text-indigo-100 hover:text-white hover:bg-indigo-500/50'
               }`}
             >
               <Calendar size={18} />
@@ -201,8 +201,8 @@ const Leaves = () => {
               onClick={() => { setActiveTab('problems'); setSearchQuery(''); setStatusFilter('All'); }}
               className={`flex-1 sm:flex-none px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                 activeTab === 'problems' 
-                  ? 'bg-rose-500 text-white shadow-md' 
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  ? 'bg-white text-rose-600 shadow-md' 
+                  : 'text-indigo-100 hover:text-white hover:bg-indigo-500/50'
               }`}
             >
               <ShieldAlert size={18} />
@@ -216,7 +216,7 @@ const Leaves = () => {
       {user.role === 'admin' && (
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 animate-in slide-in-from-bottom-4 duration-500">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full sm:w-auto">
-            <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center gap-4 hover:border-indigo-200 transition-colors">
+            <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-4 border border-white/60 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex items-center gap-4 hover:border-indigo-200 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                 <Clock size={20} />
               </div>
@@ -225,7 +225,7 @@ const Leaves = () => {
                 <p className="text-xl font-bold text-slate-900">{pendingLeavesCount}</p>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex items-center gap-4 hover:border-rose-200 transition-colors">
+            <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-4 border border-white/60 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex items-center gap-4 hover:border-rose-200 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
                 <Activity size={20} />
               </div>
@@ -236,14 +236,14 @@ const Leaves = () => {
             </div>
           </div>
           
-          <button className="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all">
+          <button className="w-full sm:w-auto bg-white/60 backdrop-blur-md border border-white/60 text-slate-700 hover:bg-white hover:border-indigo-200 px-5 py-2.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all">
             <Download size={16} /> Export Report
           </button>
         </div>
       )}
 
       {/* Toolbar (Search & Filter) */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 justify-between animate-in slide-in-from-bottom-4 duration-500 delay-75">
+      <div className="bg-white/60 backdrop-blur-xl p-4 rounded-2xl border border-white/60 shadow-[0_4px_20px_rgb(0,0,0,0.03)] flex flex-col md:flex-row gap-4 justify-between animate-in slide-in-from-bottom-4 duration-500 delay-75">
         <div className="flex-1 relative">
           <Search className="absolute left-3.5 top-3 text-slate-400" size={18} />
           <input 
@@ -251,7 +251,7 @@ const Leaves = () => {
             placeholder={activeTab === 'leaves' ? "Search leave records..." : "Search helpdesk tickets..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all text-sm font-medium text-slate-800 placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all text-sm font-medium text-slate-800 placeholder:text-slate-400"
           />
         </div>
         <div className="flex items-center gap-3">
@@ -260,7 +260,7 @@ const Leaves = () => {
             <select 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="pl-10 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-semibold text-slate-700 appearance-none outline-none"
+              className="pl-10 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm font-semibold text-slate-700 appearance-none outline-none"
             >
               <option value="All">All Statuses</option>
               <option value="Pending">Pending</option>
@@ -272,7 +272,7 @@ const Leaves = () => {
             user.role !== 'admin' && (
               <button 
                 onClick={() => setShowLeaveForm(true)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition-all shrink-0"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition-all shrink-0"
               >
                 <Plus size={18} /> Apply Leave
               </button>
@@ -337,15 +337,15 @@ const Leaves = () => {
                 <div className="p-6 flex-1 flex flex-col md:flex-row gap-6">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-5 max-w-sm">
-                      <div className="bg-indigo-50/50 border border-indigo-100/50 rounded-lg px-4 py-3 flex-1">
-                        <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">From Date</span>
+                      <div className="bg-blue-50/50 border border-blue-100/50 rounded-lg px-4 py-3 flex-1">
+                        <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block mb-1">From Date</span>
                         <span className="text-sm font-bold text-slate-800">{new Date(leave.fromDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                       </div>
                       <div className="text-slate-300">
                         <ArrowRight size={16} />
                       </div>
-                      <div className="bg-indigo-50/50 border border-indigo-100/50 rounded-lg px-4 py-3 flex-1">
-                        <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">To Date</span>
+                      <div className="bg-blue-50/50 border border-blue-100/50 rounded-lg px-4 py-3 flex-1">
+                        <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block mb-1">To Date</span>
                         <span className="text-sm font-bold text-slate-800">{new Date(leave.toDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                       </div>
                     </div>
@@ -356,7 +356,7 @@ const Leaves = () => {
                         {leave.reason}
                       </p>
                       {leave.documentUrl && (
-                        <a href={leave.documentUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 transition-colors w-max">
+                        <a href={leave.documentUrl} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 transition-colors w-max">
                           <Paperclip size={14} /> Attached Document
                         </a>
                       )}
@@ -367,7 +367,7 @@ const Leaves = () => {
                     <div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Employee</span>
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-xs border border-indigo-200">
+                        <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-xs border border-blue-200">
                           {getInitials(leave.employee?.name || 'Unknown')}
                         </div>
                         <div>
@@ -418,7 +418,7 @@ const Leaves = () => {
                 <div className="border-b border-slate-100 bg-slate-50/80 px-6 py-3.5 flex flex-wrap justify-between items-center gap-4">
                   <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg ${
-                      problem.status === 'Resolved' ? 'bg-indigo-100 text-indigo-700' :
+                      problem.status === 'Resolved' ? 'bg-blue-100 text-blue-700' :
                       problem.status === 'Rejected' ? 'bg-slate-200 text-slate-600' :
                       'bg-rose-100 text-rose-700'
                     }`}>
@@ -434,13 +434,13 @@ const Leaves = () => {
                   
                   <div className="flex items-center gap-2">
                     <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wide ${
-                      problem.status === 'Resolved' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' :
+                      problem.status === 'Resolved' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
                       problem.status === 'Rejected' ? 'bg-slate-50 text-slate-600 border border-slate-200' :
                       'bg-rose-50 text-rose-700 border border-rose-200'
                     }`}>
                       <span className="flex items-center gap-1.5">
                         <span className={`w-1.5 h-1.5 rounded-full ${
-                          problem.status === 'Resolved' ? 'bg-indigo-500' :
+                          problem.status === 'Resolved' ? 'bg-blue-500' :
                           problem.status === 'Rejected' ? 'bg-slate-500' :
                           'bg-rose-500 animate-pulse'
                         }`}></span>
@@ -489,7 +489,7 @@ const Leaves = () => {
                       <div className="mt-auto pt-4 flex flex-col gap-2">
                         <button 
                           onClick={() => handleUpdateProblemStatus(problem.id, 'Resolved')}
-                          className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-semibold text-xs uppercase tracking-wide transition-colors flex items-center justify-center gap-2 shadow-sm"
+                          className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold text-xs uppercase tracking-wide transition-colors flex items-center justify-center gap-2 shadow-sm"
                         >
                           <CheckCircle2 size={16} /> Mark Resolved
                         </button>
@@ -524,7 +524,7 @@ const Leaves = () => {
           <div className="bg-white w-full max-w-lg max-h-[90vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center border border-indigo-200">
+                <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center border border-blue-200">
                   <Calendar size={20} />
                 </div>
                 <div>
@@ -542,7 +542,7 @@ const Leaves = () => {
                 <select 
                   value={leaveFormData.type}
                   onChange={(e) => setLeaveFormData({...leaveFormData, type: e.target.value})}
-                  className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
+                  className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
                 >
                   <option>Sick Leave</option>
                   <option>Casual Leave</option>
@@ -558,7 +558,7 @@ const Leaves = () => {
                     required 
                     value={leaveFormData.fromDate}
                     onChange={(e) => setLeaveFormData({...leaveFormData, fromDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
+                    className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
                   />
                 </div>
                 <div>
@@ -568,7 +568,7 @@ const Leaves = () => {
                     required 
                     value={leaveFormData.toDate}
                     onChange={(e) => setLeaveFormData({...leaveFormData, toDate: e.target.value})}
-                    className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
+                    className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
                   />
                 </div>
               </div>
@@ -580,7 +580,7 @@ const Leaves = () => {
                   value={leaveFormData.reason}
                   onChange={(e) => setLeaveFormData({...leaveFormData, reason: e.target.value})}
                   placeholder="Please provide a valid reason..."
-                  className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white resize-none"
+                  className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white resize-none"
                 ></textarea>
               </div>
               <div>
@@ -588,13 +588,13 @@ const Leaves = () => {
                 <input 
                   type="file" 
                   onChange={(e) => setLeaveFormData({...leaveFormData, document: e.target.files[0]})}
-                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
+                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
                   accept="image/*,application/pdf"
                 />
               </div>
               <div className="flex gap-3 pt-4">
                 <button type="button" onClick={() => setShowLeaveForm(false)} className="flex-1 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-                <button type="submit" className="flex-1 px-4 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 shadow-sm transition-all">Submit Request</button>
+                <button type="submit" className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 shadow-sm transition-all">Submit Request</button>
               </div>
             </form>
           </div>

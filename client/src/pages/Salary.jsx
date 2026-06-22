@@ -141,7 +141,7 @@ export default function Salary() {
                 <td className="px-6 py-4 text-right flex justify-end gap-2">
                   <button
                     onClick={() => downloadPayslip(s)}
-                    className={`p-2 rounded-lg ${s.status === 'Released' || user.role === 'admin' ? 'text-indigo-600 hover:bg-indigo-50' : 'text-slate-400 cursor-not-allowed'}`}
+                    className={`p-2 rounded-lg ${s.status === 'Released' || user.role === 'admin' ? 'text-blue-600 hover:bg-blue-50' : 'text-slate-400 cursor-not-allowed'}`}
                     title={s.status === 'Released' ? 'Download Payslip' : 'Payslip not released yet'}
                     disabled={s.status !== 'Released' && user.role !== 'admin'}
                   >
@@ -153,7 +153,7 @@ export default function Salary() {
                     </button>
                   )}
                   {user.role === 'admin' && (
-                    <button onClick={() => sendEmail(s.id)} className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg" title="Email Payslip">
+                    <button onClick={() => sendEmail(s.id)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Email Payslip">
                       <Mail size={18} />
                     </button>
                   )}

@@ -60,14 +60,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const getThemeClasses = (isActive) => {
     if (isActive) {
       if (isStudent) {
-        return 'bg-sky-500 text-white shadow-xl shadow-sky-100 translate-x-2';
+        return 'bg-gradient-to-r from-sky-500 to-sky-400 text-white shadow-lg shadow-sky-500/30 translate-x-1';
       }
-      return 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 translate-x-2';
+      return 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-lg shadow-indigo-500/30 translate-x-1';
     }
     if (isStudent) {
-      return 'text-slate-500 hover:bg-sky-50 hover:text-sky-500';
+      return 'text-slate-500 hover:bg-white/50 hover:text-sky-600';
     }
-    return 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600';
+    return 'text-slate-500 hover:bg-white/50 hover:text-indigo-600';
   };
 
   return (
@@ -80,7 +80,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         />
       )}
 
-      <aside className={`fixed md:relative inset-y-0 left-0 z-50 w-72 h-full bg-white border-r border-slate-100 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <aside className={`fixed md:relative inset-y-0 left-0 z-50 w-72 h-full bg-white/60 backdrop-blur-2xl border-r border-white/50 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.05)] transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="p-4 pb-2 relative">
           <button 
             className="md:hidden absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600"
@@ -92,7 +92,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <img src="/geonixa-logo.png" alt="Geonixa" className="w-48 h-auto object-contain drop-shadow-sm" />
           </div>
 
-        <div className="flex bg-slate-100 p-1 rounded-xl overflow-hidden">
+        <div className="flex bg-white/40 backdrop-blur-sm border border-white/60 p-1 rounded-xl overflow-hidden shadow-inner">
           <button 
             onClick={() => setPortalMode('hr')}
             className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${!isStudent ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}

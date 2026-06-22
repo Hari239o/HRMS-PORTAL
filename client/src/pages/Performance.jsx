@@ -208,10 +208,10 @@ export default function Performance() {
     return (
       <div className="flex items-center justify-center h-[60vh] animate-in fade-in duration-1000">
         <div className="relative w-24 h-24">
-          <div className="absolute inset-0 rounded-full border-t-4 border-indigo-500 animate-spin"></div>
+          <div className="absolute inset-0 rounded-full border-t-4 border-blue-500 animate-spin"></div>
           <div className="absolute inset-2 rounded-full border-r-4 border-purple-500 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
           <div className="absolute inset-4 rounded-full border-b-4 border-pink-500 animate-spin" style={{ animationDuration: '2s' }}></div>
-          <Trophy className="absolute inset-0 m-auto text-indigo-600 animate-pulse" size={24} />
+          <Trophy className="absolute inset-0 m-auto text-blue-600 animate-pulse" size={24} />
         </div>
       </div>
     );
@@ -222,8 +222,8 @@ export default function Performance() {
       
       {/* HEADER SECTION WITH GLASSMORPHISM */}
       <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-10 shadow-2xl border border-slate-800 animate-in slide-in-from-top-8 duration-700">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/30 via-purple-600/30 to-pink-600/30 pointer-events-none"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-purple-600/30 to-pink-600/30 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/20 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -233,12 +233,12 @@ export default function Performance() {
               Performance Intelligence
             </h1>
             <p className="text-slate-400 mt-2 text-sm font-medium flex items-center gap-2">
-              <Sparkles size={14} className="text-indigo-400" />
+              <Sparkles size={14} className="text-blue-400" />
               Real-time goal tracking, gamified incentives, and quota management.
             </p>
           </div>
           <div className="flex bg-white/10 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 shadow-inner">
-            <span className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.4)] flex items-center gap-2">
+            <span className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-500 shadow-[0_0_20px_rgba(99,102,241,0.4)] flex items-center gap-2">
               <TrendingUp size={16} /> Live Data Sync
             </span>
           </div>
@@ -248,28 +248,28 @@ export default function Performance() {
       {/* METRICS WIDGETS */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
         {/* Widget 1: Monthly Target */}
-        <div className="group relative bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white hover:border-indigo-200 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 overflow-hidden animate-in zoom-in-95 duration-500 delay-100">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-100 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
+        <div className="group relative bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white hover:border-blue-200 hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 overflow-hidden animate-in zoom-in-95 duration-500 delay-100">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
           <div className="relative z-10 flex items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500/70">Monthly Quota</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500/70">Monthly Quota</p>
               <h2 className="mt-2 text-4xl font-black text-slate-800">{targetData.achievedCount}<span className="text-2xl text-slate-400">/{targetData.targetCount}</span></h2>
               <p className="mt-1 text-xs font-semibold text-slate-500">Sales goal achieved</p>
             </div>
-            <div className="rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-3.5 text-white shadow-lg shadow-indigo-500/30 transform transition-transform group-hover:rotate-12">
+            <div className="rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 p-3.5 text-white shadow-lg shadow-blue-500/30 transform transition-transform group-hover:rotate-12">
               <Target size={24} />
             </div>
           </div>
           <div className="relative z-10 mt-6">
             <div className="h-3 overflow-hidden rounded-full bg-slate-100 shadow-inner">
               <div 
-                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-out relative overflow-hidden" 
+                className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-1000 ease-out relative overflow-hidden" 
                 style={{ width: `${progressPercent}%` }}
               >
                 <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
               </div>
             </div>
-            <p className="mt-3 text-[11px] font-black uppercase tracking-[0.15em] text-indigo-600 flex justify-between">
+            <p className="mt-3 text-[11px] font-black uppercase tracking-[0.15em] text-blue-600 flex justify-between">
               <span>{progressPercent}% Complete</span>
               {progressPercent >= 100 && <span className="text-emerald-500 animate-pulse">🔥 Target Hit</span>}
             </p>
@@ -336,7 +336,7 @@ export default function Performance() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h3 className="font-black text-2xl text-slate-800 flex items-center gap-3">
-              <TrendingUp size={28} className="text-indigo-500" /> Intake Velocity Trends
+              <TrendingUp size={28} className="text-blue-500" /> Intake Velocity Trends
             </h3>
             <p className="text-sm font-semibold text-slate-400 mt-1">Daily submission metrics across the month</p>
           </div>
@@ -377,10 +377,10 @@ export default function Performance() {
           {/* DATA ENTRY FORM */}
           <div className="lg:col-span-1">
             <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-xl border border-white p-8 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
               
               <h3 className="font-black text-slate-800 text-xl flex items-center gap-3 mb-6">
-                <div className="p-2 bg-indigo-100 rounded-xl text-indigo-600">
+                <div className="p-2 bg-blue-100 rounded-xl text-blue-600">
                   <Send size={20} />
                 </div>
                 Log New Transaction
@@ -388,55 +388,55 @@ export default function Performance() {
               
               <form onSubmit={handleStudentSubmit} className="space-y-5">
                 <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-indigo-500">Student Full Name</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Student Full Name</label>
                   <input 
                     type="text" 
                     required 
-                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                     value={form.studentName}
                     onChange={(e) => setForm({...form, studentName: e.target.value})}
                     placeholder="Enter full name"
                   />
                 </div>
                 <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-indigo-500">Domain specialisation</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Domain specialisation</label>
                   <input 
                     type="text" 
                     required 
-                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                     value={form.domain}
                     onChange={(e) => setForm({...form, domain: e.target.value})}
                     placeholder="e.g. Data Science"
                   />
                 </div>
                 <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-indigo-500">College / Institution</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">College / Institution</label>
                   <input 
                     type="text" 
                     required 
-                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                     value={form.collegeName}
                     onChange={(e) => setForm({...form, collegeName: e.target.value})}
                     placeholder="e.g. Oxford University"
                   />
                 </div>
                 <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-indigo-500">Email Address</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Email Address</label>
                   <input 
                     type="email" 
                     required 
-                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                     value={form.mailId}
                     onChange={(e) => setForm({...form, mailId: e.target.value})}
                     placeholder="student@example.com"
                   />
                 </div>
                 <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-indigo-500">Total Invoice Amount (₹)</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Total Invoice Amount (₹)</label>
                   <input 
                     type="number" 
                     required 
-                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                     value={form.totalAmount}
                     onChange={(e) => setForm({...form, totalAmount: e.target.value, remainingAmount: e.target.value - (form.amountPaid || 0)})}
                     placeholder="e.g. 50000"
@@ -444,11 +444,11 @@ export default function Performance() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="group">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-indigo-500">Amount Paid (₹)</label>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Amount Paid (₹)</label>
                     <input 
                       type="number" 
                       required 
-                      className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all shadow-sm"
+                      className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                       value={form.amountPaid}
                       onChange={(e) => setForm({...form, amountPaid: e.target.value, remainingAmount: (form.totalAmount || 0) - e.target.value})}
                       placeholder="e.g. 10000"
@@ -465,19 +465,19 @@ export default function Performance() {
                   </div>
                 </div>
                 <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-indigo-500">Due Date for Remaining</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Due Date for Remaining</label>
                   <input 
                     type="date" 
-                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all shadow-sm"
+                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
                     value={form.remainingAmountDate}
                     onChange={(e) => setForm({...form, remainingAmountDate: e.target.value})}
                   />
                 </div>
                 
                 <button type="submit" className="w-full mt-4 relative overflow-hidden group rounded-xl p-[2px]">
-                  <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-xl opacity-70 group-hover:opacity-100 blur-sm transition-opacity duration-300"></span>
-                  <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 rounded-xl animate-gradient-x"></span>
-                  <div className="relative flex items-center justify-center gap-2 bg-indigo-600 px-4 py-3.5 rounded-xl transition-all duration-300 group-hover:bg-opacity-0">
+                  <span className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-xl opacity-70 group-hover:opacity-100 blur-sm transition-opacity duration-300"></span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 rounded-xl animate-gradient-x"></span>
+                  <div className="relative flex items-center justify-center gap-2 bg-blue-600 px-4 py-3.5 rounded-xl transition-all duration-300 group-hover:bg-opacity-0">
                     <Send size={16} className="text-white" />
                     <span className="font-bold text-sm text-white tracking-wide">Submit Transaction</span>
                   </div>
@@ -500,7 +500,7 @@ export default function Performance() {
                   onClick={() => exportToCSV(submissions, `my_intakes_export_${new Date().getTime()}.csv`)}
                   className="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:shadow-md transition-all group"
                 >
-                  <Download size={16} className="text-indigo-500 group-hover:-translate-y-0.5 transition-transform" /> 
+                  <Download size={16} className="text-blue-500 group-hover:-translate-y-0.5 transition-transform" /> 
                   Export CSV
                 </button>
               </div>
@@ -518,7 +518,7 @@ export default function Performance() {
                   </thead>
                   <tbody className="text-xs font-medium text-slate-700">
                     {submissions.length > 0 ? submissions.map((sub) => (
-                      <tr key={sub.id} className="hover:bg-indigo-50/30 transition-all border-b border-slate-50 last:border-0 group">
+                      <tr key={sub.id} className="hover:bg-blue-50/30 transition-all border-b border-slate-50 last:border-0 group">
                         <td className="px-6 py-5">
                           <p className="font-black text-sm text-slate-800 mb-0.5">{sub.studentName}</p>
                           <div className="flex items-center gap-2 text-[10px] text-slate-400">
@@ -556,7 +556,7 @@ export default function Performance() {
                               <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Dropped')} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.callStatus === 'Dropped' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>No Ans</button>
                             </div>
                             <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 shadow-inner w-max">
-                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Paid')} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Paid' ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Fee Paid</button>
+                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Paid')} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Paid' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Fee Paid</button>
                               <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Dropped')} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Dropped' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Dropped</button>
                             </div>
                           </div>
@@ -658,23 +658,23 @@ export default function Performance() {
               </div>
             </div>
 
-            <div className="lg:col-span-2 relative rounded-3xl shadow-2xl border border-white/60 overflow-hidden bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 backdrop-blur-2xl">
+            <div className="lg:col-span-2 relative rounded-3xl shadow-2xl border border-white/60 overflow-hidden bg-gradient-to-br from-blue-900 via-slate-900 to-blue-950 backdrop-blur-2xl">
               <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at center, #6366f1 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
-              <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
               
               <div className="p-8 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                 <div>
                   <h3 className="font-black text-2xl text-white flex items-center gap-3">
-                    <Users size={24} className="text-indigo-400" /> Devices & Star Performers
+                    <Users size={24} className="text-blue-400" /> Devices & Star Performers
                   </h3>
-                  <p className="text-indigo-200/70 text-xs font-semibold mt-1">Manage workforce biometrics, badges, and device links</p>
+                  <p className="text-blue-200/70 text-xs font-semibold mt-1">Manage workforce biometrics, badges, and device links</p>
                 </div>
                 <div className="relative max-w-xs w-full">
-                  <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400" />
+                  <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400" />
                   <input 
                     type="text" 
                     placeholder="Search workforce..." 
-                    className="w-full pl-11 pr-4 py-3 text-sm border-2 border-indigo-500/30 rounded-xl outline-none focus:border-indigo-400 transition-colors bg-white/5 backdrop-blur-md font-semibold text-white placeholder:text-indigo-300/50"
+                    className="w-full pl-11 pr-4 py-3 text-sm border-2 border-blue-500/30 rounded-xl outline-none focus:border-blue-400 transition-colors bg-white/5 backdrop-blur-md font-semibold text-white placeholder:text-blue-300/50"
                     value={employeeSearch}
                     onChange={(e) => setEmployeeSearch(e.target.value)}
                   />
@@ -684,7 +684,7 @@ export default function Performance() {
               <div className="overflow-x-auto relative z-10 p-4">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="text-indigo-300 text-[10px] font-black uppercase tracking-widest border-b border-indigo-500/20">
+                    <tr className="text-blue-300 text-[10px] font-black uppercase tracking-widest border-b border-blue-500/20">
                       <th className="px-6 py-4">Employee Data</th>
                       <th className="px-6 py-4">Honor Badge</th>
                       <th className="px-6 py-4 text-center">Recognition Actions</th>
@@ -693,15 +693,15 @@ export default function Performance() {
                   </thead>
                   <tbody className="text-xs font-medium text-slate-300">
                     {filteredEmployees.length > 0 ? filteredEmployees.map((emp) => (
-                      <tr key={emp.id} className="hover:bg-white/5 transition-all border-b border-indigo-500/10 last:border-0 group">
+                      <tr key={emp.id} className="hover:bg-white/5 transition-all border-b border-blue-500/10 last:border-0 group">
                         <td className="px-6 py-5">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/30">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/30">
                               {emp.name.charAt(0).toUpperCase()}
                             </div>
                             <div>
                               <p className="font-black text-sm text-white">{emp.name}</p>
-                              <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mt-0.5">{emp.department}</p>
+                              <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5">{emp.department}</p>
                             </div>
                           </div>
                         </td>
@@ -714,12 +714,12 @@ export default function Performance() {
                               </span>
                             </div>
                           ) : (
-                            <span className="text-indigo-400/50 font-bold text-[10px] uppercase tracking-widest bg-white/5 border border-white/5 px-3 py-1 rounded-md">None</span>
+                            <span className="text-blue-400/50 font-bold text-[10px] uppercase tracking-widest bg-white/5 border border-white/5 px-3 py-1 rounded-md">None</span>
                           )}
                         </td>
                         <td className="px-6 py-5 text-center">
                           <div className="flex gap-2 items-center justify-center">
-                            <button onClick={() => grantBadge(emp.id, 'week')} className="px-3 py-1.5 bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500 hover:text-white border border-indigo-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm transition-all hover:-translate-y-0.5">Week</button>
+                            <button onClick={() => grantBadge(emp.id, 'week')} className="px-3 py-1.5 bg-blue-500/20 text-blue-300 hover:bg-blue-500 hover:text-white border border-blue-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm transition-all hover:-translate-y-0.5">Week</button>
                             <button onClick={() => grantBadge(emp.id, 'month')} className="px-3 py-1.5 bg-sky-500/20 text-sky-300 hover:bg-sky-500 hover:text-white border border-sky-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm transition-all hover:-translate-y-0.5">Month</button>
                             <button onClick={() => grantBadge(emp.id, 'none')} className="px-3 py-1.5 bg-white/5 text-slate-400 hover:bg-rose-500 hover:text-white border border-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm transition-all hover:-translate-y-0.5">Clear</button>
                           </div>
@@ -738,7 +738,7 @@ export default function Performance() {
                               </button>
                             </div>
                           ) : (
-                            <span className="text-indigo-400/50 font-bold text-[10px] uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 inline-flex items-center gap-1.5">
+                            <span className="text-blue-400/50 font-bold text-[10px] uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 inline-flex items-center gap-1.5">
                               <Smartphone size={12} className="opacity-50" /> Unpaired
                             </span>
                           )}
@@ -746,7 +746,7 @@ export default function Performance() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="4" className="text-center py-20 text-indigo-300/50 font-semibold bg-white/5">
+                        <td colSpan="4" className="text-center py-20 text-blue-300/50 font-semibold bg-white/5">
                           <div className="flex flex-col items-center gap-3">
                             <Users size={40} className="opacity-20" />
                             <p>No workforce records found.</p>
@@ -771,7 +771,7 @@ export default function Performance() {
               <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
                 <div className="relative w-full md:w-72">
                   <select 
-                    className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-indigo-500 transition-all shadow-sm appearance-none cursor-pointer"
+                    className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 transition-all shadow-sm appearance-none cursor-pointer"
                     value={selectedEmpForIntakes}
                     onChange={(e) => fetchAdminIntakes(e.target.value)}
                   >
@@ -805,10 +805,10 @@ export default function Performance() {
                   </thead>
                   <tbody className="divide-y divide-slate-50 text-xs font-medium text-slate-700">
                     {adminIntakes.length > 0 ? adminIntakes.map((sub) => (
-                      <tr key={sub.id} className="hover:bg-indigo-50/30 transition-all group">
+                      <tr key={sub.id} className="hover:bg-blue-50/30 transition-all group">
                         <td className="px-6 py-5">
                           <p className="font-black text-sm text-slate-800 mb-0.5">{sub.studentName}</p>
-                          <p className="font-bold text-indigo-600 text-[10px] uppercase tracking-wide bg-indigo-50 px-2 py-0.5 rounded w-max">{sub.domain}</p>
+                          <p className="font-bold text-blue-600 text-[10px] uppercase tracking-wide bg-blue-50 px-2 py-0.5 rounded w-max">{sub.domain}</p>
                           <p className="text-[10px] text-slate-400 mt-1">{sub.collegeName}</p>
                         </td>
                         <td className="px-6 py-5">
@@ -840,7 +840,7 @@ export default function Performance() {
                               <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Dropped', true)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.callStatus === 'Dropped' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Missed</button>
                             </div>
                             <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 shadow-inner w-max">
-                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Paid', true)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Paid' ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Collected</button>
+                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Paid', true)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Paid' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Collected</button>
                               <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Dropped', true)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Dropped' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Lost</button>
                             </div>
                           </div>
@@ -875,7 +875,7 @@ export default function Performance() {
               </div>
             ) : (
               <div className="text-center py-24 bg-slate-50/50 flex flex-col items-center justify-center">
-                <Search size={48} className="text-indigo-200 mb-4" />
+                <Search size={48} className="text-blue-200 mb-4" />
                 <p className="text-slate-500 font-bold">Select a profile above to pull records</p>
               </div>
             )}

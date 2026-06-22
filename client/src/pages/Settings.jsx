@@ -46,7 +46,7 @@ const Settings = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -56,8 +56,8 @@ const Settings = () => {
       <div className="flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-            <SettingsIcon className="text-indigo-600" size={32} />
-            System <span className="text-indigo-600">Settings</span>
+            <SettingsIcon className="text-blue-600" size={32} />
+            System <span className="text-blue-600">Settings</span>
           </h2>
           <p className="text-slate-500 font-medium">Configure global application parameters</p>
         </div>
@@ -66,7 +66,7 @@ const Settings = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="card shadow-xl shadow-slate-100 border-none p-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
               <Clock size={20} />
             </div>
             <div>
@@ -82,7 +82,7 @@ const Settings = () => {
                 type="time" 
                 value={timings.officeStartTime}
                 onChange={(e) => setTimings({...timings, officeStartTime: e.target.value})}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all font-medium text-slate-700"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-slate-700"
               />
               <p className="text-xs text-slate-500 mt-2">Employees checking in after this time will be marked as Late.</p>
             </div>
@@ -93,7 +93,7 @@ const Settings = () => {
                 type="time" 
                 value={timings.officeEndTime}
                 onChange={(e) => setTimings({...timings, officeEndTime: e.target.value})}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all font-medium text-slate-700"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-medium text-slate-700"
               />
               <p className="text-xs text-slate-500 mt-2">Standard end of day for the office.</p>
             </div>
@@ -101,7 +101,7 @@ const Settings = () => {
             <button 
               onClick={handleSave}
               disabled={saving}
-              className="w-full py-4 bg-indigo-600 text-white rounded-xl font-black tracking-wide hover:bg-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-200"
+              className="w-full py-4 bg-blue-600 text-white rounded-xl font-black tracking-wide hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
             >
               {saving ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>

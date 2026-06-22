@@ -108,13 +108,13 @@ export default function Holidays() {
       
       {/* Enterprise Header Section */}
       <div className="relative overflow-hidden rounded-2xl bg-[#0f172a] p-8 shadow-2xl border border-slate-800">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-transparent pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-transparent pointer-events-none"></div>
         <div className="absolute right-0 top-0 w-64 h-64 bg-fuchsia-500/10 blur-3xl rounded-full pointer-events-none -mr-20 -mt-20"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
             <h2 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-              <CalendarDays className="text-indigo-400" size={32} />
+              <CalendarDays className="text-blue-400" size={32} />
               Company Holidays
             </h2>
             <p className="text-slate-400 mt-2 text-sm font-medium max-w-xl">
@@ -126,7 +126,7 @@ export default function Holidays() {
           {isAdmin && (
             <button
               onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-500 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-600 transition shadow-lg shadow-indigo-500/20 whitespace-nowrap"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-6 py-3 text-sm font-bold text-white hover:bg-blue-600 transition shadow-lg shadow-blue-500/20 whitespace-nowrap"
             >
               <Plus size={18} /> Schedule Holiday
             </button>
@@ -136,15 +136,15 @@ export default function Holidays() {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
           <p className="text-sm font-medium">Loading holiday calendar...</p>
         </div>
       ) : (
         <>
           {/* Next Holiday Notification Banner */}
           {nextHoliday ? (
-            <div className="rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50 via-white to-fuchsia-50 p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden animate-in slide-in-from-bottom-4 duration-500 group">
-              <div className="absolute right-0 top-0 w-64 h-full bg-indigo-200/20 skew-x-12 transform -translate-x-10 pointer-events-none transition-transform group-hover:translate-x-0"></div>
+            <div className="rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-fuchsia-50 p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden animate-in slide-in-from-bottom-4 duration-500 group">
+              <div className="absolute right-0 top-0 w-64 h-full bg-blue-200/20 skew-x-12 transform -translate-x-10 pointer-events-none transition-transform group-hover:translate-x-0"></div>
               
               <div className="flex items-center gap-6 z-10 w-full md:w-auto">
                 <div className="relative">
@@ -153,7 +153,7 @@ export default function Holidays() {
                       <img src={nextHoliday.image} alt={nextHoliday.name} className="w-full h-full object-cover" />
                     </div>
                   ) : (
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-400 to-fuchsia-500 flex items-center justify-center text-white shrink-0 shadow-lg border-4 border-white">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-fuchsia-500 flex items-center justify-center text-white shrink-0 shadow-lg border-4 border-white">
                       <Sparkles size={32} className="animate-pulse" />
                     </div>
                   )}
@@ -162,12 +162,12 @@ export default function Holidays() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-1 flex items-center gap-1">
+                  <p className="text-xs font-bold uppercase tracking-widest text-blue-600 mb-1 flex items-center gap-1">
                     Upcoming Celebration
                   </p>
                   <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">{nextHoliday.name}</h3>
                   <div className="flex items-center gap-2 mt-1.5 text-sm font-semibold text-slate-500">
-                    <Calendar size={14} className="text-indigo-400" />
+                    <Calendar size={14} className="text-blue-400" />
                     {new Date(nextHoliday.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                   </div>
                 </div>
@@ -176,14 +176,14 @@ export default function Holidays() {
               <div className="z-10 flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
                 <button 
                   onClick={handleSendWishes}
-                  className="bg-white/80 hover:bg-indigo-600 hover:text-white text-indigo-600 backdrop-blur-md border border-indigo-100 px-4 py-3 rounded-xl font-bold text-sm transition-all shadow-sm flex items-center gap-2"
+                  className="bg-white/80 hover:bg-blue-600 hover:text-white text-blue-600 backdrop-blur-md border border-blue-100 px-4 py-3 rounded-xl font-bold text-sm transition-all shadow-sm flex items-center gap-2"
                 >
                   <Heart size={16} /> Broadcast Wishes
                 </button>
-                <div className="bg-white/80 backdrop-blur-md rounded-xl px-6 py-3 border border-indigo-100 shadow-sm text-center min-w-[140px]">
+                <div className="bg-white/80 backdrop-blur-md rounded-xl px-6 py-3 border border-blue-100 shadow-sm text-center min-w-[140px]">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Happening in</p>
-                  <p className="text-3xl font-black text-indigo-700">
-                    {getDaysUntil(nextHoliday.date)} <span className="text-xs font-bold text-indigo-600/60 uppercase">Days</span>
+                  <p className="text-3xl font-black text-blue-700">
+                    {getDaysUntil(nextHoliday.date)} <span className="text-xs font-bold text-blue-600/60 uppercase">Days</span>
                   </p>
                 </div>
               </div>
@@ -226,18 +226,18 @@ export default function Holidays() {
                                 <img src={hol.image} alt={hol.name} className="w-full h-full object-cover" />
                               </div>
                             ) : (
-                              <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-500 border border-indigo-100 flex items-center justify-center shrink-0">
+                              <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 border border-blue-100 flex items-center justify-center shrink-0">
                                 <Palmtree size={16} />
                               </div>
                             )}
                             <div>
                               <div className="font-bold text-slate-800 flex items-center gap-2">
                                 {hol.name}
-                                <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide ${hol.type === 'National' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>
+                                <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide ${hol.type === 'National' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>
                                   {hol.type}
                                 </span>
                               </div>
-                              <div className="text-[11px] font-semibold text-indigo-500 mt-1 flex items-center gap-1">
+                              <div className="text-[11px] font-semibold text-blue-500 mt-1 flex items-center gap-1">
                                 <Clock size={10} /> In {getDaysUntil(hol.date)} days
                               </div>
                             </div>
@@ -344,7 +344,7 @@ export default function Holidays() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="bg-[#0f172a] px-8 py-6 relative overflow-hidden">
-              <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/20 blur-2xl rounded-full pointer-events-none -mr-10 -mt-10"></div>
+              <div className="absolute right-0 top-0 w-32 h-32 bg-blue-500/20 blur-2xl rounded-full pointer-events-none -mr-10 -mt-10"></div>
               <h3 className="text-xl font-bold text-white relative z-10">Schedule New Holiday</h3>
               <p className="text-sm font-medium text-slate-400 relative z-10">Add a non-operational day and an optional celebration graphic.</p>
             </div>
@@ -364,7 +364,7 @@ export default function Holidays() {
                 <div 
                   onClick={() => fileInputRef.current?.click()}
                   className={`w-full h-36 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all ${
-                    formData.image ? 'border-indigo-500 bg-indigo-50 overflow-hidden p-1 relative' : 'border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400'
+                    formData.image ? 'border-blue-500 bg-blue-50 overflow-hidden p-1 relative' : 'border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400'
                   }`}
                 >
                   {formData.image ? (
@@ -376,7 +376,7 @@ export default function Holidays() {
                     </>
                   ) : (
                     <div className="text-center">
-                      <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center text-indigo-500 mx-auto mb-2 border border-slate-100">
+                      <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center text-blue-500 mx-auto mb-2 border border-slate-100">
                         <ImageIcon size={20} />
                       </div>
                       <p className="text-sm font-bold text-slate-700">Click to upload image</p>
@@ -391,7 +391,7 @@ export default function Holidays() {
                 <input 
                   type="text" 
                   required 
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   placeholder="e.g. Diwali, Christmas, Company Retreat"
@@ -404,7 +404,7 @@ export default function Holidays() {
                   <input 
                     type="date" 
                     required 
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
                     value={formData.date}
                     onChange={(e) => setFormData({...formData, date: e.target.value})}
                   />
@@ -412,7 +412,7 @@ export default function Holidays() {
                 <div>
                   <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Holiday Type</label>
                   <select 
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm appearance-none"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm appearance-none"
                     value={formData.type}
                     onChange={(e) => setFormData({...formData, type: e.target.value})}
                   >
@@ -433,7 +433,7 @@ export default function Holidays() {
                 <button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="flex-[2] rounded-xl bg-indigo-600 px-5 py-3.5 text-sm font-bold text-white hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-[2] rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

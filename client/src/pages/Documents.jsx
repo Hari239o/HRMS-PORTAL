@@ -128,7 +128,7 @@ export default function Documents() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[40vh] space-y-4">
-        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
         <p className="text-slate-400 font-medium text-sm">Loading Documents...</p>
       </div>
     );
@@ -145,18 +145,18 @@ export default function Documents() {
       <div className="space-y-6 fade-in pb-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Employee <span className="text-indigo-600">Documents</span></h1>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Employee <span className="text-blue-600">Documents</span></h1>
             <p className="text-slate-500 mt-1">Review and manage onboarding documents across the organization.</p>
           </div>
           
           <div className="relative w-full md:w-80 z-20">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search size={16} className="text-indigo-400" />
+              <Search size={16} className="text-blue-400" />
             </div>
             <select
               value={selectedEmpId}
               onChange={(e) => setSelectedEmpId(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-white/70 backdrop-blur-md border border-indigo-100 rounded-xl shadow-sm text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 appearance-none cursor-pointer"
+              className="w-full pl-11 pr-4 py-3 bg-white/70 backdrop-blur-md border border-blue-100 rounded-xl shadow-sm text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer"
             >
               <option value="" disabled>Select an Employee</option>
               {allEmployees.map(emp => (
@@ -168,7 +168,7 @@ export default function Documents() {
 
         {selectedEmp && (
           <>
-            <div className="relative rounded-3xl shadow-xl border border-white/40 overflow-hidden bg-gradient-to-br from-white/80 to-indigo-50/40 backdrop-blur-xl p-6">
+            <div className="relative rounded-3xl shadow-xl border border-white/40 overflow-hidden bg-gradient-to-br from-white/80 to-blue-50/40 backdrop-blur-xl p-6">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-black text-slate-800 flex items-center gap-2 text-lg">
                   <CheckCircle size={20} className={progress === 100 ? "text-emerald-500" : "text-amber-500"} /> 
@@ -195,9 +195,9 @@ export default function Documents() {
                 const fileUrl = empDocs[doc.id];
 
                 return (
-                  <div key={doc.id} className={`relative rounded-3xl p-6 transition-all duration-300 border backdrop-blur-xl shadow-lg hover:shadow-2xl group ${isUploaded ? 'bg-gradient-to-br from-white/80 to-emerald-50/40 border-emerald-100/50' : 'bg-white/60 border-slate-200/50 hover:border-indigo-300'}`}>
+                  <div key={doc.id} className={`relative rounded-3xl p-6 transition-all duration-300 border backdrop-blur-xl shadow-lg hover:shadow-2xl group ${isUploaded ? 'bg-gradient-to-br from-white/80 to-emerald-50/40 border-emerald-100/50' : 'bg-white/60 border-slate-200/50 hover:border-blue-300'}`}>
                     <div className="flex justify-between items-start mb-6">
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${isUploaded ? 'bg-gradient-to-tr from-emerald-100 to-emerald-50 text-emerald-600' : 'bg-gradient-to-tr from-indigo-100 to-indigo-50 text-indigo-600'}`}>
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${isUploaded ? 'bg-gradient-to-tr from-emerald-100 to-emerald-50 text-emerald-600' : 'bg-gradient-to-tr from-blue-100 to-blue-50 text-blue-600'}`}>
                         <doc.icon size={28} />
                       </div>
                       {isUploaded ? (
@@ -220,7 +220,7 @@ export default function Documents() {
                             href={fileUrl} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="flex-1 text-center py-3 bg-white/80 backdrop-blur hover:bg-indigo-600 text-indigo-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all border border-indigo-100 shadow-sm flex justify-center items-center gap-2 group-hover:border-indigo-200"
+                            className="flex-1 text-center py-3 bg-white/80 backdrop-blur hover:bg-blue-600 text-blue-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all border border-blue-100 shadow-sm flex justify-center items-center gap-2 group-hover:border-blue-200"
                           >
                             <File size={16} /> View
                           </a>
@@ -254,11 +254,11 @@ export default function Documents() {
   return (
     <div className="space-y-6 fade-in pb-12">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Onboarding <span className="text-indigo-600">Documents</span></h1>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Onboarding <span className="text-blue-600">Documents</span></h1>
         <p className="text-slate-500 mt-1">Upload and manage your mandatory company documents securely.</p>
       </div>
 
-      <div className="relative rounded-3xl shadow-xl border border-white/40 overflow-hidden bg-gradient-to-br from-white/80 to-indigo-50/40 backdrop-blur-xl p-6">
+      <div className="relative rounded-3xl shadow-xl border border-white/40 overflow-hidden bg-gradient-to-br from-white/80 to-blue-50/40 backdrop-blur-xl p-6">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-black text-slate-800 flex items-center gap-2 text-lg">
             <CheckCircle size={20} className={progress === 100 ? "text-emerald-500" : "text-amber-500"} /> 
@@ -286,9 +286,9 @@ export default function Documents() {
           const isUploadingThis = uploading === doc.id;
 
           return (
-            <div key={doc.id} className={`relative rounded-3xl p-6 transition-all duration-300 border backdrop-blur-xl shadow-lg hover:shadow-2xl group ${isUploaded ? 'bg-gradient-to-br from-white/80 to-emerald-50/40 border-emerald-100/50' : 'bg-white/60 border-slate-200/50 hover:border-indigo-300'}`}>
+            <div key={doc.id} className={`relative rounded-3xl p-6 transition-all duration-300 border backdrop-blur-xl shadow-lg hover:shadow-2xl group ${isUploaded ? 'bg-gradient-to-br from-white/80 to-emerald-50/40 border-emerald-100/50' : 'bg-white/60 border-slate-200/50 hover:border-blue-300'}`}>
               <div className="flex justify-between items-start mb-6">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${isUploaded ? 'bg-gradient-to-tr from-emerald-100 to-emerald-50 text-emerald-600' : 'bg-gradient-to-tr from-indigo-100 to-indigo-50 text-indigo-600'}`}>
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${isUploaded ? 'bg-gradient-to-tr from-emerald-100 to-emerald-50 text-emerald-600' : 'bg-gradient-to-tr from-blue-100 to-blue-50 text-blue-600'}`}>
                   <doc.icon size={28} />
                 </div>
                 {isUploaded ? (
@@ -311,7 +311,7 @@ export default function Documents() {
                       href={fileUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="flex-1 text-center py-3 bg-white/80 backdrop-blur hover:bg-indigo-600 text-indigo-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all border border-indigo-100 shadow-sm flex justify-center items-center gap-2 group-hover:border-indigo-200"
+                      className="flex-1 text-center py-3 bg-white/80 backdrop-blur hover:bg-blue-600 text-blue-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all border border-blue-100 shadow-sm flex justify-center items-center gap-2 group-hover:border-blue-200"
                     >
                       <File size={16} /> View
                     </a>
@@ -328,7 +328,7 @@ export default function Documents() {
                   <button 
                     onClick={() => handleUploadClick(doc.id)}
                     disabled={isUploadingThis}
-                    className="w-full py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-indigo-500/30 flex justify-center items-center gap-2 hover:-translate-y-0.5"
+                    className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-blue-500/30 flex justify-center items-center gap-2 hover:-translate-y-0.5"
                   >
                     {isUploadingThis ? (
                       <>Uploading...</>

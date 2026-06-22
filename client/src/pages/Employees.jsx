@@ -175,7 +175,7 @@ const Employees = () => {
         {user.role === 'admin' && (
           <button 
             onClick={() => { resetForm(); setShowModal(true); }}
-            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200 transition-all active:scale-95"
           >
             <Plus size={20} /> Onboard Employee
           </button>
@@ -185,7 +185,7 @@ const Employees = () => {
       {user.role === 'admin' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
               <Users size={24} />
             </div>
             <div>
@@ -226,14 +226,14 @@ const Employees = () => {
         {employees.map((emp) => {
           const statusObj = getEmployeeStatus(emp.id);
           return (
-            <div key={emp.id} className="bg-white rounded-[24px] p-6 border border-slate-200 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100/50 transition-all group relative overflow-hidden flex flex-col h-full">
+            <div key={emp.id} className="bg-white rounded-[24px] p-6 border border-slate-200 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-100/50 transition-all group relative overflow-hidden flex flex-col h-full">
               {/* Online Status Indicator */}
               <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-slate-50/80 backdrop-blur-sm px-2 py-1 rounded-full border border-slate-100 shadow-sm z-10">
                 <span className={`w-2 h-2 rounded-full ${statusObj.color} ${statusObj.isOnline ? 'animate-pulse' : ''}`}></span>
                 <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">{statusObj.status}</span>
               </div>
 
-              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
               <div className="flex justify-between items-start mt-6 mb-6">
                 <div className="flex gap-4 items-center">
@@ -250,14 +250,14 @@ const Employees = () => {
                     )}
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-900 flex items-center gap-2 leading-tight mb-1 group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-xl font-black text-slate-900 flex items-center gap-2 leading-tight mb-1 group-hover:text-blue-600 transition-colors">
                       {emp.name}
                       {emp.starPerformer && emp.starPerformer !== 'none' && (
                         <span className="text-amber-500 bg-amber-50 rounded-full p-1 shadow-sm" title={`Golden ${emp.starPerformer} Badge`}>🏆</span>
                       )}
                     </h3>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <span className="text-[10px] font-black text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                      <span className="text-[10px] font-black text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md uppercase tracking-wider">
                         {emp.department}
                       </span>
                       <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md border ${
@@ -288,13 +288,13 @@ const Employees = () => {
                       <AlertTriangle size={16} />
                     </button>
                     <div className="w-full h-px bg-slate-100 my-1"></div>
-                    <button onClick={() => handleEdit(emp)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit Employee">
+                    <button onClick={() => handleEdit(emp)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit Employee">
                       <Edit size={16} />
                     </button>
-                    <button onClick={() => handleResetDevice(emp.id)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Reset Device Lock">
+                    <button onClick={() => handleResetDevice(emp.id)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Reset Device Lock">
                       <Smartphone size={16} />
                     </button>
-                    <button onClick={() => handleResetPassword(emp.id)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Reset Password">
+                    <button onClick={() => handleResetPassword(emp.id)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Reset Password">
                       <Key size={16} />
                     </button>
                     <button onClick={() => handleDelete(emp.id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
@@ -307,7 +307,7 @@ const Employees = () => {
             
             <div className="space-y-4 pt-6 border-t border-slate-100/80 mt-auto flex-1">
               <div className="grid grid-cols-1 gap-3">
-                <a href={`mailto:${emp.email}`} className="text-sm font-semibold text-slate-600 flex items-center gap-3 hover:text-indigo-600 transition-colors w-fit p-2 rounded-lg hover:bg-indigo-50/50 w-full">
+                <a href={`mailto:${emp.email}`} className="text-sm font-semibold text-slate-600 flex items-center gap-3 hover:text-blue-600 transition-colors w-fit p-2 rounded-lg hover:bg-blue-50/50 w-full">
                   <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Mail size={14} /></div> 
                   <span className="truncate">{emp.email}</span>
                 </a>
@@ -316,7 +316,7 @@ const Employees = () => {
                   <span>Off Day: <span className="text-slate-900">{emp.weekOff || 'Sunday'}</span></span>
                 </div>
                 <div className="flex items-center gap-3 text-sm font-semibold text-slate-600 bg-slate-50 p-2 rounded-xl border border-slate-100">
-                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-indigo-500"><ShieldCheck size={14} /></div>
+                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-blue-500"><ShieldCheck size={14} /></div>
                   <span className="truncate">Assets: <span className="text-slate-900">{emp.assets || 'None'}</span></span>
                 </div>
               </div>
@@ -324,7 +324,7 @@ const Employees = () => {
               <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100/80 gap-3">
                 <button 
                   onClick={() => setShowDocsModal(emp)} 
-                  className="flex-1 py-2 px-3 bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-2 border border-slate-200 hover:border-indigo-200 shadow-sm"
+                  className="flex-1 py-2 px-3 bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-2 border border-slate-200 hover:border-blue-200 shadow-sm"
                 >
                   <Folder size={14} /> View KYC Docs
                 </button>
@@ -332,7 +332,7 @@ const Employees = () => {
                   <div className="flex gap-2">
                     <button 
                       onClick={() => handleEdit(emp)} 
-                      className="p-2 bg-white hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 rounded-xl transition-colors border border-slate-200 hover:border-indigo-200 shadow-sm" 
+                      className="p-2 bg-white hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-xl transition-colors border border-slate-200 hover:border-blue-200 shadow-sm" 
                       title="Edit Profile"
                     >
                       <Edit size={16} />
@@ -356,7 +356,7 @@ const Employees = () => {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-4xl max-h-[90vh] flex flex-col rounded-[24px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-slate-200">
             <div className="bg-slate-900 p-4 md:p-6 flex justify-between items-center relative overflow-hidden shrink-0">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent"></div>
               <div className="relative z-10 flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-xl backdrop-blur-md flex items-center justify-center text-white">
                   <User size={24} />
@@ -376,7 +376,7 @@ const Employees = () => {
                 
                 {/* Section: Basic Info */}
                 <div className="col-span-1 md:col-span-2">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-indigo-600 mb-4 pb-2 border-b border-indigo-100">Personal Information</h4>
+                  <h4 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-4 pb-2 border-b border-blue-100">Personal Information</h4>
                 </div>
 
                 <div>
@@ -387,7 +387,7 @@ const Employees = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     placeholder="e.g. Jane Smith"
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                   />
                 </div>
                  <div>
@@ -397,7 +397,7 @@ const Employees = () => {
                     value={formData.avatar}
                     onChange={(e) => setFormData({...formData, avatar: e.target.value})}
                     placeholder="https://..."
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                   />
                 </div>
                 <div>
@@ -408,7 +408,7 @@ const Employees = () => {
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     placeholder="jane@company.com"
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                   />
                 </div>
                 {!editingId && (
@@ -420,14 +420,14 @@ const Employees = () => {
                       value={formData.password}
                       onChange={(e) => setFormData({...formData, password: e.target.value})}
                       placeholder="••••••••"
-                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                     />
                   </div>
                 )}
 
                 {/* Section: Employment Details */}
                 <div className="col-span-1 md:col-span-2 mt-4">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-indigo-600 mb-4 pb-2 border-b border-indigo-100">Employment Logistics</h4>
+                  <h4 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-4 pb-2 border-b border-blue-100">Employment Logistics</h4>
                 </div>
 
                 <div>
@@ -435,7 +435,7 @@ const Employees = () => {
                   <select 
                     value={formData.role}
                     onChange={(e) => setFormData({...formData, role: e.target.value})}
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-800"
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-800"
                   >
                     <option value="employee">Standard Employee</option>
                     <option value="admin">System Administrator</option>
@@ -450,7 +450,7 @@ const Employees = () => {
                   <select 
                     value={formData.department}
                     onChange={(e) => setFormData({...formData, department: e.target.value})}
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-800"
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-800"
                   >
                     <option value="Sales">Sales</option>
                     <option value="Engineering">Engineering</option>
@@ -464,7 +464,7 @@ const Employees = () => {
                   <select 
                     value={formData.weekOff}
                     onChange={(e) => setFormData({...formData, weekOff: e.target.value})}
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-slate-800"
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-800"
                   >
                     <option value="Sunday">Sunday</option>
                     <option value="Saturday">Saturday</option>
@@ -483,20 +483,20 @@ const Employees = () => {
                     value={formData.assets}
                     onChange={(e) => setFormData({...formData, assets: e.target.value})}
                     placeholder="e.g. MacBook Pro, Access Card #123"
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                   />
                 </div>
 
                 {/* Section: Hierarchy */}
-                <div className="col-span-1 md:col-span-2 mt-4 bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100/50">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-indigo-600 mb-4">Organizational Hierarchy</h4>
+                <div className="col-span-1 md:col-span-2 mt-4 bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-4">Organizational Hierarchy</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Direct Manager</label>
                       <select 
                         value={formData.manager}
                         onChange={(e) => setFormData({...formData, manager: e.target.value})}
-                        className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                        className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                       >
                         <option value="">-- None --</option>
                         {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
@@ -507,7 +507,7 @@ const Employees = () => {
                       <select 
                         value={formData.hrManager}
                         onChange={(e) => setFormData({...formData, hrManager: e.target.value})}
-                        className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                        className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                       >
                         <option value="">-- None --</option>
                         {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
@@ -518,7 +518,7 @@ const Employees = () => {
                       <select 
                         value={formData.teamLeader}
                         onChange={(e) => setFormData({...formData, teamLeader: e.target.value})}
-                        className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                        className="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                       >
                         <option value="">-- None --</option>
                         {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
@@ -542,7 +542,7 @@ const Employees = () => {
           <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                <Folder size={24} className="text-indigo-600" /> 
+                <Folder size={24} className="text-blue-600" /> 
                 {showDocsModal.name}'s Documents
               </h3>
               <button onClick={() => setShowDocsModal(null)} className="text-slate-400 hover:text-slate-600 bg-white p-2 rounded-xl shadow-sm">
@@ -567,7 +567,7 @@ const Employees = () => {
                         <span className="font-bold text-sm text-slate-700">{doc.title}</span>
                       </div>
                       {url ? (
-                        <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
+                        <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
                           <File size={14} /> View
                         </a>
                       ) : (

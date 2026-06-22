@@ -159,7 +159,7 @@ const Attendance = () => {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
     </div>
   );
 
@@ -167,7 +167,7 @@ const Attendance = () => {
     <div className="space-y-8 fade-in">
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Attendance <span className="text-indigo-600">Terminal</span></h2>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Attendance <span className="text-blue-600">Terminal</span></h2>
           <p className="text-slate-500 font-medium">Biometric and Location verified logs</p>
         </div>
         <div className="text-right">
@@ -247,22 +247,22 @@ const Attendance = () => {
           </div>
         </div>
       ) : (
-        <div className="card p-8 border border-white/40 bg-gradient-to-br from-indigo-50/50 to-white/60 backdrop-blur-xl shadow-2xl shadow-indigo-100/40 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 -mr-16 -mt-16 rounded-full blur-3xl"></div>
+        <div className="card p-8 border border-white/40 bg-gradient-to-br from-blue-50/50 to-white/60 backdrop-blur-xl shadow-2xl shadow-blue-100/40 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 -mr-16 -mt-16 rounded-full blur-3xl"></div>
           <h3 className="text-2xl font-black text-slate-900 mb-6 relative z-10">HR Attendance Summary</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
             <div className="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white shadow-sm hover:shadow-md transition-all">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-indigo-400 font-bold mb-2">Company Office Location</p>
+              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-400 font-bold mb-2">Company Office Location</p>
               <p className="font-black text-slate-800 text-lg">{OFFICE_LOCATION.latitude.toFixed(6)}, {OFFICE_LOCATION.longitude.toFixed(6)}</p>
               <p className="text-xs text-slate-500 mt-2 font-medium">Strict GPS-only geofence</p>
             </div>
             <div className="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white shadow-sm hover:shadow-md transition-all">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-indigo-400 font-bold mb-2">Office Window</p>
+              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-400 font-bold mb-2">Office Window</p>
               <p className="font-black text-slate-800 text-lg">{ATTENDANCE_WINDOW.from} - {ATTENDANCE_WINDOW.to}</p>
               <p className="text-xs text-slate-500 mt-2 font-medium">Attendance valid only during this window</p>
             </div>
             <div className="p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white shadow-sm hover:shadow-md transition-all">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-indigo-400 font-bold mb-2">Today's Attendance Place</p>
+              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-400 font-bold mb-2">Today's Attendance Place</p>
               <p className="font-black text-slate-800 text-lg">
                 {todayRecord && todayRecord.checkInLocation
                   ? `${todayRecord.checkInLocation.latitude.toFixed(6)}, ${todayRecord.checkInLocation.longitude.toFixed(6)}`
@@ -275,25 +275,25 @@ const Attendance = () => {
       )}
 
       {/* History Table */}
-      <div className="card overflow-hidden p-0 border border-white/40 shadow-2xl shadow-indigo-100/40 bg-white/60 backdrop-blur-2xl">
+      <div className="card overflow-hidden p-0 border border-white/40 shadow-2xl shadow-blue-100/40 bg-white/60 backdrop-blur-2xl">
         {user.role === 'admin' && (
           <div className="px-4 md:px-8 py-6 border-b border-white/50 bg-white/40 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <div className="w-full">
               <label className="flex text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 items-center gap-1"><Filter size={12}/> Filter by Day</label>
-              <input type="date" value={filterDay} onChange={(e) => { setFilterDay(e.target.value); setFilterMonth(''); }} className="w-full px-4 py-2 bg-white/50 border border-white rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all shadow-sm backdrop-blur-md" />
+              <input type="date" value={filterDay} onChange={(e) => { setFilterDay(e.target.value); setFilterMonth(''); }} className="w-full px-4 py-2 bg-white/50 border border-white rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all shadow-sm backdrop-blur-md" />
             </div>
             <div className="w-full">
               <label className="flex text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 items-center gap-1"><Filter size={12}/> Filter by Month</label>
-              <input type="month" value={filterMonth} onChange={(e) => { setFilterMonth(e.target.value); setFilterDay(''); }} className="w-full px-4 py-2 bg-white/50 border border-white rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all shadow-sm backdrop-blur-md" />
+              <input type="month" value={filterMonth} onChange={(e) => { setFilterMonth(e.target.value); setFilterDay(''); }} className="w-full px-4 py-2 bg-white/50 border border-white rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all shadow-sm backdrop-blur-md" />
             </div>
             <div className="w-full">
               <label className="flex text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 items-center gap-1"><Users size={12}/> Filter by Employee</label>
-              <select value={filterEmployee} onChange={(e) => setFilterEmployee(e.target.value)} className="w-full px-4 py-2 bg-white/50 border border-white rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all shadow-sm backdrop-blur-md">
+              <select value={filterEmployee} onChange={(e) => setFilterEmployee(e.target.value)} className="w-full px-4 py-2 bg-white/50 border border-white rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all shadow-sm backdrop-blur-md">
                 <option value="">All Employees</option>
                 {uniqueEmployees.map(emp => <option key={emp} value={emp}>{emp}</option>)}
               </select>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50/80 backdrop-blur-md rounded-xl text-indigo-700 font-bold text-sm border border-indigo-100 w-full justify-center h-[38px] shadow-sm">
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-50/80 backdrop-blur-md rounded-xl text-blue-700 font-bold text-sm border border-blue-100 w-full justify-center h-[38px] shadow-sm">
               <CheckCircle size={16} /> {membersPresent} Members Present
             </div>
           </div>
@@ -304,7 +304,7 @@ const Attendance = () => {
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Audit Trail • Last 30 Days</p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md rounded-xl text-xs font-bold text-slate-600 border border-white shadow-sm">
-            <Clock size={16} className="text-indigo-600 animate-pulse" /> Real-time Sync
+            <Clock size={16} className="text-blue-600 animate-pulse" /> Real-time Sync
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -330,7 +330,7 @@ const Attendance = () => {
                   {user.role === 'admin' && (
                     <td className="px-4 md:px-8 py-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 flex items-center justify-center text-indigo-700 font-bold text-xs uppercase shadow-sm border border-white">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center text-blue-700 font-bold text-xs uppercase shadow-sm border border-white">
                           {row.employee?.name?.[0] || '?'}
                         </div>
                         <div className="flex flex-col">

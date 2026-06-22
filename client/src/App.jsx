@@ -41,7 +41,7 @@ const ProtectedRoute = ({ children, adminOnly = false, expectedPortal }) => {
 
   if (loading) return (
     <div className="h-screen w-full flex items-center justify-center bg-slate-50">
-      <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
   
@@ -59,9 +59,9 @@ const ProtectedRoute = ({ children, adminOnly = false, expectedPortal }) => {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-sky-50">
       <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
         {/* Mobile Header */}
         <header className="md:hidden bg-white border-b border-slate-100 flex items-center justify-between p-4 z-40">
           <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ const ProtectedRoute = ({ children, adminOnly = false, expectedPortal }) => {
           </div>
           <button 
             onClick={() => setIsMobileMenuOpen(true)}
-            className="p-2 -mr-2 text-slate-500 hover:text-indigo-600 focus:outline-none"
+            className="p-2 -mr-2 text-slate-500 hover:text-blue-600 focus:outline-none"
           >
             <Menu size={24} />
           </button>

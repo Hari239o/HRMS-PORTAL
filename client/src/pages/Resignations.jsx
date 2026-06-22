@@ -140,8 +140,8 @@ const Resignations = () => {
         
         {/* Modern Header Banner */}
         <div className="bg-[#0f172a] rounded-[24px] p-8 md:p-10 relative overflow-hidden shadow-xl">
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-transparent"></div>
-          <div className="absolute -right-24 -top-24 w-96 h-96 bg-indigo-500/20 blur-3xl rounded-full"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent"></div>
+          <div className="absolute -right-24 -top-24 w-96 h-96 bg-blue-500/20 blur-3xl rounded-full"></div>
           
           <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-2xl">
@@ -166,7 +166,7 @@ const Resignations = () => {
               {user.role !== 'admin' && (
                 <button 
                   onClick={() => setShowResignationForm(true)} 
-                  className="px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-500/25 flex items-center gap-2"
+                  className="px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold text-sm transition-all shadow-lg shadow-blue-500/25 flex items-center gap-2"
                 >
                   <UserMinus size={18} /> Initiate Separation
                 </button>
@@ -219,7 +219,7 @@ const Resignations = () => {
               placeholder="Search resignations..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium"
+              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium"
             />
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
@@ -227,7 +227,7 @@ const Resignations = () => {
             <select 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 font-medium outline-none"
+              className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-3 font-medium outline-none"
             >
               <option value="All">All Statuses</option>
               <option value="Pending">Pending</option>
@@ -269,7 +269,7 @@ const Resignations = () => {
                       {user.role === 'admin' && (
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold">
+                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold">
                               {item.employeeName?.charAt(0) || 'U'}
                             </div>
                             <div>
@@ -311,7 +311,7 @@ const Resignations = () => {
                               });
                               setShowActionModal(true);
                             }}
-                            className="px-4 py-2 bg-slate-100 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 rounded-lg text-xs font-bold transition-all border border-slate-200 hover:border-indigo-200"
+                            className="px-4 py-2 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-lg text-xs font-bold transition-all border border-slate-200 hover:border-blue-200"
                           >
                             Manage
                           </button>
@@ -350,7 +350,7 @@ const Resignations = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-[24px] w-full max-w-3xl overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
             <div className="p-8 border-b border-slate-100 bg-slate-900 text-white relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent"></div>
               <div className="relative z-10 flex items-center justify-between mb-2">
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white mb-4 backdrop-blur-md">
                   <UserMinus size={24} />
@@ -372,7 +372,7 @@ const Resignations = () => {
                       required
                       value={formData.primaryReason}
                       onChange={(e) => setFormData({...formData, primaryReason: e.target.value})}
-                      className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                      className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                     >
                       <option value="">Select a reason...</option>
                       <option value="Better Opportunity">Better Career Opportunity</option>
@@ -392,7 +392,7 @@ const Resignations = () => {
                       value={formData.personalEmail}
                       onChange={(e) => setFormData({...formData, personalEmail: e.target.value})}
                       placeholder="john.doe@gmail.com"
-                      className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                      className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                     />
                   </div>
 
@@ -403,7 +403,7 @@ const Resignations = () => {
                       required
                       value={formData.requestedLWD}
                       onChange={(e) => setFormData({...formData, requestedLWD: e.target.value})}
-                      className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                      className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                     />
                     <p className="text-xs text-slate-500 mt-2 flex items-center gap-1"><Info size={12}/> Based on your {user?.noticePeriod || 30}-day notice period. Official LWD is determined by HR.</p>
                   </div>
@@ -417,7 +417,7 @@ const Resignations = () => {
                       value={formData.reason}
                       onChange={(e) => setFormData({...formData, reason: e.target.value})}
                       placeholder="Please provide a detailed explanation. If joining another company, mentioning the name is optional but helpful..."
-                      className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none flex-1"
+                      className="w-full p-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none flex-1"
                     ></textarea>
                   </div>
                 </div>
@@ -433,7 +433,7 @@ const Resignations = () => {
                 </button>
                 <button 
                   type="submit"
-                  className="flex-1 px-6 py-4 rounded-xl text-white font-bold bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all"
+                  className="flex-1 px-6 py-4 rounded-xl text-white font-bold bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all"
                 >
                   Submit Request
                 </button>
@@ -462,11 +462,11 @@ const Resignations = () => {
               {/* Left Panel - Details */}
               <div className="w-full md:w-1/2 bg-slate-50 p-8 overflow-y-auto border-r border-slate-100">
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-6 flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-xl">
+                  <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xl">
                     {selectedResignation.employeeName?.charAt(0) || 'U'}
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Employee Profile</p>
+                    <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Employee Profile</p>
                     <p className="font-black text-xl text-slate-900">{selectedResignation.employeeName}</p>
                     <p className="text-sm text-slate-500 font-medium">{selectedResignation.department} • {selectedResignation.employeeEmail}</p>
                   </div>
@@ -492,8 +492,8 @@ const Resignations = () => {
                   </div>
 
                   {selectedResignation.requestedLWD && (
-                    <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
-                      <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Requested Last Working Day</p>
+                    <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                      <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Requested Last Working Day</p>
                       <p className="text-lg font-black text-slate-800">{new Date(selectedResignation.requestedLWD).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     </div>
                   )}
@@ -509,7 +509,7 @@ const Resignations = () => {
                       required
                       value={actionData.status}
                       onChange={(e) => setActionData({...actionData, status: e.target.value})}
-                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-800"
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-800"
                     >
                       <option value="Pending">Pending HR Review</option>
                       <option value="Approved">Approved (Awaiting Notice Period)</option>
@@ -526,24 +526,24 @@ const Resignations = () => {
                       type="date" 
                       value={actionData.officialLWD}
                       onChange={(e) => setActionData({...actionData, officialLWD: e.target.value})}
-                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                     />
                     <p className="text-xs text-slate-500 mt-2 flex items-center gap-1"><Info size={12}/> Update this field to extend or adjust the notice period officially.</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors bg-slate-50"
+                    <div className="border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-300 transition-colors bg-slate-50"
                          onClick={() => setActionData({...actionData, eligibleForRehire: !actionData.eligibleForRehire})}>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-bold text-slate-700 uppercase">Eligible for Rehire</span>
-                        <div className={`w-10 h-6 rounded-full flex items-center p-1 transition-colors ${actionData.eligibleForRehire ? 'bg-indigo-500' : 'bg-slate-300'}`}>
+                        <div className={`w-10 h-6 rounded-full flex items-center p-1 transition-colors ${actionData.eligibleForRehire ? 'bg-blue-500' : 'bg-slate-300'}`}>
                           <div className={`w-4 h-4 rounded-full bg-white transition-transform ${actionData.eligibleForRehire ? 'translate-x-4' : 'translate-x-0'}`}></div>
                         </div>
                       </div>
                       <p className="text-[10px] text-slate-500">Can be considered for future openings.</p>
                     </div>
 
-                    <div className="border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors bg-slate-50"
+                    <div className="border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-blue-300 transition-colors bg-slate-50"
                          onClick={() => setActionData({...actionData, noticeWaived: !actionData.noticeWaived})}>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-bold text-slate-700 uppercase">Notice Period Waived</span>
@@ -561,7 +561,7 @@ const Resignations = () => {
                       value={actionData.adminRemarks}
                       onChange={(e) => setActionData({...actionData, adminRemarks: e.target.value})}
                       placeholder="Internal HR notes regarding settlement, behavior, or handover..."
-                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none h-24"
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none h-24"
                     ></textarea>
                   </div>
                 </div>

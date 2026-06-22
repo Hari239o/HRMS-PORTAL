@@ -90,7 +90,7 @@ const Login = () => {
               type="button"
               onClick={() => setRole('employee')}
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${
-                role === 'employee' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                role === 'employee' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
               <User size={18} /> Employee
@@ -99,7 +99,7 @@ const Login = () => {
               type="button"
               onClick={() => setRole('student')}
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${
-                role === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                role === 'student' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
               <ShieldCheck size={18} /> Student
@@ -108,7 +108,7 @@ const Login = () => {
               type="button"
               onClick={() => setRole('admin')}
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${
-                role === 'admin' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                role === 'admin' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
               <ShieldCheck size={18} /> Administrator
@@ -178,7 +178,7 @@ const Login = () => {
           <div className="mt-12 pt-8 border-t border-slate-50 text-center">
             <p className="text-slate-500 font-medium">
               New to Geonixa?{' '}
-              <Link to="/register" className="text-indigo-600 font-black hover:underline underline-offset-4">
+              <Link to="/register" className="text-blue-600 font-black hover:underline underline-offset-4">
                 Register Workforce Account
               </Link>
             </p>
@@ -190,7 +190,7 @@ const Login = () => {
         </p>
 
         {/* Brand Banner */}
-        <div className="absolute top-0 left-0 w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 text-white text-center py-2 text-xs font-bold tracking-[0.2em] shadow-md z-10 uppercase">
+        <div className="absolute top-0 left-0 w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white text-center py-2 text-xs font-bold tracking-[0.2em] shadow-md z-10 uppercase">
           Geonixa Enterprise Systems
         </div>
       </div>

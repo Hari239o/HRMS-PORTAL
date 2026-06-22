@@ -82,7 +82,7 @@ const Reports = () => {
     <div className="space-y-8 fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Workforce <span className="text-indigo-600">Intelligence</span></h2>
+          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Workforce <span className="text-blue-600">Intelligence</span></h2>
           <p className="text-slate-500 font-medium">Advanced attendance analytics and export tools</p>
         </div>
         <button 
@@ -97,7 +97,7 @@ const Reports = () => {
       <div className="card border-none shadow-xl shadow-slate-100 flex flex-col md:flex-row flex-wrap gap-4 md:gap-8 items-stretch md:items-end bg-white">
         <div className="flex-1 min-w-[240px]">
           <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1 flex items-center gap-2">
-            <Calendar size={14} className="text-indigo-600" /> Reporting Period
+            <Calendar size={14} className="text-blue-600" /> Reporting Period
           </label>
           <div className="grid grid-cols-2 gap-3">
             <select 
@@ -121,7 +121,7 @@ const Reports = () => {
         
         <div className="flex-1 min-w-[240px]">
           <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1 flex items-center gap-2">
-            <Users size={14} className="text-indigo-600" /> Department Focus
+            <Users size={14} className="text-blue-600" /> Department Focus
           </label>
           <select 
             className="input-field py-3 font-bold text-slate-700"
@@ -134,7 +134,7 @@ const Reports = () => {
 
         <button 
           onClick={fetchReport}
-          className="w-full md:w-auto px-8 py-3 bg-indigo-50 text-indigo-600 rounded-xl font-black text-sm hover:bg-indigo-100 transition-all flex items-center justify-center gap-2 border border-indigo-100 mt-2 md:mt-0"
+          className="w-full md:w-auto px-8 py-3 bg-blue-50 text-blue-600 rounded-xl font-black text-sm hover:bg-blue-100 transition-all flex items-center justify-center gap-2 border border-blue-100 mt-2 md:mt-0"
         >
           <Search size={18} /> QUERY DATA
         </button>
@@ -157,7 +157,7 @@ const Reports = () => {
                 <tr>
                   <td colSpan="4" className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center">
-                      <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                      <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Aggregating Statistics...</p>
                     </div>
                   </td>
@@ -174,7 +174,7 @@ const Reports = () => {
                     <tr key={emp.id} onClick={() => handleEmployeeClick(emp)} className="group hover:bg-slate-50/80 transition-all cursor-pointer">
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-black text-sm shadow-sm group-hover:scale-110 transition-transform">
+                          <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-black text-sm shadow-sm group-hover:scale-110 transition-transform">
                             {emp.name.charAt(0)}
                           </div>
                           <div>
@@ -202,7 +202,7 @@ const Reports = () => {
                           </div>
                           <div className="text-center">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Leave</p>
-                            <p className="text-lg font-black text-indigo-600">{leaves}</p>
+                            <p className="text-lg font-black text-blue-600">{leaves}</p>
                           </div>
                         </div>
                       </td>
@@ -246,13 +246,13 @@ const Reports = () => {
           <div className="relative w-full max-w-5xl rounded-[32px] shadow-2xl overflow-hidden flex flex-col bg-white/70 backdrop-blur-2xl border border-white/60 animate-in zoom-in-95 duration-300 my-auto h-fit max-h-[95vh]">
             {/* Glowing Orbs for Glassmorphism Effect */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-              <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-400/20 blur-[100px]"></div>
+              <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-400/20 blur-[100px]"></div>
               <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-400/20 blur-[100px]"></div>
             </div>
 
             <div className="p-4 md:p-8 border-b border-white/40 flex justify-between items-start bg-white/30 backdrop-blur-md shrink-0">
               <div className="flex items-center gap-4 md:gap-5">
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-violet-600 text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shadow-indigo-200 border border-white/20">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-violet-600 text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shadow-blue-200 border border-white/20">
                   {selectedEmp.name.charAt(0)}
                 </div>
                 <div>
@@ -274,7 +274,7 @@ const Reports = () => {
             <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50/10">
               {modalLoading ? (
                 <div className="flex justify-center items-center h-40">
-                  <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                 </div>
               ) : (
                 <div className="space-y-8">
@@ -304,7 +304,7 @@ const Reports = () => {
                           </div>
                           <div className="bg-white/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-white/60 text-center transition-transform hover:-translate-y-1">
                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Leave</p>
-                            <p className="text-3xl font-black text-indigo-600 drop-shadow-sm">{leaves}</p>
+                            <p className="text-3xl font-black text-blue-600 drop-shadow-sm">{leaves}</p>
                           </div>
                           <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-2xl shadow-xl shadow-slate-300/50 border border-slate-700 text-center relative overflow-hidden transition-transform hover:-translate-y-1">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 relative z-10">Target Cleared</p>
@@ -356,10 +356,10 @@ const Reports = () => {
                           }
 
                           return (
-                            <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-indigo-500/20 before:via-slate-200 before:to-transparent">
+                            <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-blue-500/20 before:via-slate-200 before:to-transparent">
                               {activities.map((act, i) => (
                                 <div key={i} className="relative flex items-start gap-4 group">
-                                  <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-indigo-50 text-indigo-600 shrink-0 shadow-sm z-10 group-hover:scale-110 transition-transform">
+                                  <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-blue-50 text-blue-600 shrink-0 shadow-sm z-10 group-hover:scale-110 transition-transform">
                                     <Calendar size={16} />
                                   </div>
                                   <div className="flex-1 bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 group-hover:shadow-md transition-all">
@@ -388,7 +388,7 @@ const Reports = () => {
                     {/* Right Column: Targets Details */}
                     <div>
                       <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
                         Targets Details
                       </h4>
                       
@@ -400,7 +400,7 @@ const Reports = () => {
                                 <div className="flex justify-between items-start mb-2">
                                   <div>
                                     <h5 className="font-black text-slate-800 text-sm">{sub.studentName}</h5>
-                                    <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{sub.domain || 'Target'}</p>
+                                    <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{sub.domain || 'Target'}</p>
                                   </div>
                                   <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">
                                     {new Date(sub.date).toLocaleDateString()}

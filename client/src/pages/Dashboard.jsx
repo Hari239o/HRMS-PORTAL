@@ -221,12 +221,13 @@ export default function Dashboard() {
   };
 
     const StatCard = ({ title, value, icon: Icon, color, trend }) => {
-      const textColor = color ? color.replace('bg-', 'text-') : 'text-indigo-600';
-      const bgColor = color ? color.replace('bg-', 'bg-').replace('600', '50').replace('500', '50') : 'bg-indigo-50';
+      const textColor = color ? color.replace('bg-', 'text-') : 'text-blue-600';
+      const bgColor = color ? color.replace('bg-', 'bg-').replace('600', '50').replace('500', '50') : 'bg-blue-50';
       
       return (
-        <div className="group relative rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-          <div className="p-6 flex flex-col justify-between h-full">
+        <div className="group relative rounded-3xl bg-white/60 backdrop-blur-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="p-6 flex flex-col justify-between h-full relative z-10">
             <div className="flex justify-between items-start mb-4">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${bgColor} ${textColor} group-hover:scale-110 transition-transform duration-300`}>
                 <Icon size={24} />
@@ -260,22 +261,22 @@ export default function Dashboard() {
     }
     
     return (
-      <div className={`flex items-center justify-between p-4 rounded-xl transition-all duration-300 group cursor-default w-64 ${highlight ? 'bg-indigo-50/50 border-indigo-300 shadow-md ring-1 ring-indigo-200' : 'bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-200'} border`}>
+      <div className={`flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group cursor-default w-64 ${highlight ? 'bg-indigo-50/60 backdrop-blur-md border-indigo-200 shadow-lg ring-1 ring-indigo-100' : 'bg-white/60 backdrop-blur-md border-white/50 shadow-sm hover:shadow-md hover:border-indigo-200'} border`}>
         <div className="flex items-center gap-4">
           {profile.avatar ? (
             <img src={profile.avatar} alt={profile.name} className="w-10 h-10 rounded-full object-cover shadow-sm ring-1 ring-slate-200" />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-lg shadow-sm ring-1 ring-slate-200">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm ring-1 ring-slate-200">
               {profile.name.charAt(0)}
             </div>
           )}
           <div>
-            <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mb-0.5">{title}</p>
+            <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-0.5">{title}</p>
             <p className="text-sm font-black text-slate-800 leading-tight">{profile.name}</p>
             <p className="text-xs font-medium text-slate-500 truncate max-w-[120px]">{profile.email}</p>
           </div>
         </div>
-        <a href={`mailto:${profile.email}`} className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-slate-100" title={`Email ${profile.name}`}>
+        <a href={`mailto:${profile.email}`} className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-slate-100" title={`Email ${profile.name}`}>
           <Mail size={14} />
         </a>
       </div>
@@ -286,7 +287,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[40vh] space-y-4">
-        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
         <p className="text-slate-400 font-medium text-sm">Authenticating Secure Session...</p>
       </div>
     );
@@ -303,7 +304,7 @@ export default function Dashboard() {
             setDashboardError(null);
             fetchData();
           }}
-          className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-700 transition"
+          className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition"
         >
           Retry
         </button>
@@ -323,14 +324,14 @@ export default function Dashboard() {
             <span className="text-xs text-slate-400">{new Date().toLocaleDateString()}</span>
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            Welcome Back, <span className="text-indigo-600">{user.name}</span>
+            Welcome Back, <span className="text-blue-600">{user.name}</span>
             {user.starPerformer === 'month' && (
               <span className="flex items-center gap-1 text-xs font-black bg-gradient-to-r from-amber-400 to-amber-500 text-white px-3 py-1 rounded-lg shadow-md shadow-amber-500/20">
                 <Award size={14} /> Star of the Month
               </span>
             )}
             {user.starPerformer === 'week' && (
-              <span className="flex items-center gap-1 text-xs font-black bg-gradient-to-r from-sky-400 to-indigo-500 text-white px-3 py-1 rounded-lg shadow-md shadow-indigo-500/20">
+              <span className="flex items-center gap-1 text-xs font-black bg-gradient-to-r from-sky-400 to-blue-500 text-white px-3 py-1 rounded-lg shadow-md shadow-blue-500/20">
                 <Star size={14} /> Star of the Week
               </span>
             )}
@@ -339,7 +340,7 @@ export default function Dashboard() {
         </div>
 
         {starPerformers.length > 0 && (
-          <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm relative overflow-hidden mb-8">
+          <div className="bg-white/60 backdrop-blur-2xl border border-white/60 rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden mb-8">
             <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none">
               <Award size={250} className="transform translate-x-10 -translate-y-10 text-slate-900" />
             </div>
@@ -366,7 +367,7 @@ export default function Dashboard() {
                       {star.avatar ? (
                         <img src={star.avatar} alt={star.name} className="w-14 h-14 rounded-full object-cover shadow-sm ring-1 ring-slate-200 relative z-10" />
                       ) : (
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center font-black text-xl shadow-sm ring-1 ring-slate-200 relative z-10 bg-gradient-to-tr from-indigo-100 to-indigo-50 text-indigo-600">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center font-black text-xl shadow-sm ring-1 ring-slate-200 relative z-10 bg-gradient-to-tr from-blue-100 to-blue-50 text-blue-600">
                           {star.name.charAt(0)}
                         </div>
                       )}
@@ -382,7 +383,7 @@ export default function Dashboard() {
                               <div className="flex items-center gap-2">
                                 <button 
                                   onClick={() => sendCongratulations(star.id, star.name)}
-                                  className="text-xs bg-white hover:bg-slate-100 text-indigo-600 border border-slate-200 transition-colors font-bold py-2 px-4 rounded-xl shadow-sm flex items-center gap-2"
+                                  className="text-xs bg-white hover:bg-slate-100 text-blue-600 border border-slate-200 transition-colors font-bold py-2 px-4 rounded-xl shadow-sm flex items-center gap-2"
                                 >
                                   <Star size={14} /> Quick Wishes
                                 </button>
@@ -407,7 +408,7 @@ export default function Dashboard() {
                                 />
                                 <button 
                                   onClick={() => sendCongratulations(star.id, star.name, true)}
-                                  className="bg-indigo-50 text-indigo-600 p-1.5 rounded-lg hover:bg-indigo-100 transition-colors"
+                                  className="bg-blue-50 text-blue-600 p-1.5 rounded-lg hover:bg-blue-100 transition-colors"
                                   title="Send Message"
                                 >
                                   <Send size={14} />
@@ -424,7 +425,7 @@ export default function Dashboard() {
                           </div>
                         )}
                         {user.id === star.id && (
-                          <p className="mt-3 text-[10px] bg-indigo-50 text-indigo-700 font-bold py-1.5 px-3 rounded-lg inline-flex items-center gap-1 shadow-sm">
+                          <p className="mt-3 text-[10px] bg-blue-50 text-blue-700 font-bold py-1.5 px-3 rounded-lg inline-flex items-center gap-1 shadow-sm">
                             <Star size={12} /> That's You! 🎉
                           </p>
                         )}
@@ -438,29 +439,29 @@ export default function Dashboard() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard title="Total Days Present" value={empStats.presentDays} icon={UserCheck} color="bg-indigo-600" />
+          <StatCard title="Total Days Present" value={empStats.presentDays} icon={UserCheck} color="bg-blue-600" />
           <StatCard title="Total Days Absent" value={empStats.absentDays} icon={UserX} color="bg-rose-600" />
           <StatCard title="Total Half Days" value={empStats.halfDays || 0} icon={Clock} color="bg-orange-500" />
           <StatCard title="Total Working Days" value={empStats.totalWorkingDays} icon={Briefcase} color="bg-slate-600" />
         </div>
 
         {/* Full width Horizontal Tree */}
-        <div className="card border border-slate-100 bg-gradient-to-br from-white to-slate-50/50 mb-6 overflow-x-auto w-full">
+        <div className="card bg-white/60 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl mb-6 overflow-x-auto w-full p-8">
           <h3 className="font-black text-slate-800 mb-8 flex items-center justify-center gap-2 min-w-max">
-            <Users size={18} className="text-indigo-600" /> Organizational Hierarchy
+            <Users size={18} className="text-blue-600" /> Organizational Hierarchy
           </h3>
           <div className="flex flex-col items-center min-w-max pb-8 pt-4">
             {/* Manager Node */}
             <div className="flex flex-col items-center">
               <ProfileCard title="Reporting Manager" profile={employeeDetails?.managerProfile} />
-              <div className="w-0.5 h-8 bg-indigo-200"></div>
+              <div className="w-0.5 h-8 bg-blue-200"></div>
             </div>
             
             {/* Team Leader Node */}
             <div className="flex flex-col items-center">
                <ProfileCard title="Team Leader" profile={employeeDetails?.teamLeaderProfile || { name: 'Not Assigned' }} />
                {employeeDetails?.teamMembers && employeeDetails.teamMembers.length > 0 && (
-                 <div className="w-0.5 h-8 bg-indigo-200"></div>
+                 <div className="w-0.5 h-8 bg-blue-200"></div>
                )}
             </div>
 
@@ -468,7 +469,7 @@ export default function Dashboard() {
             {employeeDetails?.teamMembers && employeeDetails.teamMembers.length > 0 ? (
               <div className="relative flex justify-center w-full mt-0">
                 {/* Horizontal branch line */}
-                <div className="absolute top-0 h-0.5 bg-indigo-200" 
+                <div className="absolute top-0 h-0.5 bg-blue-200" 
                      style={{ 
                        width: employeeDetails.teamMembers.length > 1 ? `calc(100% - ${100 / employeeDetails.teamMembers.length}%)` : '0',
                        left: employeeDetails.teamMembers.length > 1 ? `calc(${50 / employeeDetails.teamMembers.length}%)` : '50%'
@@ -479,7 +480,7 @@ export default function Dashboard() {
                   {employeeDetails.teamMembers.map((member) => (
                     <div key={member.id} className="relative flex flex-col items-center flex-1">
                       {/* Vertical line connecting up to the horizontal branch */}
-                      <div className="absolute top-0 w-0.5 h-8 bg-indigo-200"></div>
+                      <div className="absolute top-0 w-0.5 h-8 bg-blue-200"></div>
                       <div className="pt-8">
                         <ProfileCard 
                           title={member.id === user.id ? 'You' : member.role.replace('_', ' ')} 
@@ -494,7 +495,7 @@ export default function Dashboard() {
             ) : (
               <div className="relative flex justify-center w-full mt-0">
                 <div className="flex justify-center w-full pt-8 relative">
-                   <div className="absolute top-0 w-0.5 h-8 bg-indigo-200"></div>
+                   <div className="absolute top-0 w-0.5 h-8 bg-blue-200"></div>
                    <ProfileCard title="You" profile={user} highlight={true} />
                 </div>
               </div>
@@ -503,9 +504,9 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 card bg-white shadow-xl shadow-slate-100/30 border border-slate-100">
+          <div className="lg:col-span-2 card bg-white/60 backdrop-blur-xl shadow-xl shadow-slate-100/30 border border-white/50">
             <h3 className="font-black text-lg text-slate-800 mb-6 flex items-center gap-2">
-              <FileText size={20} className="text-indigo-600" /> My Generated Payslips
+              <FileText size={20} className="text-blue-600" /> My Generated Payslips
             </h3>
             {payslips.length > 0 ? (
               <div className="divide-y divide-slate-100">
@@ -517,7 +518,7 @@ export default function Dashboard() {
                     </div>
                     <button 
                       onClick={() => downloadPayslip(pay.id, pay.month)}
-                      className="flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-all"
+                      className="flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all"
                     >
                       <Download size={14} /> Download PDF
                     </button>
@@ -535,16 +536,16 @@ export default function Dashboard() {
           <div className="space-y-6">
             
 
-            <div className="card border border-slate-100 bg-white">
+            <div className="card border border-white/50 bg-white/60 backdrop-blur-md">
               <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
                  HR Point of Contact
               </h4>
               <ProfileCard title="HR Representative" profile={employeeDetails?.hrProfile} />
             </div>
 
-            <div className="card border border-slate-100">
+            <div className="card border border-white/50 bg-white/60 backdrop-blur-md">
               <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <ShieldCheck size={18} className="text-indigo-600" /> Quick Access
+                <ShieldCheck size={18} className="text-blue-600" /> Quick Access
               </h3>
               <div className="space-y-2">
                 <Link to="/attendance" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-all font-bold text-slate-700 text-sm">
@@ -557,7 +558,7 @@ export default function Dashboard() {
                 </Link>
                 <button 
                   onClick={handleSelfChangePassword}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 transition-all font-bold text-indigo-700 text-sm"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-blue-50 hover:bg-blue-100 transition-all font-bold text-blue-700 text-sm"
                 >
                   <span className="flex items-center gap-2"><Key size={16} /> Change Password</span>
                   <ChevronRight size={16} />
@@ -577,7 +578,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-3 py-1 bg-gradient-to-r from-sky-500 to-indigo-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow-sm">
+            <span className="px-3 py-1 bg-gradient-to-r from-sky-500 to-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow-sm">
               <Server size={12} /> Operations
             </span>
             <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-lg">
@@ -585,25 +586,25 @@ export default function Dashboard() {
             </span>
           </div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">
-            Admin <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-600">Command Center</span>
+            Admin <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600">Command Center</span>
           </h1>
         </div>
         <div className="flex gap-2">
-          <Link to="/reports" className="px-6 py-3 bg-gradient-to-r from-sky-500 to-indigo-600 text-white rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-indigo-500/30 transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+          <Link to="/reports" className="px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
             <Download size={18} /> Generate Report
           </Link>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        <StatCard title="Total Workforce" value={adminStats.totalEmployees} icon={Users} color="bg-indigo-600" />
+        <StatCard title="Total Workforce" value={adminStats.totalEmployees} icon={Users} color="bg-blue-600" />
         <StatCard title="Present Today" value={adminStats.presentToday} icon={UserCheck} color="bg-emerald-600" />
         <StatCard title="Absent Pool" value={adminStats.absentToday} icon={UserX} color="bg-rose-600" />
         <StatCard title="Leave Requests" value={adminStats.leavesToday} icon={Calendar} color="bg-amber-600" />
         <StatCard title="Half Days Today" value={adminStats.halfDaysToday || 0} icon={Clock} color="bg-orange-500" />
       </div>
 
-      <div className="rounded-3xl border border-slate-100 shadow-sm bg-white overflow-hidden mb-6 relative">
+      <div className="rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white/60 backdrop-blur-xl overflow-hidden mb-6 relative">
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 p-8 gap-10">
           <div>
             <h3 className="font-black text-3xl mb-2 flex items-center gap-3 text-slate-800">
@@ -613,7 +614,7 @@ export default function Dashboard() {
             
             <form onSubmit={declareStarPerformer} className="flex flex-col sm:flex-row gap-3">
               <select 
-                className="py-3 px-4 text-sm flex-1 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:bg-white focus:border-indigo-300 outline-none transition-colors"
+                className="py-3 px-4 text-sm flex-1 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:bg-white focus:border-blue-300 outline-none transition-colors"
                 value={starDeclarationForm.employeeId}
                 onChange={(e) => setStarDeclarationForm({...starDeclarationForm, employeeId: e.target.value})}
                 required
@@ -624,14 +625,14 @@ export default function Dashboard() {
                 ))}
               </select>
               <select 
-                className="py-3 px-4 text-sm w-full sm:w-32 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:bg-white focus:border-indigo-300 outline-none transition-colors"
+                className="py-3 px-4 text-sm w-full sm:w-32 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:bg-white focus:border-blue-300 outline-none transition-colors"
                 value={starDeclarationForm.badge}
                 onChange={(e) => setStarDeclarationForm({...starDeclarationForm, badge: e.target.value})}
               >
                 <option value="week">Week</option>
                 <option value="month">Month</option>
               </select>
-              <button type="submit" className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-sm transition-all flex-shrink-0">
+              <button type="submit" className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-sm transition-all flex-shrink-0">
                 Declare
               </button>
             </form>
@@ -644,12 +645,12 @@ export default function Dashboard() {
                 {starPerformers.map(star => (
                   <div key={star.id} className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between group transition-all hover:border-slate-300">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-100 to-indigo-50 text-indigo-600 flex items-center justify-center font-black text-sm shadow-sm ring-1 ring-slate-200">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-100 to-blue-50 text-blue-600 flex items-center justify-center font-black text-sm shadow-sm ring-1 ring-slate-200">
                         {star.name.charAt(0)}
                       </div>
                       <div>
                         <p className="font-bold text-sm leading-tight text-slate-800">{star.name}</p>
-                        <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{star.starPerformer}ly Star</p>
+                        <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{star.starPerformer}ly Star</p>
                       </div>
                     </div>
                     <button 
@@ -675,9 +676,9 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 card border border-slate-100 shadow-xl shadow-slate-100/30 bg-white">
+        <div className="lg:col-span-2 card border border-white/50 shadow-xl shadow-slate-100/30 bg-white/60 backdrop-blur-xl">
           <h3 className="font-black text-lg text-slate-800 flex items-center gap-2 mb-6">
-            <TrendingUp size={20} className="text-indigo-600" /> Workforce Reliability Analytics
+            <TrendingUp size={20} className="text-blue-600" /> Workforce Reliability Analytics
           </h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -699,14 +700,14 @@ export default function Dashboard() {
         <div className="space-y-6">
           
 
-          <div className="card bg-white border border-slate-100">
+          <div className="card bg-white/60 backdrop-blur-md border border-white/50 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
             <h3 className="font-bold text-sm text-slate-800 mb-4 flex items-center gap-2">
-              <Activity size={16} className="text-indigo-600" /> Recent Activity
+              <Activity size={16} className="text-blue-600" /> Recent Activity
             </h3>
             <div className="space-y-3">
               {recentActivity.length > 0 ? recentActivity.map((act, i) => (
                 <div key={i} className="flex items-start gap-3 pb-2 border-b border-slate-50 last:border-0 last:pb-0">
-                  <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 text-[10px] font-bold">
+                  <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-[10px] font-bold">
                     {act.name[0]}
                   </div>
                   <div>
@@ -720,7 +721,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="card border border-slate-100">
+          <div className="card border border-white/50 bg-white/60 backdrop-blur-md shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
             <h3 className="font-bold text-sm text-slate-800 mb-4 flex justify-between items-center">
               Quick Actions
             </h3>

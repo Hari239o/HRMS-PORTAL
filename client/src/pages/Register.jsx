@@ -37,7 +37,7 @@ const Register = () => {
       <div className="w-full max-w-xl animate-in fade-in zoom-in duration-500">
         <div className="bg-white p-12 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100">
           <div className="flex justify-center mb-10">
-            <div className="w-20 h-20 bg-indigo-600 rounded-[24px] flex items-center justify-center text-white shadow-xl shadow-indigo-100">
+            <div className="w-20 h-20 bg-blue-600 rounded-[24px] flex items-center justify-center text-white shadow-xl shadow-blue-100">
               <UserPlus size={40} strokeWidth={2.5} />
             </div>
           </div>
@@ -121,7 +121,7 @@ const Register = () => {
 
           <div className="mt-12 pt-8 border-t border-slate-50 text-center text-slate-500 font-medium">
             Already registered?{' '}
-            <Link to="/login" className="text-indigo-600 font-black hover:underline underline-offset-4">
+            <Link to="/login" className="text-blue-600 font-black hover:underline underline-offset-4">
               Return to Login
             </Link>
           </div>
