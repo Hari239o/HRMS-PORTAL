@@ -32,7 +32,13 @@ if (useEmulator) {
   }
 } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    let envJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+    // Bulletproof fix: Strip any invisible or garbage characters pasted after the JSON
+    const lastBraceIndex = envJson.lastIndexOf('}');
+    if (lastBraceIndex !== -1) {
+      envJson = envJson.substring(0, lastBraceIndex + 1);
+    }
+    const serviceAccount = JSON.parse(envJson);
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
     });
