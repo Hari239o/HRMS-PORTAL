@@ -27,12 +27,13 @@ export default function Documents() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    if (user.role === 'admin') {
+    if (!user) return;
+    if (user?.role === 'admin') {
       fetchAdminData();
     } else {
       fetchMyDocuments();
     }
-  }, [user.role]);
+  }, [user?.role]);
 
   const fetchAdminData = async () => {
     try {
