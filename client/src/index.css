@@ -4,11 +4,11 @@
 
 @layer base {
   html {
-    font-size: 85%; /* Scales down the entire UI so it fits the screen better (13.6px base instead of 16px) */
+    font-size: 75%; /* Aggressive scale down (12px base) to counter Windows 125%/150% display scaling */
   }
   @media (min-width: 1536px) {
     html {
-      font-size: 90%; /* slightly larger on huge monitors */
+      font-size: 80%; /* 12.8px on very large monitors */
     }
   }
   body {

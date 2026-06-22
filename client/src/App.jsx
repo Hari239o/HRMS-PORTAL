@@ -74,8 +74,8 @@ const ProtectedRoute = ({ children, adminOnly = false, expectedPortal }) => {
             <Menu size={24} />
           </button>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10">
-          <div className="w-full">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8">
+          <div className="w-full max-w-[1600px] mx-auto">
             {children}
           </div>
         </main>
