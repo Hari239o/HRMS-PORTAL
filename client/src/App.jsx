@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import { Menu } from 'lucide-react';
@@ -35,8 +35,8 @@ const IndexRedirect = () => {
   return <Navigate to="/dashboard" replace />;
 };
 
-const ProtectedRoute = ({ children, adminOnly = false, expectedPortal }) => {
-  const { user, loading, portalMode } = useAuth();
+const AppLayout = () => {
+  const { user, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (loading) return (
@@ -46,17 +46,6 @@ const ProtectedRoute = ({ children, adminOnly = false, expectedPortal }) => {
   );
   
   if (!user) return <Navigate to="/login" />;
-  
-  if (adminOnly && user.role !== 'admin') {
-    const fallback = portalMode === 'student' ? '/student/dashboard' : '/dashboard';
-    return <Navigate to={fallback} />;
-  }
-
-  // Enforce strict separation between portals
-  if (expectedPortal && portalMode !== expectedPortal) {
-    const fallback = portalMode === 'student' ? '/student/dashboard' : '/dashboard';
-    return <Navigate to={fallback} replace />;
-  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-sky-50">
@@ -76,12 +65,28 @@ const ProtectedRoute = ({ children, adminOnly = false, expectedPortal }) => {
         </header>
         <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8">
           <div className="w-full max-w-[1600px] mx-auto">
-            {children}
+            <Outlet />
           </div>
         </main>
       </div>
     </div>
   );
+};
+
+const AuthGuard = ({ children, adminOnly = false, expectedPortal }) => {
+  const { user, portalMode } = useAuth();
+
+  if (adminOnly && user?.role !== 'admin') {
+    const fallback = portalMode === 'student' ? '/student/dashboard' : '/dashboard';
+    return <Navigate to={fallback} replace />;
+  }
+
+  if (expectedPortal && portalMode !== expectedPortal) {
+    const fallback = portalMode === 'student' ? '/student/dashboard' : '/dashboard';
+    return <Navigate to={fallback} replace />;
+  }
+
+  return children;
 };
 
 function App() {
@@ -94,109 +99,29 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
-            <Route path="/dashboard" element={
-              <ProtectedRoute expectedPortal="hr">
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/attendance" element={
-              <ProtectedRoute expectedPortal="hr">
-                <Attendance />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/leaves" element={
-              <ProtectedRoute expectedPortal="hr">
-                <Leaves />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/employees" element={
-              <ProtectedRoute expectedPortal="hr">
-                <Employees />
-              </ProtectedRoute>
-            } />
+            <Route element={<AppLayout />}>
+              <Route path="/dashboard" element={<AuthGuard expectedPortal="hr"><Dashboard /></AuthGuard>} />
+              <Route path="/attendance" element={<AuthGuard expectedPortal="hr"><Attendance /></AuthGuard>} />
+              <Route path="/leaves" element={<AuthGuard expectedPortal="hr"><Leaves /></AuthGuard>} />
+              <Route path="/employees" element={<AuthGuard expectedPortal="hr"><Employees /></AuthGuard>} />
+              <Route path="/reports" element={<AuthGuard expectedPortal="hr" adminOnly={true}><Reports /></AuthGuard>} />
+              <Route path="/salary" element={<AuthGuard expectedPortal="hr"><Salary /></AuthGuard>} />
+              <Route path="/holidays" element={<AuthGuard expectedPortal="hr"><Holidays /></AuthGuard>} />
+              <Route path="/performance" element={<AuthGuard expectedPortal="hr"><Performance /></AuthGuard>} />
+              <Route path="/documents" element={<AuthGuard expectedPortal="hr"><Documents /></AuthGuard>} />
+              <Route path="/settings" element={<AuthGuard expectedPortal="hr" adminOnly={true}><Settings /></AuthGuard>} />
+              <Route path="/resignations" element={<AuthGuard><Resignations /></AuthGuard>} />
+              
+              <Route path="/student/dashboard" element={<AuthGuard expectedPortal="student"><StudentDashboard /></AuthGuard>} />
+              <Route path="/student/payments" element={<AuthGuard expectedPortal="student"><StudentPayments /></AuthGuard>} />
+              <Route path="/student/enrollment" element={<AuthGuard expectedPortal="student"><StudentEnrollment /></AuthGuard>} />
+              <Route path="/student/documents" element={<AuthGuard expectedPortal="student"><StudentDocuments /></AuthGuard>} />
+              <Route path="/student/certificates" element={<AuthGuard expectedPortal="student"><StudentCertificates /></AuthGuard>} />
+              <Route path="/student/support" element={<AuthGuard expectedPortal="student"><StudentSupport /></AuthGuard>} />
+              <Route path="/student/realtime" element={<AuthGuard expectedPortal="student"><StudentRealtime /></AuthGuard>} />
+            </Route>
 
-            <Route path="/reports" element={
-              <ProtectedRoute adminOnly={true} expectedPortal="hr">
-                <Reports />
-              </ProtectedRoute>
-            } />
-
-            <Route path="/salary" element={
-              <ProtectedRoute expectedPortal="hr">
-                <Salary />
-              </ProtectedRoute>
-            } />
             <Route path="/payroll" element={<Navigate to="/salary" replace />} />
-
-            <Route path="/holidays" element={
-              <ProtectedRoute expectedPortal="hr">
-                <Holidays />
-              </ProtectedRoute>
-            } />
-
-            <Route path="/performance" element={
-              <ProtectedRoute expectedPortal="hr">
-                <Performance />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/documents" element={
-              <ProtectedRoute expectedPortal="hr">
-                <Documents />
-              </ProtectedRoute>
-            } />
-
-            <Route path="/settings" element={
-              <ProtectedRoute adminOnly={true} expectedPortal="hr">
-                <Settings />
-              </ProtectedRoute>
-            } />
-
-            <Route path="/student/dashboard" element={
-              <ProtectedRoute expectedPortal="student">
-                <StudentDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/payments" element={
-              <ProtectedRoute expectedPortal="student">
-                <StudentPayments />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/enrollment" element={
-              <ProtectedRoute expectedPortal="student">
-                <StudentEnrollment />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/documents" element={
-              <ProtectedRoute expectedPortal="student">
-                <StudentDocuments />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/certificates" element={
-              <ProtectedRoute expectedPortal="student">
-                <StudentCertificates />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/support" element={
-              <ProtectedRoute expectedPortal="student">
-                <StudentSupport />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/realtime" element={
-              <ProtectedRoute expectedPortal="student">
-                <StudentRealtime />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/resignations" element={
-              <ProtectedRoute>
-                <Resignations />
-              </ProtectedRoute>
-            } />
-            
             <Route path="/" element={<IndexRedirect />} />
             <Route path="*" element={<IndexRedirect />} />
           </Routes>

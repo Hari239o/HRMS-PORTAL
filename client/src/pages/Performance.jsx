@@ -91,10 +91,10 @@ export default function Performance() {
 
   useEffect(() => {
     fetchPerformance();
-    if (user.role === 'admin') {
+    if (user?.role === 'admin') {
       fetchWorkforce();
     }
-  }, [user]);
+  }, [user?.id, user?.role]);
 
   const fetchPerformance = async () => {
     try {

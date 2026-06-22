@@ -20,8 +20,8 @@ export default function Salary() {
   useEffect(() => {
     if (!user) return;
     fetchSalaries();
-    if (user.role === 'admin') fetchEmployees();
-  }, [user]);
+    if (user?.role === 'admin') fetchEmployees();
+  }, [user?.id, user?.role]);
 
   const fetchSalaries = async () => {
     try {
