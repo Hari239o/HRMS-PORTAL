@@ -19,8 +19,12 @@
       "destination": "/server/src/app.js"
     },
     {
+      "source": "/(.*)\\.(.*)",
+      "destination": "/client/$1.$2"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/client/dist/$1"
+      "destination": "/client/index.html"
     }
   ]
 }
