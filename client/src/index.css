@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    font-size: 85%; /* Scales down the entire UI so it fits the screen better (13.6px base instead of 16px) */
+  }
+  @media (min-width: 1536px) {
+    html {
+      font-size: 90%; /* slightly larger on huge monitors */
+    }
+  }
   body {
     @apply bg-[#f8fafc] text-slate-900 font-sans antialiased;
   }
