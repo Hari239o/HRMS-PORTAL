@@ -91,20 +91,21 @@ router.post('/checkin', authenticate, upload.single('photo'), async (req, res) =
     const [endHour, endMinute] = officeEndTime.split(':').map(Number);
     const shiftStart = now.set({ hour: startHour, minute: startMinute, second: 0, millisecond: 0 });
     const shiftEnd = now.set({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 });
+    const allowedStart = shiftStart.minus({ hours: 2 });
 
-    if (now < shiftStart || now > shiftEnd) {
-      return res.status(400).json({ error: `Attendance can only be taken between ${officeStartTime} and ${officeEndTime}.` });
+    if (now < allowedStart || now > shiftEnd) {
+      return res.status(400).json({ error: `Attendance can only be taken between ${officeStartTime} (allowed 2 hrs early) and ${officeEndTime}.` });
     }
 
     const maxPossibleHours = shiftEnd.diff(now, 'hours').hours;
     let status = 'Present';
     const limitTime = shiftStart.plus({ minutes: 5 }); // 11:05 AM limit
     
-    if (maxPossibleHours < 5) {
-      status = 'Absent';
-    } else if (now > limitTime) {
+    if (now > limitTime) {
       // Checked in after 11:05 AM
       status = 'Half Day';
+    } else if (maxPossibleHours < 5) {
+      status = 'Absent';
     }
 
     const photoUrl = req.file ? (req.file.path.startsWith('http') ? req.file.path : `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`) : null;
@@ -266,11 +267,12 @@ router.put('/:id/status', authenticate, async (req, res) => {
         checkIn: null,
         checkOut: null,
         checkInLocation: null,
-        checkOutLocation: null
+        checkOutLocation: null,
+        adminEdited: true
       });
       return res.json({ message: 'Status updated', id: newId, status });
     } else {
-      await db.collection('attendance').doc(id).update({ status });
+      await db.collection('attendance').doc(id).update({ status, adminEdited: true });
       return res.json({ message: 'Status updated', id, status });
     }
   } catch (err) {
@@ -354,7 +356,7 @@ router.get('/', authenticate, async (req, res) => {
 
       let effectiveStatus = a.status;
       
-      if (!a.checkOut) {
+      if (!a.checkOut && a.checkIn && !a.adminEdited) {
         const isPastDay = a.date < today;
         const isTodayAfterOffice = a.date === today && currentTime > afterOffice;
         if (isPastDay || isTodayAfterOffice) {
