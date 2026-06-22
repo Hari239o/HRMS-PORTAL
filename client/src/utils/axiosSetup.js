@@ -22,7 +22,11 @@ const setupAxios = (logout) => {
         toast.error('Network Error: Please check if the backend server is running on port 5002.');
       } else {
         const status = error.response.status;
-        const message = error.response.data?.error || 'An unexpected error occurred.';
+        const serverError = error.response.data?.error;
+        let message = 'An unexpected error occurred.';
+        if (serverError) {
+          message = typeof serverError === 'string' ? serverError : (serverError.message || message);
+        }
 
         if (status === 401) {
           toast.error('Session Expired: Please login again.');
@@ -30,7 +34,7 @@ const setupAxios = (logout) => {
             logout();
           }
         } else if (status === 403) {
-          toast.error('Access Denied: You do not have permission for this action.');
+          toast.error(typeof serverError === 'string' && serverError.includes('device') ? 'Device Access Restricted' : 'Access Denied: You do not have permission for this action.');
         } else if (status === 503) {
           toast.error(message || 'Database temporarily unavailable.');
         } else if (status >= 500) {
