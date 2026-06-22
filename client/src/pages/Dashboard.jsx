@@ -211,26 +211,26 @@ export default function Dashboard() {
   };
 
     const StatCard = ({ title, value, icon: Icon, color, trend }) => {
-    // We expect color to be a tailwind background class like 'bg-indigo-600'
-    return (
-      <div className={`group overflow-hidden relative rounded-2xl shadow-lg transition-all duration-300 ${color || 'bg-indigo-600'} text-white hover:-translate-y-1`}>
-        {/* Abstract Pattern Overlay */}
-        <div className="absolute inset-0 opacity-[0.08] pointer-events-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='2' fill='%23ffffff' fill-opacity='1'/%3E%3C/svg%3E\")" }}></div>
-        <div className="relative z-10 p-6 flex flex-col justify-between h-full">
-          <div className="flex justify-between items-start mb-6">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white/20 backdrop-blur-md text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-sm border border-white/10">
-              <Icon size={24} />
+      const textColor = color ? color.replace('bg-', 'text-') : 'text-indigo-600';
+      const bgColor = color ? color.replace('bg-', 'bg-').replace('600', '50').replace('500', '50') : 'bg-indigo-50';
+      
+      return (
+        <div className="group relative rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+          <div className="p-6 flex flex-col justify-between h-full">
+            <div className="flex justify-between items-start mb-4">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${bgColor} ${textColor} group-hover:scale-110 transition-transform duration-300`}>
+                <Icon size={24} />
+              </div>
+              {trend && <span className="px-2 py-1 bg-slate-50 rounded-full text-[10px] font-bold text-slate-500 border border-slate-100">{trend}</span>}
             </div>
-            {trend && <span className="px-2 py-1 bg-white/20 rounded-full text-[10px] font-bold backdrop-blur-md border border-white/10">{trend}</span>}
-          </div>
-          <div>
-            <h4 className="text-4xl font-black tracking-tight mb-1">{value}</h4>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-white/80">{title}</p>
+            <div>
+              <h4 className="text-3xl font-black tracking-tight text-slate-800 mb-1">{value}</h4>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400">{title}</p>
+            </div>
           </div>
         </div>
-      </div>
-    );
-  };
+      );
+    };
 
   const ProfileCard = ({ title, profile, highlight }) => {
     if (!profile) {
@@ -329,19 +329,17 @@ export default function Dashboard() {
         </div>
 
         {starPerformers.length > 0 && (
-          <div className="bg-gradient-to-br from-violet-600 via-fuchsia-600 to-rose-500 rounded-3xl p-8 shadow-xl relative overflow-hidden mb-8 text-white">
-            <div className="absolute right-0 top-0 opacity-10 pointer-events-none">
-              <Award size={250} className="transform translate-x-10 -translate-y-10 text-white" />
+          <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm relative overflow-hidden mb-8">
+            <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none">
+              <Award size={250} className="transform translate-x-10 -translate-y-10 text-slate-900" />
             </div>
-            {/* Pattern Overlay */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}></div>
             
             <div className="relative z-10 flex flex-col md:flex-row gap-6 md:gap-10 items-start md:items-center">
               <div className="md:w-1/3">
-                <h2 className="text-3xl font-black mb-2 flex items-center gap-3 text-white">
-                  <Star size={32} className="text-yellow-300 drop-shadow-md" /> Company Wall of Fame
+                <h2 className="text-3xl font-black mb-2 flex items-center gap-3 text-slate-800">
+                  <Star size={32} className="text-yellow-400 drop-shadow-sm" /> Company Wall of Fame
                 </h2>
-                <p className="text-white/80 text-sm font-medium max-w-xs leading-relaxed">
+                <p className="text-slate-500 text-sm font-medium max-w-xs leading-relaxed">
                   Honoring our top performers who have demonstrated outstanding dedication and excellence.
                 </p>
               </div>
@@ -350,22 +348,22 @@ export default function Dashboard() {
                 {starPerformers.map(star => {
                   const isMonth = star.starPerformer === 'month';
                   return (
-                    <div key={star.id} className="relative overflow-hidden rounded-2xl p-4 pr-16 flex items-center gap-4 transition-all hover:-translate-y-1 bg-white/10 backdrop-blur-md border border-white/20 shadow-lg group">
-                      <div className="absolute -right-4 -bottom-4 opacity-20 pointer-events-none group-hover:scale-110 transition-transform">
-                        {isMonth ? <Award size={80} className="text-yellow-300" /> : <Star size={80} className="text-sky-300" />}
+                    <div key={star.id} className="relative overflow-hidden rounded-2xl p-4 pr-16 flex items-center gap-4 transition-all hover:-translate-y-1 bg-slate-50 border border-slate-200 shadow-sm group">
+                      <div className="absolute -right-4 -bottom-4 opacity-[0.05] pointer-events-none group-hover:scale-110 transition-transform">
+                        {isMonth ? <Award size={80} className="text-slate-900" /> : <Star size={80} className="text-slate-900" />}
                       </div>
                       
                       {star.avatar ? (
-                        <img src={star.avatar} alt={star.name} className="w-14 h-14 rounded-full object-cover shadow-md ring-2 ring-white/30 relative z-10" />
+                        <img src={star.avatar} alt={star.name} className="w-14 h-14 rounded-full object-cover shadow-sm ring-1 ring-slate-200 relative z-10" />
                       ) : (
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center font-black text-xl shadow-md ring-2 ring-white/30 relative z-10 bg-gradient-to-tr from-yellow-300 to-amber-500 text-amber-900">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center font-black text-xl shadow-sm ring-1 ring-slate-200 relative z-10 bg-gradient-to-tr from-indigo-100 to-indigo-50 text-indigo-600">
                           {star.name.charAt(0)}
                         </div>
                       )}
                       
                       <div className="relative z-10">
-                        <p className="font-black text-lg text-white">{star.name}</p>
-                        <p className={`text-[10px] uppercase tracking-widest font-black flex items-center gap-1 mt-0.5 ${isMonth ? 'text-yellow-300' : 'text-sky-300'}`}>
+                        <p className="font-black text-lg text-slate-800">{star.name}</p>
+                        <p className={`text-[10px] uppercase tracking-widest font-black flex items-center gap-1 mt-0.5 ${isMonth ? 'text-amber-500' : 'text-sky-500'}`}>
                           {isMonth ? '🌟 Star of the Month' : '⭐ Star of the Week'}
                         </p>
                         {user.id !== star.id && (
@@ -374,7 +372,7 @@ export default function Dashboard() {
                               <div className="flex items-center gap-2">
                                 <button 
                                   onClick={() => sendCongratulations(star.id, star.name)}
-                                  className="text-xs bg-white/20 hover:bg-white text-white hover:text-violet-700 transition-colors font-bold py-2 px-4 rounded-xl shadow-sm flex items-center gap-2"
+                                  className="text-xs bg-white hover:bg-slate-100 text-indigo-600 border border-slate-200 transition-colors font-bold py-2 px-4 rounded-xl shadow-sm flex items-center gap-2"
                                 >
                                   <Star size={14} /> Quick Wishes
                                 </button>
@@ -383,30 +381,30 @@ export default function Dashboard() {
                                     setMessageFormOpenId(star.id);
                                     setCustomMessage('');
                                   }}
-                                  className="text-xs bg-white/10 hover:bg-white/30 text-white transition-colors font-bold py-2 px-4 rounded-xl shadow-sm flex items-center gap-2"
+                                  className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors font-bold py-2 px-4 rounded-xl shadow-sm flex items-center gap-2"
                                 >
                                   <MessageSquare size={14} /> Custom
                                 </button>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-2 bg-white/20 p-1.5 rounded-xl border border-white/30">
+                              <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm">
                                 <input 
                                   type="text" 
                                   value={customMessage}
                                   onChange={(e) => setCustomMessage(e.target.value)}
                                   placeholder="Type your wishes..."
-                                  className="text-xs bg-transparent text-white placeholder-white/60 px-2 py-1 w-full focus:outline-none"
+                                  className="text-xs bg-transparent text-slate-800 placeholder-slate-400 px-2 py-1 w-full focus:outline-none"
                                 />
                                 <button 
                                   onClick={() => sendCongratulations(star.id, star.name, true)}
-                                  className="bg-white text-violet-700 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                                  className="bg-indigo-50 text-indigo-600 p-1.5 rounded-lg hover:bg-indigo-100 transition-colors"
                                   title="Send Message"
                                 >
                                   <Send size={14} />
                                 </button>
                                 <button 
                                   onClick={() => setMessageFormOpenId(null)}
-                                  className="text-white p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+                                  className="text-slate-400 p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
                                   title="Cancel"
                                 >
                                   <X size={14} />
@@ -416,7 +414,7 @@ export default function Dashboard() {
                           </div>
                         )}
                         {user.id === star.id && (
-                          <p className="mt-3 text-[10px] bg-white text-violet-700 font-bold py-1.5 px-3 rounded-lg inline-flex items-center gap-1 shadow-sm">
+                          <p className="mt-3 text-[10px] bg-indigo-50 text-indigo-700 font-bold py-1.5 px-3 rounded-lg inline-flex items-center gap-1 shadow-sm">
                             <Star size={12} /> That's You! 🎉
                           </p>
                         )}
@@ -595,61 +593,58 @@ export default function Dashboard() {
         <StatCard title="Half Days Today" value={adminStats.halfDaysToday || 0} icon={Clock} color="bg-orange-500" />
       </div>
 
-      <div className="rounded-3xl shadow-xl overflow-hidden mb-6 bg-gradient-to-br from-violet-600 via-fuchsia-600 to-rose-500 text-white relative">
-        {/* Zig-Zag / Wavy Pattern Background */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}></div>
-        
+      <div className="rounded-3xl border border-slate-100 shadow-sm bg-white overflow-hidden mb-6 relative">
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 p-8 gap-10">
           <div>
-            <h3 className="font-black text-3xl mb-2 flex items-center gap-3">
-              <Star size={32} className="text-yellow-300 drop-shadow-md" /> Declare Star Performer
+            <h3 className="font-black text-3xl mb-2 flex items-center gap-3 text-slate-800">
+              <Star size={32} className="text-yellow-400 drop-shadow-sm" /> Declare Star Performer
             </h3>
-            <p className="text-white/80 text-sm mb-6">Select an employee to feature them on everyone's dashboard directly.</p>
+            <p className="text-slate-500 text-sm mb-6">Select an employee to feature them on everyone's dashboard directly.</p>
             
             <form onSubmit={declareStarPerformer} className="flex flex-col sm:flex-row gap-3">
               <select 
-                className="py-3 px-4 text-sm flex-1 bg-white/10 border border-white/20 text-white rounded-xl focus:bg-white/20 outline-none backdrop-blur-sm placeholder:text-white/50"
+                className="py-3 px-4 text-sm flex-1 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:bg-white focus:border-indigo-300 outline-none transition-colors"
                 value={starDeclarationForm.employeeId}
                 onChange={(e) => setStarDeclarationForm({...starDeclarationForm, employeeId: e.target.value})}
                 required
               >
-                <option value="" disabled className="text-slate-800">-- Select Employee --</option>
+                <option value="" disabled>-- Select Employee --</option>
                 {allEmployees.map(emp => (
-                  <option key={emp.id} value={emp.id} className="text-slate-800">{emp.name}</option>
+                  <option key={emp.id} value={emp.id}>{emp.name}</option>
                 ))}
               </select>
               <select 
-                className="py-3 px-4 text-sm w-full sm:w-32 bg-white/10 border border-white/20 text-white rounded-xl focus:bg-white/20 outline-none backdrop-blur-sm"
+                className="py-3 px-4 text-sm w-full sm:w-32 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl focus:bg-white focus:border-indigo-300 outline-none transition-colors"
                 value={starDeclarationForm.badge}
                 onChange={(e) => setStarDeclarationForm({...starDeclarationForm, badge: e.target.value})}
               >
-                <option value="week" className="text-slate-800">Week</option>
-                <option value="month" className="text-slate-800">Month</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
               </select>
-              <button type="submit" className="px-6 py-3 bg-white text-violet-700 font-bold rounded-xl hover:bg-slate-100 shadow-lg shadow-white/20 transition-all flex-shrink-0">
+              <button type="submit" className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-sm transition-all flex-shrink-0">
                 Declare
               </button>
             </form>
           </div>
           
-          <div className="lg:border-l border-white/20 lg:pl-10 flex flex-col justify-center">
-            <h4 className="font-bold text-sm uppercase tracking-widest text-white/70 mb-4">Current Wall of Fame</h4>
+          <div className="lg:border-l border-slate-100 lg:pl-10 flex flex-col justify-center">
+            <h4 className="font-bold text-sm uppercase tracking-widest text-slate-400 mb-4">Current Wall of Fame</h4>
             {starPerformers.length > 0 ? (
               <div className="space-y-3">
                 {starPerformers.map(star => (
-                  <div key={star.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-3 flex items-center justify-between group transition-all hover:bg-white/20">
+                  <div key={star.id} className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between group transition-all hover:border-slate-300">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-yellow-300 to-amber-500 text-amber-900 flex items-center justify-center font-black text-sm shadow-md">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-100 to-indigo-50 text-indigo-600 flex items-center justify-center font-black text-sm shadow-sm ring-1 ring-slate-200">
                         {star.name.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-bold text-sm leading-tight text-white">{star.name}</p>
-                        <p className="text-[10px] font-black text-yellow-300 uppercase tracking-widest">{star.starPerformer}ly Star</p>
+                        <p className="font-bold text-sm leading-tight text-slate-800">{star.name}</p>
+                        <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{star.starPerformer}ly Star</p>
                       </div>
                     </div>
                     <button 
                       onClick={() => removeStarPerformer(star.id)} 
-                      className="px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-bold bg-white/10 hover:bg-rose-500 text-white rounded-lg transition-all opacity-0 group-hover:opacity-100" 
+                      className="px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-bold bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-slate-200 hover:border-rose-200 rounded-lg transition-all opacity-0 group-hover:opacity-100" 
                       title="Revoke Badge"
                     >
                       <UserX size={12} /> Revoke
@@ -658,11 +653,11 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <div className="bg-white/5 rounded-xl p-6 border border-white/10 border-dashed text-center flex flex-col items-center justify-center">
-                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-3">
-                  <Star size={24} className="text-white/40" />
+              <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 border-dashed text-center flex flex-col items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-white border border-slate-100 flex items-center justify-center mb-3">
+                  <Star size={24} className="text-slate-300" />
                 </div>
-                <p className="text-sm text-white/50 italic font-medium">No star performers declared currently.</p>
+                <p className="text-sm text-slate-400 italic font-medium">No star performers declared currently.</p>
               </div>
             )}
           </div>

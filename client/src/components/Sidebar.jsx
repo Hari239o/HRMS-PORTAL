@@ -81,14 +81,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       )}
 
       <aside className={`fixed md:relative inset-y-0 left-0 z-50 w-72 h-full bg-white border-r border-slate-100 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-        <div className="p-6 pb-2 relative">
+        <div className="p-4 pb-2 relative">
           <button 
             className="md:hidden absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600"
             onClick={() => setIsOpen(false)}
           >
             <X size={20} />
           </button>
-          <div className="flex items-center justify-center mb-4 w-full mt-2">
+          <div className="flex items-center justify-center mb-1 w-full mt-0">
             <img src="/geonixa-logo.png" alt="Geonixa" className="w-48 h-auto object-contain drop-shadow-sm" />
           </div>
 
