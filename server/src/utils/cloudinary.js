@@ -37,9 +37,14 @@ if (isCloudinaryConfigured) {
   uploadDocument = multer({ storage: documentStorage });
 } else {
   // Local storage fallback
-  const uploadsDir = path.join(__dirname, '../../uploads');
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
+  const isVercel = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+  const uploadsDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '../../uploads');
+  try {
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+  } catch (err) {
+    console.warn('Failed to create uploads directory (expected in Vercel):', err.message);
   }
 
   const localStorage = multer.diskStorage({

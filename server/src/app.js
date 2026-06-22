@@ -20,6 +20,26 @@ const approvalsRoutes = require('./routes/approvals');
 
 const app = express();
 
+let lastCrashError = null;
+
+process.on('uncaughtException', (err) => {
+  console.error('CRITICAL UNCAUGHT EXCEPTION:', err);
+  lastCrashError = err;
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('CRITICAL UNHANDLED REJECTION:', reason);
+  lastCrashError = reason;
+});
+
+app.get('/api/debug-crash', (req, res) => {
+  if (lastCrashError) {
+    res.json({ error: lastCrashError.message || String(lastCrashError), stack: lastCrashError.stack });
+  } else {
+    res.json({ status: 'No crashes detected' });
+  }
+});
+
 app.use(cors({
   origin: process.env.CLIENT_URL || '*',
   credentials: true
