@@ -1,0 +1,62 @@
+name: "Server tests"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - "18.x"
+          - "20.x"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "${{ matrix.node-version }}"
+          cache: npm
+
+      - name: Install server dependencies
+        run: npm ci
+        working-directory: server
+
+      - name: Run server tests
+        run: npm test
+        working-directory: server
+      - name: Start server in background for integration tests
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          cd server
+          node src/index.js &
+          echo $! > server.pid
+      - name: Wait for server to be healthy
+        run: |
+          for i in {1..30}; do
+            if curl -sSf http://localhost:5002/api/health >/dev/null 2>&1; then
+              echo "Server is healthy"; break
+            fi
+            sleep 1
+          done
+      - name: Run integration tests
+        run: npm run test:integration
+        working-directory: server
+      - name: Kill server
+        if: always()
+        run: |
+          if [ -f server/server.pid ]; then
+            kill "$(cat server/server.pid)" || true
+            rm server/server.pid || true
+          else
+            pkill -f "node src/index.js" || true
+          fi
