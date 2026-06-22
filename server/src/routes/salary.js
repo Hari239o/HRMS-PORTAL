@@ -6,12 +6,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 let HummusRecipe = null;
-try {
-  HummusRecipe = require('hummus-recipe');
-} catch (e) {
-  // optional dependency - encryption will be skipped if not installed
-  HummusRecipe = null;
-}
+// hummus-recipe removed due to native module crashes on Vercel
 
 const router = express.Router();
 
