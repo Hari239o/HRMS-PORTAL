@@ -286,9 +286,9 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[40vh] space-y-4">
-        <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-slate-400 font-medium text-sm">Authenticating Secure Session...</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 animate-in fade-in duration-500">
+        <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+        <p className="text-slate-500 font-bold tracking-widest uppercase text-xs">Loading Dashboard...</p>
       </div>
     );
   }

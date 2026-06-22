@@ -13,7 +13,8 @@ const requiresDeviceLock = (role) => {
   return !hasMultiDeviceAccess(role);
 };
 
-// Seed admin users
+// Seed admin users (Disabled to improve startup performance)
+/*
 (async () => {
   try {
     const admins = [
@@ -58,6 +59,7 @@ const requiresDeviceLock = (role) => {
     console.error('Error seeding admins:', err.message);
   }
 })();
+*/
 
 router.post('/register', async (req, res) => {
   const { name, email, password, department, avatar, role: requestedRole } = req.body;
