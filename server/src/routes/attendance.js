@@ -70,7 +70,7 @@ router.post('/checkin', authenticate, upload.single('photo'), async (req, res) =
     const distance = getDistance(parseFloat(latitude), parseFloat(longitude), officeLat, officeLong);
 
     if (Math.round(distance) > radius) {
-      return res.status(400).json({ error: `Geofencing failure: You are out of office range (${Math.round(distance)}m). Required: ${radius}m.` });
+      return res.status(400).json({ error: `Geofencing failure: You are out of office range (${Math.round(distance)}m). Required: ${radius}m. Your Exact GPS: ${latitude}, ${longitude}` });
     }
 
     // 3. Enforce office attendance window
@@ -175,7 +175,7 @@ router.post('/checkout', authenticate, upload.single('photo'), async (req, res) 
     const distance = getDistance(parseFloat(latitude), parseFloat(longitude), officeLat, officeLong);
 
     if (Math.round(distance) > radius) {
-      return res.status(400).json({ error: `Geofencing failure: You are out of office range for checkout (${Math.round(distance)}m). Required: ${radius}m.` });
+      return res.status(400).json({ error: `Geofencing failure: You are out of office range for checkout (${Math.round(distance)}m). Required: ${radius}m. Your Exact GPS: ${latitude}, ${longitude}` });
     }
 
     const officeStartTime = '11:00';
