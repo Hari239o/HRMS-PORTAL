@@ -8,7 +8,7 @@ const router = express.Router();
 
 const OFFICE_LAT = Number.isFinite(parseFloat(process.env.OFFICE_LAT)) ? parseFloat(process.env.OFFICE_LAT) : 17.43904716;
 const OFFICE_LONG = Number.isFinite(parseFloat(process.env.OFFICE_LONG)) ? parseFloat(process.env.OFFICE_LONG) : 78.39482505;
-const OFFICE_RADIUS = Number.isFinite(parseFloat(process.env.OFFICE_RADIUS)) ? parseFloat(process.env.OFFICE_RADIUS) : 5;
+const OFFICE_RADIUS = Number.isFinite(parseFloat(process.env.OFFICE_RADIUS)) ? parseFloat(process.env.OFFICE_RADIUS) : 15;
 
 const hasMultiDeviceAccess = (role) => {
   return role === 'admin' || role === 'manager' || role.endsWith('_manager');
