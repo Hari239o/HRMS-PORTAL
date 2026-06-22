@@ -140,9 +140,13 @@ export default function Dashboard() {
       }
     } catch (err) {
       console.error('Dashboard data fetch error:', err);
-      const friendlyError = err.response?.status === 503
-        ? 'Database temporarily unavailable. Please try again later.'
-        : err.response?.data?.error || 'Unable to load dashboard data. Please refresh the page.';
+      let friendlyError = 'Unable to load dashboard data. Please refresh the page.';
+      if (err.response?.status === 503) {
+        friendlyError = 'Database temporarily unavailable. Please try again later.';
+      } else if (err.response?.data?.error) {
+        const serverError = err.response.data.error;
+        friendlyError = typeof serverError === 'string' ? serverError : (serverError.message || friendlyError);
+      }
       setDashboardError(friendlyError);
     } finally {
       setLoading(false);

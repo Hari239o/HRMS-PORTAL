@@ -56,10 +56,15 @@ const Login = () => {
     } catch (err) {
       if (!err.response) {
         toast.error('Connection Refused: Please ensure the backend server is running on port 5002.');
-      } else if (err.response?.status === 403 && err.response?.data?.error?.includes('device')) {
+      } else if (err.response?.status === 403 && typeof err.response?.data?.error === 'string' && err.response.data.error.includes('device')) {
         setDeviceLocked(true);
       } else {
-        toast.error(err.response?.data?.error || 'Authentication failed. Check your credentials.');
+        let errMsg = 'Authentication failed. Check your credentials.';
+        const serverError = err.response?.data?.error;
+        if (serverError) {
+           errMsg = typeof serverError === 'string' ? serverError : (serverError.message || errMsg);
+        }
+        toast.error(errMsg);
       }
     } finally {
       setLoading(false);
