@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest --runInBand",
+    "test": "jest --runInBand --testPathIgnorePatterns=tests/integration.test.js",
     "test:integration": "jest --runInBand tests/integration.test.js"
   },
   "dependencies": {
