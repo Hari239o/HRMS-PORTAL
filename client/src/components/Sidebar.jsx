@@ -81,14 +81,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       )}
 
       <aside className={`fixed md:relative inset-y-0 left-0 z-50 w-72 h-full bg-white border-r border-slate-100 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-        <div className="p-8 pb-4 relative">
+        <div className="p-6 pb-2 relative">
           <button 
             className="md:hidden absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600"
             onClick={() => setIsOpen(false)}
           >
             <X size={20} />
           </button>
-          <div className="flex items-center justify-center mb-10 w-full mt-2">
+          <div className="flex items-center justify-center mb-4 w-full mt-2">
             <img src="/geonixa-logo.png" alt="Geonixa" className="w-48 h-auto object-contain drop-shadow-sm" />
           </div>
 
@@ -110,9 +110,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         </div>
       </div>
 
-      <nav className="flex-1 px-4 py-4 space-y-8 overflow-y-auto">
+      <nav className="flex-1 px-4 py-4 space-y-4 overflow-y-auto">
         <div>
-          <p className="px-4 mb-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Core Modules</p>
+          <p className="px-4 mb-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Core Modules</p>
           <div className="space-y-1.5">
             {(isStudent ? studentMenuItems : menuItems).map((item) => (
               <NavLink
