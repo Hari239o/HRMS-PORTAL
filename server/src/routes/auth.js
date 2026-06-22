@@ -13,51 +13,7 @@ const requiresDeviceLock = (role) => {
   return !hasMultiDeviceAccess(role);
 };
 
-// Seed admin users
-(async () => {
-  try {
-    const admins = [
-      {
-        email: 'harikishoreddy9908@gmail.com',
-        pass: 'Hari@9908',
-        name: 'Harikishore Reddy',
-        id: 'admin-hari'
-      },
-      {
-        email: 'Admin@geonixa.com',
-        pass: 'GEO@2026',
-        name: 'Geonixa Admin',
-        id: 'admin-geonixa'
-      }
-    ];
-
-    for (const admin of admins) {
-      const hashedPassword = await bcrypt.hash(admin.pass, 10);
-      const snapshot = await db.collection('employees').where('email', '==', admin.email).get();
-      
-      if (snapshot.empty) {
-        await db.collection('employees').doc(admin.id).set({
-          name: admin.name,
-          email: admin.email,
-          password: hashedPassword,
-          role: 'admin',
-          department: 'HR'
-        });
-        console.log('✅ Admin account created:', admin.email);
-      } else {
-        // Force update password and role for this specific user
-        const docId = snapshot.docs[0].id;
-        await db.collection('employees').doc(docId).update({
-          password: hashedPassword,
-          role: 'admin'
-        });
-        console.log('✅ Admin account updated:', admin.email);
-      }
-    }
-  } catch (err) {
-    console.error('Error seeding admins:', err.message);
-  }
-})();
+// Admin seeding has been removed to prevent Vercel Serverless Function initialization crashes.
 
 router.post('/register', async (req, res) => {
   const { name, email, password, department, avatar, role: requestedRole } = req.body;
