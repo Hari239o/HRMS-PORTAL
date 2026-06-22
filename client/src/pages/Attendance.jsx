@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Clock, CheckCircle, ArrowUpRight, ArrowDownLeft, Camera, Filter, Users, MapPin } from 'lucide-react';
 
-const OFFICE_LOCATION = { latitude: 17.438847, longitude: 78.394719 };
+const OFFICE_LOCATION = { latitude: 17.43909266436075, longitude: 78.39484164924859 };
 const ATTENDANCE_WINDOW = { from: '11:00', to: '20:00' };
 
 const Attendance = () => {
