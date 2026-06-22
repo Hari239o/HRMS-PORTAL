@@ -98,9 +98,12 @@ router.post('/checkin', authenticate, upload.single('photo'), async (req, res) =
 
     const maxPossibleHours = shiftEnd.diff(now, 'hours').hours;
     let status = 'Present';
+    const limitTime = shiftStart.plus({ minutes: 5 }); // 11:05 AM limit
+    
     if (maxPossibleHours < 5) {
       status = 'Absent';
-    } else if (maxPossibleHours < 8) {
+    } else if (now > limitTime) {
+      // Checked in after 11:05 AM
       status = 'Half Day';
     }
 
@@ -185,11 +188,18 @@ router.post('/checkout', authenticate, upload.single('photo'), async (req, res) 
     const checkInTime = DateTime.fromISO(attendance.checkIn);
     const durationHours = now.diff(checkInTime, 'hours').hours;
 
-    let finalStatus = 'Absent';
-    if (durationHours >= 8) {
-      finalStatus = 'Present';
-    } else if (durationHours >= 5) {
-      finalStatus = 'Half Day';
+    let finalStatus = attendance.status; // Keep late penalty from check-in if any
+
+    if (finalStatus === 'Present') {
+      if (durationHours < 5) {
+        finalStatus = 'Absent';
+      } else if (durationHours < 8) {
+        finalStatus = 'Half Day';
+      }
+    } else if (finalStatus === 'Half Day') {
+       if (durationHours < 5) {
+         finalStatus = 'Absent'; // Downgrade to absent if they barely worked
+       }
     }
 
     const photoUrl = req.file ? (req.file.path.startsWith('http') ? req.file.path : `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`) : null;
