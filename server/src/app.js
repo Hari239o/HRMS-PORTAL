@@ -72,6 +72,21 @@ app.use('/api/approvals', approvalsRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/resignations', require('./routes/resignations'));
 
+// Fallback for Vercel Serverless where /api prefix is stripped from req.url
+app.use('/auth', authRoutes);
+app.use('/attendance', attendanceRoutes);
+app.use('/reports', reportRoutes);
+app.use('/holidays', holidayRoutes);
+app.use('/salary', salaryRoutes);
+app.use('/tasks', taskRoutes);
+app.use('/settings', settingsRoutes);
+app.use('/leaves', leaveRoutes);
+app.use('/problems', problemsRoutes);
+app.use('/employees', employeeRoutes);
+app.use('/approvals', approvalsRoutes);
+app.use('/onboarding', onboardingRoutes);
+app.use('/resignations', require('./routes/resignations'));
+
 
 app.use((err, req, res, next) => {
   console.error('Unhandled server error:', err);
