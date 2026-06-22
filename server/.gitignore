@@ -6,3 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 uploads/
 serviceAccountKey.json
+.wwebjs_auth/
+.wwebjs_cache/
+temp/
+firestore-data/
