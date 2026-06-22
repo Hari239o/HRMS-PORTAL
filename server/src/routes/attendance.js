@@ -6,8 +6,8 @@ const { DateTime } = require('luxon');
 
 const router = express.Router();
 
-const OFFICE_LAT = 17.43909266436075; // Hardcoded exact center of 6th floor
-const OFFICE_LONG = 78.39484164924859; // Hardcoded exact center of 6th floor
+const OFFICE_LAT = Number.isFinite(parseFloat(process.env.OFFICE_LAT)) ? parseFloat(process.env.OFFICE_LAT) : 17.43904716;
+const OFFICE_LONG = Number.isFinite(parseFloat(process.env.OFFICE_LONG)) ? parseFloat(process.env.OFFICE_LONG) : 78.39482505;
 const OFFICE_RADIUS = Number.isFinite(parseFloat(process.env.OFFICE_RADIUS)) ? parseFloat(process.env.OFFICE_RADIUS) : 5;
 
 const hasMultiDeviceAccess = (role) => {
