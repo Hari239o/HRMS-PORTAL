@@ -285,10 +285,15 @@ router.get('/', authenticate, async (req, res) => {
   try {
     let attendance = [];
     if (role !== 'admin') {
-      const snap = await db.collection('attendance').where('employeeId', '==', id).get();
+      const snap = await db.collection('attendance')
+        .where('employeeId', '==', id)
+        .get();
       attendance = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     } else {
-      const snap = await db.collection('attendance').get();
+      const snap = await db.collection('attendance')
+        .orderBy('checkIn', 'desc')
+        .limit(300)
+        .get();
       attendance = snap.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     }
     

@@ -628,20 +628,20 @@ router.get('/admissions', authenticate, authorize(['admin']), async (req, res) =
 router.get('/recent-activity', authenticate, authorize(['admin']), async (req, res) => {
   try {
     const attSnap = await db.collection('attendance').orderBy('checkIn', 'desc').limit(10).get();
-    const activities = [];
-
-    for (const doc of attSnap.docs) {
+    
+    // Fetch all employee docs in parallel to fix N+1 performance issue
+    const activities = await Promise.all(attSnap.docs.map(async (doc) => {
       const data = doc.data();
       const empDoc = await db.collection('employees').doc(data.employeeId).get();
       const empName = empDoc.exists ? empDoc.data().name : 'Unknown';
 
-      activities.push({
+      return {
         name: empName,
         action: data.status,
         time: data.checkIn,
         type: 'Attendance'
-      });
-    }
+      };
+    }));
 
     res.json(activities);
   } catch (error) {
