@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Refresh latest user data in background
-      axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/employees/me`)
+      axios.get(`${import.meta.env.VITE_API_URL || ""}/api/employees/me`)
         .then(res => {
           if (res.data) {
             const updated = { ...parsedUser, ...res.data };

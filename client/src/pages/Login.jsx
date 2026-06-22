@@ -29,7 +29,7 @@ const Login = () => {
     setDeviceLocked(false);
     try {
       const deviceId = getDeviceId();
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/auth/login`, { email, password, deviceId });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || ""}/api/auth/login`, { email, password, deviceId });
       
       // Verification: Ensure user logged in through the correct portal tab
       if (role === 'admin' && res.data.user.role !== 'admin') {

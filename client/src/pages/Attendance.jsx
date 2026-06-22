@@ -57,7 +57,7 @@ const Attendance = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/attendance`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || ""}/api/attendance`);
       setHistory(res.data);
       const today = new Date().toLocaleDateString('en-CA'); // Gets YYYY-MM-DD in local time
       const todayRec = res.data.find(r => r.date === today);
@@ -71,7 +71,7 @@ const Attendance = () => {
 
   const handleStatusChange = async (recordId, newStatus) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/attendance/${recordId}/status`, { status: newStatus });
+      await axios.put(`${import.meta.env.VITE_API_URL || ""}/api/attendance/${recordId}/status`, { status: newStatus });
       toast.success(`Status successfully updated to ${newStatus}`);
       fetchData();
     } catch (err) {
@@ -103,7 +103,7 @@ const Attendance = () => {
           longitude,
           deviceId,
         };
-        await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/attendance/checkin`, payload);
+        await axios.post(`${import.meta.env.VITE_API_URL || ""}/api/attendance/checkin`, payload);
         toast.success('Identity Verified. Check-in Approved!');
         fetchData();
       } catch (err) {
@@ -134,7 +134,7 @@ const Attendance = () => {
       setScanning(false);
       try {
         const payload = { latitude, longitude };
-        await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/attendance/checkout`, payload);
+        await axios.post(`${import.meta.env.VITE_API_URL || ""}/api/attendance/checkout`, payload);
         toast.success('Checked out successfully!');
         fetchData();
       } catch (err) {
