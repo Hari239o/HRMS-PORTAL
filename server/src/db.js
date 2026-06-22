@@ -14,6 +14,9 @@ console.log('USE_FIREBASE_EMULATOR:', process.env.USE_FIREBASE_EMULATOR);
 console.log('USE_FIRESTORE_EMULATOR:', process.env.USE_FIRESTORE_EMULATOR);
 console.log('Using Firestore emulator:', useEmulator);
 
+let db;
+let initError = null;
+
 if (useEmulator) {
   const emulatorHost = process.env.FIRESTORE_EMULATOR_HOST || '127.0.0.1:8080';
   process.env.FIRESTORE_EMULATOR_HOST = emulatorHost;
@@ -22,9 +25,10 @@ if (useEmulator) {
   try {
     admin.initializeApp({ projectId: process.env.FIRESTORE_PROJECT_ID || 'demo-geonixa' });
     console.log('Connected to Firestore emulator');
+    db = admin.firestore();
   } catch (e) {
     console.error('Firestore emulator init failed:', e.message || e);
-    process.exit(1);
+    initError = 'Firestore emulator init failed: ' + (e.message || e);
   }
 } else if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
@@ -33,9 +37,10 @@ if (useEmulator) {
       credential: admin.credential.cert(serviceAccount)
     });
     console.log('Connected to Firestore database via FIREBASE_SERVICE_ACCOUNT env variable');
+    db = admin.firestore();
   } catch (e) {
-    console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT environment variable. Ensure it is valid JSON.', e.message || e);
-    process.exit(1);
+    console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT. Ensure it is valid JSON.', e.message || e);
+    initError = 'Failed to parse FIREBASE_SERVICE_ACCOUNT. ' + (e.message || '');
   }
 } else if (fs.existsSync(serviceAccountPath)) {
   try {
@@ -44,17 +49,23 @@ if (useEmulator) {
       credential: admin.credential.cert(serviceAccount)
     });
     console.log('Connected to Firestore database (Cloud)');
+    db = admin.firestore();
   } catch (e) {
     console.error('Failed to initialize Firebase Admin SDK with serviceAccountKey.json:', e.message || e);
-    process.exit(1);
+    initError = 'Failed to initialize via JSON file: ' + (e.message || '');
   }
 } else {
   console.error('Missing Firebase credentials.');
-  console.error('Provide FIREBASE_SERVICE_ACCOUNT via environment variables (for Vercel), OR a valid serviceAccountKey.json in server/serviceAccountKey.json, OR enable the Firestore emulator.');
-  console.error('  NODE_ENV=development USE_FIRESTORE_EMULATOR=true');
-  process.exit(1);
+  initError = 'Missing Firebase credentials in Vercel environment.';
 }
 
-const db = admin.firestore();
+if (!db) {
+  // Create a proxy that throws the initError whenever db is accessed
+  db = new Proxy({}, {
+    get: function(target, prop) {
+      throw new Error("Database not initialized: " + initError);
+    }
+  });
+}
 
-module.exports = { db, admin };
+module.exports = { db, admin, initError };
