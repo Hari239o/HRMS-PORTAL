@@ -35,7 +35,8 @@ const Leaves = () => {
     category: 'IT Support',
     title: '',
     description: '',
-    priority: 'Medium'
+    priority: 'Medium',
+    document: null
   });
 
   useEffect(() => {
@@ -88,10 +89,21 @@ const Leaves = () => {
   const handleProblemSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/problems`, problemFormData);
+      const formData = new FormData();
+      formData.append('category', problemFormData.category);
+      formData.append('title', problemFormData.title);
+      formData.append('description', problemFormData.description);
+      formData.append('priority', problemFormData.priority);
+      if (problemFormData.document) {
+        formData.append('document', problemFormData.document);
+      }
+
+      await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/problems`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       toast.success('Issue raised successfully. Our team will review it.');
       setShowProblemForm(false);
-      setProblemFormData({ category: 'IT Support', title: '', description: '', priority: 'Medium' });
+      setProblemFormData({ category: 'IT Support', title: '', description: '', priority: 'Medium', document: null });
       fetchProblems();
     } catch (err) {
       toast.error('Failed to raise problem');
@@ -452,6 +464,11 @@ const Leaves = () => {
                     <div className="text-sm text-slate-600 bg-slate-50/80 rounded-lg p-4 border border-slate-100 whitespace-pre-wrap leading-relaxed font-medium">
                       {problem.description}
                     </div>
+                    {problem.documentUrl && (
+                      <a href={problem.documentUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-800 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 transition-colors w-max">
+                        <Paperclip size={14} /> Attached Document
+                      </a>
+                    )}
                   </div>
                   
                   <div className="w-full md:w-64 shrink-0 flex flex-col gap-4 border-l-0 md:border-l border-slate-100 md:pl-6">
@@ -654,6 +671,15 @@ const Leaves = () => {
                   placeholder="Explain the problem in detail. Your privacy is guaranteed for confidential matters."
                   className="w-full border border-slate-200 rounded-lg p-3 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white resize-none"
                 ></textarea>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Attach Document (Optional)</label>
+                <input 
+                  type="file" 
+                  onChange={(e) => setProblemFormData({...problemFormData, document: e.target.files[0]})}
+                  className="w-full border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm font-medium text-slate-800 bg-slate-50 hover:bg-white focus:bg-white"
+                  accept="image/*,application/pdf"
+                />
               </div>
               <div className="flex gap-3 pt-4">
                 <button type="button" onClick={() => setShowProblemForm(false)} className="flex-1 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>

@@ -1,11 +1,17 @@
 const express = require('express');
 const { db } = require('../db');
 const { authenticate, authorize } = require('../middleware/auth');
+const { uploadDocument } = require('../utils/cloudinary');
 const router = express.Router();
 
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate, uploadDocument.single('document'), async (req, res) => {
   const { category, title, description, priority = 'Medium' } = req.body;
   try {
+    let documentUrl = null;
+    if (req.file) {
+      documentUrl = req.file.path.startsWith('http') ? req.file.path : `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    }
+
     const id = Date.now().toString();
     await db.collection('problems').doc(id).set({
       id,
@@ -15,6 +21,7 @@ router.post('/', authenticate, async (req, res) => {
       description,
       priority,
       status: 'Pending',
+      documentUrl,
       createdAt: new Date().toISOString()
     });
 
