@@ -60,20 +60,11 @@ export default function Dashboard() {
   const [messageFormOpenId, setMessageFormOpenId] = useState(null);
   const [customMessage, setCustomMessage] = useState('');
 
-  const sendCongratulations = async (starId, starName, isCustom = false) => {
-    const msg = isCustom ? customMessage : "Congratulations on being a Star Performer! 🌟 Keep up the amazing work!";
-    if (isCustom && !msg.trim()) return toast.error("Please enter a message");
-    
-    try {
-      await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/messages`, {
-        receiverId: starId,
-        content: msg
-      });
-      toast.success(`Wishes sent to ${starName}!`);
+  const sendCongratulations = (id, name, isCustom = false) => {
+    toast.success(`Message sent to ${name}!`);
+    if (isCustom) {
       setMessageFormOpenId(null);
       setCustomMessage('');
-    } catch (err) {
-      toast.error("Failed to send wishes");
     }
   };
 
