@@ -7,7 +7,7 @@ const router = express.Router();
 const PDFDocument = require('pdfkit');
 
 router.get('/dashboard-stats', authenticate, authorize(['admin']), async (req, res) => {
-  const today = DateTime.now().toISODate();
+  const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
   try {
     const empSnap = await db.collection('employees').get();
     
@@ -152,7 +152,7 @@ router.get('/export', authenticate, authorize(['admin']), async (req, res) => {
     const leaveSnap = await db.collection('leaves').where('status', '==', 'Approved').get();
     const allLeaves = leaveSnap.docs.map(d => d.data());
 
-    const today = DateTime.now().toISODate();
+    const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
     
     let csv = 'Employee Name,Email,Department,Present Days,Half Days,Leaves Approved\n';
     
@@ -184,7 +184,7 @@ router.get('/export', authenticate, authorize(['admin']), async (req, res) => {
 
 function parseDateRange(req) {
   const { startDate, endDate, period } = req.query;
-  const now = DateTime.now();
+  const now = DateTime.now().setZone('Asia/Kolkata');
   if (startDate && endDate) return { start: DateTime.fromISO(startDate).toISODate(), end: DateTime.fromISO(endDate).toISODate() };
   if (period === 'daily') {
     const d = now.toISODate();

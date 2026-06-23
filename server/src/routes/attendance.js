@@ -8,7 +8,7 @@ const router = express.Router();
 
 const OFFICE_LAT = 17.438989; // Hardcoded to bypass Vercel typos
 const OFFICE_LONG = 78.394794; // Hardcoded to bypass Vercel typos
-const OFFICE_RADIUS = 30; // Hardcoded to 30m to forcefully forgive GPS drift and bypass Vercel
+const OFFICE_RADIUS = 15;
 
 const hasMultiDeviceAccess = (role) => {
   return role === 'admin' || role === 'manager' || role.endsWith('_manager');
@@ -33,8 +33,8 @@ function getDistance(lat1, lon1, lat2, lon2) {
 router.post('/checkin', authenticate, upload.single('photo'), async (req, res) => {
   const { latitude, longitude, deviceId } = req.body;
   const employeeId = req.user.id;
-  const today = DateTime.now().toISODate();
-  const now = DateTime.now();
+  const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
+  const now = DateTime.now().setZone('Asia/Kolkata');
 
   try {
     // 0. Enforce Device Locking
@@ -149,8 +149,8 @@ router.post('/checkin', authenticate, upload.single('photo'), async (req, res) =
 router.post('/checkout', authenticate, upload.single('photo'), async (req, res) => {
   const { latitude, longitude } = req.body;
   const employeeId = req.user.id;
-  const today = DateTime.now().toISODate();
-  const now = DateTime.now();
+  const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
+  const now = DateTime.now().setZone('Asia/Kolkata');
 
   try {
     const attendanceQuery = await db.collection('attendance')
@@ -309,8 +309,8 @@ router.get('/', authenticate, async (req, res) => {
     const officeLong = OFFICE_LONG;
     const officeEndTime = '20:00';
     const [endHour, endMinute] = officeEndTime.split(':').map(Number);
-    const afterOffice = DateTime.now().set({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 });
-    const currentTime = DateTime.now();
+    const afterOffice = DateTime.now().setZone('Asia/Kolkata').set({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 });
+    const currentTime = DateTime.now().setZone('Asia/Kolkata');
     const today = currentTime.toISODate();
 
     if (role === 'admin') {
