@@ -6,8 +6,8 @@ const { DateTime } = require('luxon');
 
 const router = express.Router();
 
-const OFFICE_LAT = 17.438989; // Hardcoded to bypass Vercel typos
-const OFFICE_LONG = 78.394794; // Hardcoded to bypass Vercel typos
+const OFFICE_LAT = 17.4392259;
+const OFFICE_LONG = 78.3948023;
 const OFFICE_RADIUS = 15;
 
 const hasMultiDeviceAccess = (role) => {
