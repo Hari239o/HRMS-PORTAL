@@ -186,10 +186,10 @@ export default function Salary() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="card w-full max-w-md max-h-[90vh] flex flex-col animate-in fade-in zoom-in duration-200">
-            <h2 className="text-xl font-bold mb-4 shrink-0">Record Monthly Salary</h2>
-            <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto flex-1">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-start justify-center pt-10 pb-10 p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 animate-in fade-in zoom-in duration-200">
+            <h2 className="text-xl font-bold mb-4 border-b border-slate-100 pb-4">Record Monthly Salary</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Employee</label>
                 <select 
