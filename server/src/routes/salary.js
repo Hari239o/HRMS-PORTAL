@@ -271,28 +271,30 @@ function generateProfessionalPDF(doc, salary) {
   doc.moveDown(0.5);
 
   const drawRow = (y, leftText, rightText, isBoldLeft = false, isBoldRight = false) => {
-    doc.rect(margin, y, 200, 25).stroke();
-    doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, 25).stroke();
+    const rowHeight = 32;
+    doc.rect(margin, y, 200, rowHeight).stroke();
+    doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, rowHeight).stroke();
     
     // Header cells styling
-    if (isBoldLeft) doc.rect(margin, y, 200, 25).fill('#e2e2e2').stroke();
-    if (isBoldRight) doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, 25).fill('#e2e2e2').stroke();
+    if (isBoldLeft) doc.rect(margin, y, 200, rowHeight).fill('#e2e2e2').stroke();
+    if (isBoldRight) doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, rowHeight).fill('#e2e2e2').stroke();
 
-    doc.fillColor('#000000').font(isBoldLeft ? titleFont : bodyFont).fontSize(10).text(leftText, margin + 5, y + 8, { width: 190 });
-    doc.fillColor('#000000').font(isBoldRight ? titleFont : bodyFont).fontSize(10).text(rightText, margin + 205, y + 8, { width: doc.page.width - 2 * margin - 210 });
+    doc.fillColor('#000000').font(isBoldLeft ? titleFont : bodyFont).fontSize(11).text(leftText, margin + 8, y + 10, { width: 184 });
+    doc.fillColor('#000000').font(isBoldRight ? titleFont : bodyFont).fontSize(11).text(rightText, margin + 208, y + 10, { width: doc.page.width - 2 * margin - 216 });
   };
 
   let currentY = doc.y;
+  const rowHeight = 32;
   
-  drawRow(currentY, 'Employee Name', salary.name, true, true); currentY += 25;
-  drawRow(currentY, 'Employee ID', salary.empId, true, true); currentY += 25;
-  drawRow(currentY, 'Designation', salary.designation, true, true); currentY += 25;
-  drawRow(currentY, 'PAN', salary.pan, true, true); currentY += 25;
-  drawRow(currentY, 'UAN', salary.uan, true, true); currentY += 25;
-  drawRow(currentY, 'Bank Name', salary.bankName, true, true); currentY += 25;
-  drawRow(currentY, 'Account Number', salary.accountNumber, true, true); currentY += 25;
+  drawRow(currentY, 'Employee Name', salary.name, true, true); currentY += rowHeight;
+  drawRow(currentY, 'Employee ID', salary.empId, true, true); currentY += rowHeight;
+  drawRow(currentY, 'Designation', salary.designation, true, true); currentY += rowHeight;
+  drawRow(currentY, 'PAN', salary.pan, true, true); currentY += rowHeight;
+  drawRow(currentY, 'UAN', salary.uan, true, true); currentY += rowHeight;
+  drawRow(currentY, 'Bank Name', salary.bankName, true, true); currentY += rowHeight;
+  drawRow(currentY, 'Account Number', salary.accountNumber, true, true); currentY += rowHeight;
 
-  doc.y = currentY + 20;
+  doc.y = currentY + 30;
   
   doc.font(titleFont).fontSize(12).text('Salary Details', margin, doc.y);
   doc.moveDown(0.5);
@@ -300,59 +302,66 @@ function generateProfessionalPDF(doc, salary) {
   currentY = doc.y;
   
   const drawSalaryRow = (y, col1, col2, col3, col4, isHeader = false) => {
-    const colWidths = [150, 100, 150, 100];
-    const xOffsets = [margin, margin + 150, margin + 250, margin + 400];
+    const totalW = doc.page.width - 2 * margin; 
+    const w1 = 150;
+    const w2 = (totalW - 300) / 2; 
+    const w3 = 150;
+    const w4 = totalW - w1 - w2 - w3;
+    const colWidths = [w1, w2, w3, w4];
+    const xOffsets = [margin, margin + w1, margin + w1 + w2, margin + w1 + w2 + w3];
+    const rowHeight = 32;
     
     // Draw borders
     for (let i = 0; i < 4; i++) {
       if (isHeader) {
-        doc.rect(xOffsets[i], y, colWidths[i], 25).fill('#e2e2e2').stroke();
+        doc.rect(xOffsets[i], y, colWidths[i], rowHeight).fill('#e2e2e2').stroke();
       } else {
-        doc.rect(xOffsets[i], y, colWidths[i], 25).stroke();
+        doc.rect(xOffsets[i], y, colWidths[i], rowHeight).stroke();
         // shaded cells for totals or empty
         if (col1 === 'Total Earnings (A)' || col3 === 'Total Deductions (B)') {
-          doc.rect(xOffsets[i], y, colWidths[i], 25).fill('#e2e2e2').stroke();
+          doc.rect(xOffsets[i], y, colWidths[i], rowHeight).fill('#e2e2e2').stroke();
         }
       }
     }
     
-    doc.fillColor('#000000').font(isHeader ? titleFont : bodyFont).fontSize(10);
+    doc.fillColor('#000000').font(isHeader ? titleFont : bodyFont).fontSize(11);
     if (!isHeader && (col1 === 'Total Earnings (A)' || col3 === 'Total Deductions (B)')) {
        doc.font(titleFont);
     }
 
-    doc.text(col1, xOffsets[0] + 5, y + 8, { width: colWidths[0] - 10 });
-    doc.text(col2, xOffsets[1] + 5, y + 8, { width: colWidths[1] - 10 });
-    doc.text(col3, xOffsets[2] + 5, y + 8, { width: colWidths[2] - 10 });
-    doc.text(col4, xOffsets[3] + 5, y + 8, { width: colWidths[3] - 10 });
+    doc.text(col1, xOffsets[0] + 8, y + 10, { width: colWidths[0] - 16 });
+    doc.text(col2, xOffsets[1] + 8, y + 10, { width: colWidths[1] - 16, align: 'right' });
+    doc.text(col3, xOffsets[2] + 8, y + 10, { width: colWidths[2] - 16 });
+    doc.text(col4, xOffsets[3] + 8, y + 10, { width: colWidths[3] - 16, align: 'right' });
   };
 
-  drawSalaryRow(currentY, 'Earnings', `₹${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Deductions', 'Amount (₹)', true); currentY += 25;
-  drawSalaryRow(currentY, 'Basic Salary', `₹${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Provident Fund (PF)', `₹${Number(salary.pf || 0).toFixed(2)}`); currentY += 25;
-  drawSalaryRow(currentY, 'HRA', `₹${Number(salary.hra || 0).toFixed(2)}`, 'ESI', `₹${Number(salary.esi || 0).toFixed(2)}`); currentY += 25;
-  drawSalaryRow(currentY, 'Special Allowance', `₹${Number(salary.specialAllowance || 0).toFixed(2)}`, 'Professional Tax', `₹${Number(salary.professionalTax || 0).toFixed(2)}`); currentY += 25;
-  drawSalaryRow(currentY, 'Incentives', `₹${Number(salary.incentives || 0).toFixed(2)}`, 'TDS', `₹${Number(salary.tds || 0).toFixed(2)}`); currentY += 25;
-  drawSalaryRow(currentY, 'Other Allowances', `₹${Number(salary.otherAllowances || 0).toFixed(2)}`, 'Other Deductions', `₹${Number(salary.otherDeductions || 0).toFixed(2)}`); currentY += 25;
+  drawSalaryRow(currentY, 'Earnings', `₹${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Deductions', 'Amount (₹)', true); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Basic Salary', `₹${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Provident Fund (PF)', `₹${Number(salary.pf || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'HRA', `₹${Number(salary.hra || 0).toFixed(2)}`, 'ESI', `₹${Number(salary.esi || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Special Allowance', `₹${Number(salary.specialAllowance || 0).toFixed(2)}`, 'Professional Tax', `₹${Number(salary.professionalTax || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Incentives', `₹${Number(salary.incentives || 0).toFixed(2)}`, 'TDS', `₹${Number(salary.tds || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Other Allowances', `₹${Number(salary.otherAllowances || 0).toFixed(2)}`, 'Other Deductions', `₹${Number(salary.otherDeductions || 0).toFixed(2)}`); currentY += rowHeight;
   
   const totalEarnings = (salary.basicSalary || salary.baseSalary || 0) + (salary.hra || 0) + (salary.specialAllowance || 0) + (salary.incentives || 0) + (salary.otherAllowances || 0) + (salary.bonus || 0);
   const totalDeductions = (salary.pf || 0) + (salary.esi || 0) + (salary.professionalTax || 0) + (salary.tds || 0) + (salary.otherDeductions || 0);
   const netPay = totalEarnings - totalDeductions;
 
-  drawSalaryRow(currentY, 'Total Earnings (A)', `₹${Number(totalEarnings).toFixed(2)}`, 'Total Deductions (B)', `₹${Number(totalDeductions).toFixed(2)}`); currentY += 25;
+  drawSalaryRow(currentY, 'Total Earnings (A)', `₹${Number(totalEarnings).toFixed(2)}`, 'Total Deductions (B)', `₹${Number(totalDeductions).toFixed(2)}`); currentY += rowHeight;
 
   // Net Pay Row
-  doc.rect(margin, currentY, 250, 25).stroke();
-  doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, 25).stroke();
-  doc.font(titleFont).text('Net Salary Payable (A - B)', margin + 5, currentY + 8);
-  doc.font(titleFont).text(`₹${Number(netPay).toFixed(2)}`, margin + 255, currentY + 8);
-  currentY += 25;
+  doc.rect(margin, currentY, 250, rowHeight).stroke();
+  doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, rowHeight).stroke();
+  doc.font(titleFont).fontSize(12).text('Net Salary Payable (A - B)', margin + 8, currentY + 10);
+  doc.font(titleFont).fontSize(12).text(`₹${Number(netPay).toFixed(2)}`, margin + 258, currentY + 10, { align: 'right', width: doc.page.width - 2 * margin - 274 });
+  currentY += rowHeight;
 
   // Words Row
-  doc.rect(margin, currentY, 250, 25).stroke();
-  doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, 25).stroke();
-  doc.font(bodyFont).text('Net Pay (In Words)', margin + 5, currentY + 8);
-  doc.font(titleFont).text(numToWords(netPay), margin + 255, currentY + 8);
-  currentY += 45;
+  const wordsRowHeight = 40;
+  doc.rect(margin, currentY, 250, wordsRowHeight).stroke();
+  doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, wordsRowHeight).stroke();
+  doc.font(bodyFont).fontSize(11).text('Net Pay (In Words)', margin + 8, currentY + 10);
+  doc.font(titleFont).fontSize(11).text(numToWords(netPay), margin + 258, currentY + 10, { width: doc.page.width - 2 * margin - 274 });
+  currentY += wordsRowHeight + 50;
 
   doc.font(bodyFont).fontSize(10).text('Authorized Signatory For Geonixa Pvt. Ltd.', margin, currentY);
   currentY += 20;
