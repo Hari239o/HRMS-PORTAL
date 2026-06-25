@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
-import { IndianRupee, Download, Mail, Plus, User, Trash2 } from 'lucide-react';
+import { IndianRupee, Download, Mail, Plus, User, Trash2, Edit2 } from 'lucide-react';
 
 export default function Salary() {
   const { user } = useAuth();
@@ -11,7 +11,8 @@ export default function Salary() {
   const [employees, setEmployees] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isReleasing, setIsReleasing] = useState(null);
-  const [formData, setFormData] = useState({
+  const [editSalaryId, setEditSalaryId] = useState(null);
+  const defaultFormData = {
     employeeId: '',
     month: new Date().toISOString().slice(0,7),
     empId: '',
@@ -25,13 +26,15 @@ export default function Salary() {
     specialAllowance: '',
     incentives: '',
     otherAllowances: '',
-    bonus: 0,
+    bonus: '',
     pf: '',
     esi: '',
     professionalTax: '',
     tds: '',
     otherDeductions: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(defaultFormData);
 
   useEffect(() => {
     if (!user) return;
@@ -84,12 +87,19 @@ export default function Salary() {
       if (!payload.employeeId || !payload.month || payload.basicSalary <= 0) {
         return toast.error('Please select employee, month and a valid basic salary');
       }
-      await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary`, payload);
-      toast.success("Salary recorded successfully");
-      setShowModal(false);
+
+      if (editSalaryId) {
+        await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary/${editSalaryId}`, payload);
+        toast.success("Salary updated successfully");
+      } else {
+        await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary`, payload);
+        toast.success("Salary recorded successfully");
+      }
+      
+      closeModal();
       fetchSalaries();
     } catch (err) {
-      toast.error(err.response?.data?.error || "Failed to record salary");
+      toast.error(err.response?.data?.error || "Failed to save salary");
     }
   };
 
@@ -134,12 +144,49 @@ export default function Salary() {
     }
   };
 
+  const openModalForNew = () => {
+    setEditSalaryId(null);
+    setFormData(defaultFormData);
+    setShowModal(true);
+  };
+
+  const openModalForEdit = (salary) => {
+    setEditSalaryId(salary.id);
+    setFormData({
+      employeeId: salary.employeeId || '',
+      month: salary.month || new Date().toISOString().slice(0,7),
+      empId: salary.empId || '',
+      designation: salary.designation || '',
+      pan: salary.pan || '',
+      uan: salary.uan || '',
+      bankName: salary.bankName || '',
+      accountNumber: salary.accountNumber || '',
+      basicSalary: salary.basicSalary || '',
+      hra: salary.hra || '',
+      specialAllowance: salary.specialAllowance || '',
+      incentives: salary.incentives || '',
+      otherAllowances: salary.otherAllowances || '',
+      bonus: salary.bonus || '',
+      pf: salary.pf || '',
+      esi: salary.esi || '',
+      professionalTax: salary.professionalTax || '',
+      tds: salary.tds || '',
+      otherDeductions: salary.otherDeductions || ''
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEditSalaryId(null);
+  };
+
   return (
     <div className="space-y-6 fade-in">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-slate-800">Payroll Management</h1>
         {user.role === 'admin' && (
-          <button onClick={() => setShowModal(true)} className="btn-primary">
+          <button onClick={openModalForNew} className="btn-primary">
             <Plus size={20} /> Record Salary
           </button>
         )}
@@ -181,6 +228,11 @@ export default function Salary() {
                     <Download size={18} />
                   </button>
                   {user.role === 'admin' && s.status !== 'Released' && (
+                    <button onClick={() => openModalForEdit(s)} className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg" title="Edit Record">
+                      <Edit2 size={18} />
+                    </button>
+                  )}
+                  {user.role === 'admin' && s.status !== 'Released' && (
                     <button 
                       onClick={() => releasePayslip(s.id)} 
                       disabled={isReleasing === s.id}
@@ -210,7 +262,7 @@ export default function Salary() {
         <div className="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
           <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             {/* Background overlay */}
-            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" onClick={() => setShowModal(false)}></div>
+            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" aria-hidden="true" onClick={closeModal}></div>
             
             {/* This element is to trick the browser into centering the modal contents. */}
             <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
@@ -221,9 +273,11 @@ export default function Salary() {
                   <div className="bg-blue-50 p-2 rounded-lg">
                     <IndianRupee className="w-6 h-6 text-blue-600" />
                   </div>
-                  <h3 className="text-xl font-bold leading-6 text-slate-800" id="modal-title">Record Monthly Salary</h3>
+                  <h3 className="text-xl font-bold leading-6 text-slate-800" id="modal-title">
+                    {editSalaryId ? 'Edit Monthly Salary' : 'Record Monthly Salary'}
+                  </h3>
                 </div>
-                <button type="button" onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-colors">
+                <button type="button" onClick={closeModal} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
               </div>
@@ -398,7 +452,7 @@ export default function Salary() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={closeModal}
                   className="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-300 shadow-sm px-6 py-2.5 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors"
                 >
                   Cancel

@@ -61,6 +61,51 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
+router.put('/:salaryId', authenticate, authorize(['admin']), async (req, res) => {
+  const { salaryId } = req.params;
+  const { employeeId, month, basicSalary, hra, specialAllowance, incentives, otherAllowances, pf, esi, professionalTax, tds, otherDeductions, bonus, empId, designation, pan, uan, bankName, accountNumber } = req.body;
+  try {
+    const totalEarnings = (parseFloat(basicSalary) || 0) + (parseFloat(hra) || 0) + (parseFloat(specialAllowance) || 0) + (parseFloat(incentives) || 0) + (parseFloat(otherAllowances) || 0) + (parseFloat(bonus) || 0);
+    const totalDeds = (parseFloat(pf) || 0) + (parseFloat(esi) || 0) + (parseFloat(professionalTax) || 0) + (parseFloat(tds) || 0) + (parseFloat(otherDeductions) || 0);
+    const netSalary = totalEarnings - totalDeds;
+
+    const salaryDocRef = db.collection('salaries').doc(salaryId);
+    const salaryDoc = await salaryDocRef.get();
+    
+    if (!salaryDoc.exists) return res.status(404).json({ error: 'Salary record not found' });
+    if (salaryDoc.data().status === 'Released') return res.status(400).json({ error: 'Cannot edit a released payslip' });
+
+    await salaryDocRef.update({
+      employeeId,
+      month,
+      basicSalary: parseFloat(basicSalary) || 0,
+      hra: parseFloat(hra) || 0,
+      specialAllowance: parseFloat(specialAllowance) || 0,
+      incentives: parseFloat(incentives) || 0,
+      otherAllowances: parseFloat(otherAllowances) || 0,
+      bonus: parseFloat(bonus) || 0,
+      pf: parseFloat(pf) || 0,
+      esi: parseFloat(esi) || 0,
+      professionalTax: parseFloat(professionalTax) || 0,
+      tds: parseFloat(tds) || 0,
+      otherDeductions: parseFloat(otherDeductions) || 0,
+      baseSalary: parseFloat(basicSalary) || 0, 
+      deductions: totalDeds,
+      netSalary,
+      empId: empId || '',
+      designation: designation || '',
+      pan: pan || '',
+      uan: uan || '',
+      bankName: bankName || '',
+      accountNumber: accountNumber || '',
+      updatedAt: new Date().toISOString()
+    });
+    res.json({ message: 'Salary updated successfully', netSalary });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 router.get('/', authenticate, async (req, res) => {
   const { role, id } = req.user;
   try {
