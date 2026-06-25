@@ -186,7 +186,7 @@ const Attendance = () => {
                 <ArrowUpRight size={40} strokeWidth={2.5} />
               </div>
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-black text-slate-800 mb-1">Morning Arrival</h3>
+                <h3 className="text-2xl font-black text-slate-800 mb-1">Check In</h3>
                 <p className="text-sm font-medium text-slate-500 flex items-center justify-center gap-2">
                   <MapPin size={14} /> GPS Required
                 </p>
@@ -220,7 +220,7 @@ const Attendance = () => {
                 <ArrowDownLeft size={40} strokeWidth={2.5} />
               </div>
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-black text-slate-800 mb-1">Evening Departure</h3>
+                <h3 className="text-2xl font-black text-slate-800 mb-1">Check Out</h3>
                 <p className="text-sm font-medium text-slate-500 flex items-center justify-center gap-2">
                   <Camera size={14} /> GPS Required
                 </p>
