@@ -186,18 +186,19 @@ export default function Salary() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setShowModal(false)}></div>
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setShowModal(false)}></div>
           
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col animate-in fade-in zoom-in duration-200 overflow-hidden">
-            <div className="p-5 sm:p-6 border-b border-slate-100 shrink-0 bg-white flex justify-between items-center">
-              <h2 className="text-xl font-bold text-slate-800">Record Monthly Salary</h2>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-              </button>
-            </div>
-            
-            <div className="p-5 sm:p-6 overflow-y-auto flex-1 min-h-0 bg-slate-50/30">
+          <div className="flex min-h-screen items-start justify-center pt-12 pb-12 px-4 sm:px-6">
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl flex flex-col animate-in fade-in zoom-in duration-200">
+              <div className="p-5 sm:p-6 border-b border-slate-100 bg-white flex justify-between items-center rounded-t-2xl">
+                <h2 className="text-xl font-bold text-slate-800">Record Monthly Salary</h2>
+                <button type="button" onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-colors">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+              </div>
+              
+              <div className="p-5 sm:p-6 bg-slate-50/30">
               <form id="salaryForm" onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
