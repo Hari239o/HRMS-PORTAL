@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 });
 
 router.post('/', authenticate, authorize(['admin']), async (req, res) => {
-  const { employeeId, month, basicSalary, hra, specialAllowance, incentives, otherAllowances, pf, esi, professionalTax, tds, otherDeductions, bonus } = req.body;
+  const { employeeId, month, basicSalary, hra, specialAllowance, incentives, otherAllowances, pf, esi, professionalTax, tds, otherDeductions, bonus, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
     const totalEarnings = (parseFloat(basicSalary) || 0) + (parseFloat(hra) || 0) + (parseFloat(specialAllowance) || 0) + (parseFloat(incentives) || 0) + (parseFloat(otherAllowances) || 0) + (parseFloat(bonus) || 0);
     const totalDeds = (parseFloat(pf) || 0) + (parseFloat(esi) || 0) + (parseFloat(professionalTax) || 0) + (parseFloat(tds) || 0) + (parseFloat(otherDeductions) || 0);
@@ -47,7 +47,13 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
       netSalary,
       status: 'Pending',
       createdAt: new Date().toISOString(),
-      releasedAt: null
+      releasedAt: null,
+      empId: empId || '',
+      designation: designation || '',
+      pan: pan || '',
+      uan: uan || '',
+      bankName: bankName || '',
+      accountNumber: accountNumber || ''
     });
     res.status(201).json({ id, employeeId, month, netSalary, status: 'Pending' });
   } catch (error) {
@@ -255,7 +261,12 @@ function generateProfessionalPDF(doc, salary) {
   const paddedMonth = monthLabel(salary.month);
 
   // Header Left (Logo)
-  doc.fillColor('#e84b25').font(titleFont).fontSize(28).text('GEONIXA', margin, margin);
+  const logoPath = path.join(__dirname, '../../../public/company-logo.jpeg');
+  if (fs.existsSync(logoPath)) {
+    doc.image(logoPath, margin, margin - 15, { height: 40 });
+  } else {
+    doc.fillColor('#e84b25').font(titleFont).fontSize(28).text('GEONIXA', margin, margin);
+  }
   
   // Header Right (Address)
   doc.font(bodyFont).fontSize(9).fillColor('#333333').text('247, Trendz aspire, Madhapur, Hyderabad,500033', margin, margin + 10, { align: 'right' });
@@ -453,6 +464,8 @@ router.patch('/release/:salaryId', authenticate, authorize(['admin']), async (re
     if (!salaryDoc.exists) return res.status(404).json({ error: 'Salary record not found' });
 
     const salary = salaryDoc.data();
+    if (salary.status === 'Released') return res.status(400).json({ error: 'Payslip already released' });
+    
     await populateSalaryDetails(salary);
 
     const subject = `[CONFIDENTIAL] Your Geonixa Payslip for ${salary.month} is Released`;

@@ -10,6 +10,7 @@ export default function Salary() {
   const [salaries, setSalaries] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [isReleasing, setIsReleasing] = useState(null);
   const [formData, setFormData] = useState({
     employeeId: '',
     month: new Date().toISOString().slice(0,7),
@@ -101,11 +102,14 @@ export default function Salary() {
 
   const releasePayslip = async (salaryId) => {
     try {
+      setIsReleasing(salaryId);
       await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary/release/${salaryId}`);
       toast.success('Payslip released and employee notified');
       fetchSalaries();
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to release payslip');
+    } finally {
+      setIsReleasing(null);
     }
   };
 
@@ -177,8 +181,12 @@ export default function Salary() {
                     <Download size={18} />
                   </button>
                   {user.role === 'admin' && s.status !== 'Released' && (
-                    <button onClick={() => releasePayslip(s.id)} className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg" title="Release Payslip">
-                      <span className="text-sm font-semibold">Release</span>
+                    <button 
+                      onClick={() => releasePayslip(s.id)} 
+                      disabled={isReleasing === s.id}
+                      className={`p-2 rounded-lg title="Release Payslip" ${isReleasing === s.id ? 'text-slate-400 cursor-not-allowed' : 'text-amber-600 hover:bg-amber-50'}`}
+                    >
+                      <span className="text-sm font-semibold">{isReleasing === s.id ? 'Releasing...' : 'Release'}</span>
                     </button>
                   )}
                   {user.role === 'admin' && (
