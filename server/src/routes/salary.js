@@ -147,7 +147,8 @@ async function enrichSalary(salary) {
 
 function buildPayslipFile(salary) {
   return new Promise((resolve, reject) => {
-    const tempDir = path.join(__dirname, '../../temp');
+    const os = require('os');
+    const tempDir = path.join(os.tmpdir(), 'geonixa-temp');
     fs.mkdirSync(tempDir, { recursive: true });
     const filePath = path.join(tempDir, `payslip-${salary.id}.pdf`);
     const doc = new PDFDocument({ margin: 50 });
