@@ -12,6 +12,12 @@ export default function Salary() {
   const [formData, setFormData] = useState({
     employeeId: '',
     month: new Date().toISOString().slice(0,7),
+    empId: '',
+    designation: '',
+    pan: '',
+    uan: '',
+    bankName: '',
+    accountNumber: '',
     basicSalary: '',
     hra: '',
     specialAllowance: '',
@@ -65,7 +71,13 @@ export default function Salary() {
         esi: Number(formData.esi) || 0,
         professionalTax: Number(formData.professionalTax) || 0,
         tds: Number(formData.tds) || 0,
-        otherDeductions: Number(formData.otherDeductions) || 0
+        otherDeductions: Number(formData.otherDeductions) || 0,
+        empId: formData.empId || undefined,
+        designation: formData.designation || undefined,
+        pan: formData.pan || undefined,
+        uan: formData.uan || undefined,
+        bankName: formData.bankName || undefined,
+        accountNumber: formData.accountNumber || undefined
       };
       if (!payload.employeeId || !payload.month || payload.basicSalary <= 0) {
         return toast.error('Please select employee, month and a valid basic salary');
@@ -206,7 +218,20 @@ export default function Salary() {
                       className="input-field w-full bg-white py-1.5 text-sm" 
                       required
                       value={formData.employeeId}
-                      onChange={(e) => setFormData({...formData, employeeId: e.target.value})}
+                      onChange={(e) => {
+                        const id = e.target.value;
+                        const emp = employees.find(x => x.id === id);
+                        setFormData({
+                          ...formData, 
+                          employeeId: id,
+                          empId: emp?.empId || '',
+                          designation: emp?.designation || '',
+                          pan: emp?.pan || '',
+                          uan: emp?.uan || '',
+                          bankName: emp?.bankName || '',
+                          accountNumber: emp?.accountNumber || ''
+                        });
+                      }}
                     >
                       <option value="">Select Employee</option>
                       {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.name} ({emp.department})</option>)}
@@ -231,6 +256,33 @@ export default function Salary() {
                         </svg>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-2 border border-slate-100 rounded-lg p-2 bg-white">
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase">Employee ID</label>
+                    <input type="text" className="input-field py-1 px-2 text-xs w-full bg-slate-50 focus:bg-white" value={formData.empId} onChange={(e) => setFormData({...formData, empId: e.target.value})} placeholder="Optional" />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase">Designation</label>
+                    <input type="text" className="input-field py-1 px-2 text-xs w-full bg-slate-50 focus:bg-white" value={formData.designation} onChange={(e) => setFormData({...formData, designation: e.target.value})} placeholder="Optional" />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase">PAN</label>
+                    <input type="text" className="input-field py-1 px-2 text-xs w-full bg-slate-50 focus:bg-white" value={formData.pan} onChange={(e) => setFormData({...formData, pan: e.target.value})} placeholder="Optional" />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase">UAN</label>
+                    <input type="text" className="input-field py-1 px-2 text-xs w-full bg-slate-50 focus:bg-white" value={formData.uan} onChange={(e) => setFormData({...formData, uan: e.target.value})} placeholder="Optional" />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase">Bank Name</label>
+                    <input type="text" className="input-field py-1 px-2 text-xs w-full bg-slate-50 focus:bg-white" value={formData.bankName} onChange={(e) => setFormData({...formData, bankName: e.target.value})} placeholder="Optional" />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-500 uppercase">Account No</label>
+                    <input type="text" className="input-field py-1 px-2 text-xs w-full bg-slate-50 focus:bg-white" value={formData.accountNumber} onChange={(e) => setFormData({...formData, accountNumber: e.target.value})} placeholder="Optional" />
                   </div>
                 </div>
 

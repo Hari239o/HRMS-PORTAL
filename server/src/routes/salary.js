@@ -120,12 +120,12 @@ async function enrichSalary(salary) {
     salary.name = emp.name;
     salary.department = emp.department;
     salary.employeeRole = emp.role === 'admin' ? 'Administrator' : 'Employee';
-    salary.designation = emp.designation || (emp.role === 'admin' ? 'HR Administrator' : 'Individual Contributor');
-    salary.empId = emp.empId || 'Company will provide while release';
-    salary.pan = emp.pan || 'N/A';
-    salary.uan = emp.uan || 'N/A';
-    salary.bankName = emp.bankName || 'N/A';
-    salary.accountNumber = emp.accountNumber || 'N/A';
+    salary.designation = salary.designation || emp.designation || (emp.role === 'admin' ? 'HR Administrator' : 'Individual Contributor');
+    salary.empId = salary.empId || emp.empId || 'N/A';
+    salary.pan = salary.pan || emp.pan || 'N/A';
+    salary.uan = salary.uan || emp.uan || 'N/A';
+    salary.bankName = salary.bankName || emp.bankName || 'N/A';
+    salary.accountNumber = salary.accountNumber || emp.accountNumber || 'N/A';
     salary.joinDate = emp.createdAt || emp.joinDate || null;
     salary.email = emp.email;
     salary.functionalArea = emp.department || 'Operations';
@@ -133,12 +133,12 @@ async function enrichSalary(salary) {
     salary.name = 'Unknown';
     salary.department = 'Unknown';
     salary.employeeRole = 'Employee';
-    salary.designation = 'Individual Contributor';
-    salary.empId = 'N/A';
-    salary.pan = 'N/A';
-    salary.uan = 'N/A';
-    salary.bankName = 'N/A';
-    salary.accountNumber = 'N/A';
+    salary.designation = salary.designation || 'Individual Contributor';
+    salary.empId = salary.empId || 'N/A';
+    salary.pan = salary.pan || 'N/A';
+    salary.uan = salary.uan || 'N/A';
+    salary.bankName = salary.bankName || 'N/A';
+    salary.accountNumber = salary.accountNumber || 'N/A';
     salary.joinDate = null;
     salary.email = '';
     salary.functionalArea = 'Operations';
@@ -272,7 +272,7 @@ function generateProfessionalPDF(doc, salary) {
   doc.moveDown(0.5);
 
   const drawRow = (y, leftText, rightText, isBoldLeft = false, isBoldRight = false) => {
-    const rowHeight = 32;
+    const rowHeight = 24;
     doc.rect(margin, y, 200, rowHeight).stroke();
     doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, rowHeight).stroke();
     
@@ -280,12 +280,12 @@ function generateProfessionalPDF(doc, salary) {
     if (isBoldLeft) doc.rect(margin, y, 200, rowHeight).fill('#e2e2e2').stroke();
     if (isBoldRight) doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, rowHeight).fill('#e2e2e2').stroke();
 
-    doc.fillColor('#000000').font(isBoldLeft ? titleFont : bodyFont).fontSize(11).text(leftText, margin + 8, y + 10, { width: 184 });
-    doc.fillColor('#000000').font(isBoldRight ? titleFont : bodyFont).fontSize(11).text(rightText, margin + 208, y + 10, { width: doc.page.width - 2 * margin - 216 });
+    doc.fillColor('#000000').font(isBoldLeft ? titleFont : bodyFont).fontSize(10).text(leftText, margin + 8, y + 7, { width: 184 });
+    doc.fillColor('#000000').font(isBoldRight ? titleFont : bodyFont).fontSize(10).text(rightText, margin + 208, y + 7, { width: doc.page.width - 2 * margin - 216 });
   };
 
   let currentY = doc.y;
-  const rowHeight = 32;
+  const rowHeight = 24;
   
   drawRow(currentY, 'Employee Name', salary.name, true, true); currentY += rowHeight;
   drawRow(currentY, 'Employee ID', salary.empId, true, true); currentY += rowHeight;
@@ -310,7 +310,7 @@ function generateProfessionalPDF(doc, salary) {
     const w4 = totalW - w1 - w2 - w3;
     const colWidths = [w1, w2, w3, w4];
     const xOffsets = [margin, margin + w1, margin + w1 + w2, margin + w1 + w2 + w3];
-    const rowHeight = 32;
+    const rowHeight = 24;
     
     // Draw borders
     for (let i = 0; i < 4; i++) {
@@ -325,15 +325,15 @@ function generateProfessionalPDF(doc, salary) {
       }
     }
     
-    doc.fillColor('#000000').font(isHeader ? titleFont : bodyFont).fontSize(11);
+    doc.fillColor('#000000').font(isHeader ? titleFont : bodyFont).fontSize(10);
     if (!isHeader && (col1 === 'Total Earnings (A)' || col3 === 'Total Deductions (B)')) {
        doc.font(titleFont);
     }
 
-    doc.text(col1, xOffsets[0] + 8, y + 10, { width: colWidths[0] - 16 });
-    doc.text(col2, xOffsets[1] + 8, y + 10, { width: colWidths[1] - 16, align: 'right' });
-    doc.text(col3, xOffsets[2] + 8, y + 10, { width: colWidths[2] - 16 });
-    doc.text(col4, xOffsets[3] + 8, y + 10, { width: colWidths[3] - 16, align: 'right' });
+    doc.text(col1, xOffsets[0] + 8, y + 7, { width: colWidths[0] - 16 });
+    doc.text(col2, xOffsets[1] + 8, y + 7, { width: colWidths[1] - 16, align: 'right' });
+    doc.text(col3, xOffsets[2] + 8, y + 7, { width: colWidths[2] - 16 });
+    doc.text(col4, xOffsets[3] + 8, y + 7, { width: colWidths[3] - 16, align: 'right' });
   };
 
   drawSalaryRow(currentY, 'Earnings', `₹${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Deductions', 'Amount (₹)', true); currentY += rowHeight;
