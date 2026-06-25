@@ -19,17 +19,30 @@ const transporter = nodemailer.createTransport({
 });
 
 router.post('/', authenticate, authorize(['admin']), async (req, res) => {
-  const { employeeId, month, baseSalary, deductions, bonus } = req.body;
+  const { employeeId, month, basicSalary, hra, specialAllowance, incentives, otherAllowances, pf, esi, professionalTax, tds, otherDeductions, bonus } = req.body;
   try {
-    const netSalary = parseFloat(baseSalary) + parseFloat(bonus) - parseFloat(deductions);
+    const totalEarnings = (parseFloat(basicSalary) || 0) + (parseFloat(hra) || 0) + (parseFloat(specialAllowance) || 0) + (parseFloat(incentives) || 0) + (parseFloat(otherAllowances) || 0) + (parseFloat(bonus) || 0);
+    const totalDeds = (parseFloat(pf) || 0) + (parseFloat(esi) || 0) + (parseFloat(professionalTax) || 0) + (parseFloat(tds) || 0) + (parseFloat(otherDeductions) || 0);
+    const netSalary = totalEarnings - totalDeds;
+
     const id = Date.now().toString();
     await db.collection('salaries').doc(id).set({
       id,
       employeeId,
       month,
-      baseSalary: parseFloat(baseSalary),
-      deductions: parseFloat(deductions),
-      bonus: parseFloat(bonus),
+      basicSalary: parseFloat(basicSalary) || 0,
+      hra: parseFloat(hra) || 0,
+      specialAllowance: parseFloat(specialAllowance) || 0,
+      incentives: parseFloat(incentives) || 0,
+      otherAllowances: parseFloat(otherAllowances) || 0,
+      bonus: parseFloat(bonus) || 0,
+      pf: parseFloat(pf) || 0,
+      esi: parseFloat(esi) || 0,
+      professionalTax: parseFloat(professionalTax) || 0,
+      tds: parseFloat(tds) || 0,
+      otherDeductions: parseFloat(otherDeductions) || 0,
+      baseSalary: parseFloat(basicSalary) || 0, // Fallback for old code
+      deductions: totalDeds, // Fallback for old code
       netSalary,
       status: 'Pending',
       createdAt: new Date().toISOString(),
@@ -106,7 +119,12 @@ async function enrichSalary(salary) {
     salary.name = emp.name;
     salary.department = emp.department;
     salary.employeeRole = emp.role === 'admin' ? 'Administrator' : 'Employee';
-    salary.designation = emp.role === 'admin' ? 'HR Administrator' : 'Individual Contributor';
+    salary.designation = emp.designation || (emp.role === 'admin' ? 'HR Administrator' : 'Individual Contributor');
+    salary.empId = emp.empId || 'Company will provide while release';
+    salary.pan = emp.pan || 'N/A';
+    salary.uan = emp.uan || 'N/A';
+    salary.bankName = emp.bankName || 'N/A';
+    salary.accountNumber = emp.accountNumber || 'N/A';
     salary.joinDate = emp.createdAt || emp.joinDate || null;
     salary.email = emp.email;
     salary.functionalArea = emp.department || 'Operations';
@@ -115,6 +133,11 @@ async function enrichSalary(salary) {
     salary.department = 'Unknown';
     salary.employeeRole = 'Employee';
     salary.designation = 'Individual Contributor';
+    salary.empId = 'N/A';
+    salary.pan = 'N/A';
+    salary.uan = 'N/A';
+    salary.bankName = 'N/A';
+    salary.accountNumber = 'N/A';
     salary.joinDate = null;
     salary.email = '';
     salary.functionalArea = 'Operations';
@@ -218,54 +241,122 @@ async function sendSalaryEmail(salary, subject, html) {
   });
 }
 
+function numToWords(amount) {
+  return "Rupees " + Math.floor(amount).toString() + " Only"; // Simplified fallback, could add full library if needed
+}
+
 function generateProfessionalPDF(doc, salary) {
   const titleFont = 'Helvetica-Bold';
   const bodyFont = 'Helvetica';
   const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+  const margin = 50;
 
   const paddedMonth = monthLabel(salary.month);
 
-  // Header
-  doc.fillColor('#111827').font(titleFont).fontSize(28).text('GEONIXA', { align: 'center', characterSpacing: 1.5 });
-  doc.font(bodyFont).fontSize(10).fillColor('#475569').text('Payroll & Attendance Services', { align: 'center' });
-  doc.moveDown(0.25);
-  doc.font(bodyFont).fontSize(9).fillColor('#475569').text('Level 3, Geonixa Tower, Business District, Bengaluru, Karnataka 560064', { align: 'center' });
+  // Header Left (Logo)
+  doc.fillColor('#e84b25').font(titleFont).fontSize(28).text('GEONIXA', margin, margin);
+  
+  // Header Right (Address)
+  doc.font(bodyFont).fontSize(9).fillColor('#333333').text('247, Trendz aspire, Madhapur, Hyderabad,500033', margin, margin + 10, { align: 'right' });
+  doc.text('www.geonixa.com', margin, margin + 22, { align: 'right' });
+  
+  // Divider
+  doc.moveTo(margin, margin + 40).lineTo(doc.page.width - margin, margin + 40).lineWidth(1).stroke('#000000');
+  
+  // Title
+  doc.font(titleFont).fontSize(14).fillColor('#000000').text(`Salary Slip – ${paddedMonth}`, margin, margin + 50, { align: 'center' });
+  
+  doc.moveDown(1.5);
+  doc.font(titleFont).fontSize(12).text('Employee Details', margin, doc.y);
   doc.moveDown(0.5);
 
-  doc.font(titleFont).fontSize(16).fillColor('#0f172a').text('Salary Slip', 50, doc.y);
-  doc.font(bodyFont).fontSize(9).fillColor('#475569').text(`For the month of ${paddedMonth}`, 50, doc.y + 18);
-  doc.font(bodyFont).fontSize(8).fillColor('#94a3b8').text('This is a computer generated payslip and is not editable.', 50, doc.y + 34);
-  doc.moveDown(2);
+  const drawRow = (y, leftText, rightText, isBoldLeft = false, isBoldRight = false) => {
+    doc.rect(margin, y, 200, 25).stroke();
+    doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, 25).stroke();
+    
+    // Header cells styling
+    if (isBoldLeft) doc.rect(margin, y, 200, 25).fill('#e2e2e2').stroke();
+    if (isBoldRight) doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, 25).fill('#e2e2e2').stroke();
 
-  // Employee info block
-  const infoTop = doc.y;
-  doc.roundedRect(50, infoTop - 6, pageWidth, 120, 12).fillOpacity(0.04).fillAndStroke('#eef2ff', '#c7d2fe').fillOpacity(1);
+    doc.fillColor('#000000').font(isBoldLeft ? titleFont : bodyFont).fontSize(10).text(leftText, margin + 5, y + 8, { width: 190 });
+    doc.fillColor('#000000').font(isBoldRight ? titleFont : bodyFont).fontSize(10).text(rightText, margin + 205, y + 8, { width: doc.page.width - 2 * margin - 210 });
+  };
 
-  drawKeyValue(doc, 'Employee Name', salary.name || 'N/A', 60, infoTop + 10);
-  drawKeyValue(doc, 'Designation', salary.designation || 'Individual Contributor', 60, infoTop + 34);
-  drawKeyValue(doc, 'Role', salary.employeeRole || 'Employee', 60, infoTop + 58);
-  drawKeyValue(doc, 'Date of Joining', formatDate(salary.joinDate), 60, infoTop + 82);
+  let currentY = doc.y;
+  
+  drawRow(currentY, 'Employee Name', salary.name, true, true); currentY += 25;
+  drawRow(currentY, 'Employee ID', salary.empId, true, true); currentY += 25;
+  drawRow(currentY, 'Designation', salary.designation, true, true); currentY += 25;
+  drawRow(currentY, 'PAN', salary.pan, true, true); currentY += 25;
+  drawRow(currentY, 'UAN', salary.uan, true, true); currentY += 25;
+  drawRow(currentY, 'Bank Name', salary.bankName, true, true); currentY += 25;
+  drawRow(currentY, 'Account Number', salary.accountNumber, true, true); currentY += 25;
 
-  doc.y = infoTop + 130;
-  doc.strokeColor('#cbd5e1').lineWidth(1).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
-  doc.moveDown(1);
+  doc.y = currentY + 20;
+  
+  doc.font(titleFont).fontSize(12).text('Salary Details', margin, doc.y);
+  doc.moveDown(0.5);
 
-  // Salary summary block
-  const summaryTop = doc.y;
-  doc.roundedRect(50, summaryTop - 6, pageWidth, 90, 12).stroke('#cbd5e1');
-  drawKeyValue(doc, 'Company', 'Geonixa', 60, summaryTop + 10);
-  drawKeyValue(doc, 'Company Address', 'Level 3, Geonixa Tower, Business District, Bengaluru, Karnataka 560064', 60, summaryTop + 34);
-  drawKeyValue(doc, 'No. of Working Days', `${salary.totalWorkingDays || 0}`, 60, summaryTop + 58);
-  drawKeyValue(doc, 'No. of Absent Days', `${salary.lopDays || 0}`, 320, summaryTop + 10);
-  drawKeyValue(doc, 'Salary', `₹${Number(salary.netSalary || 0).toFixed(2)}`, 320, summaryTop + 34);
+  currentY = doc.y;
+  
+  const drawSalaryRow = (y, col1, col2, col3, col4, isHeader = false) => {
+    const colWidths = [150, 100, 150, 100];
+    const xOffsets = [margin, margin + 150, margin + 250, margin + 400];
+    
+    // Draw borders
+    for (let i = 0; i < 4; i++) {
+      if (isHeader) {
+        doc.rect(xOffsets[i], y, colWidths[i], 25).fill('#e2e2e2').stroke();
+      } else {
+        doc.rect(xOffsets[i], y, colWidths[i], 25).stroke();
+        // shaded cells for totals or empty
+        if (col1 === 'Total Earnings (A)' || col3 === 'Total Deductions (B)') {
+          doc.rect(xOffsets[i], y, colWidths[i], 25).fill('#e2e2e2').stroke();
+        }
+      }
+    }
+    
+    doc.fillColor('#000000').font(isHeader ? titleFont : bodyFont).fontSize(10);
+    if (!isHeader && (col1 === 'Total Earnings (A)' || col3 === 'Total Deductions (B)')) {
+       doc.font(titleFont);
+    }
 
-  doc.y = summaryTop + 100;
-  doc.moveDown(1);
+    doc.text(col1, xOffsets[0] + 5, y + 8, { width: colWidths[0] - 10 });
+    doc.text(col2, xOffsets[1] + 5, y + 8, { width: colWidths[1] - 10 });
+    doc.text(col3, xOffsets[2] + 5, y + 8, { width: colWidths[2] - 10 });
+    doc.text(col4, xOffsets[3] + 5, y + 8, { width: colWidths[3] - 10 });
+  };
 
-  // Bottom note
-  doc.font(bodyFont).fontSize(8).fillColor('#64748b').text('Note: Salary figure shown above is the net payable amount after applicable deductions.', 50, doc.y, { width: pageWidth });
-  doc.moveDown(0.8);
-  doc.font(bodyFont).fontSize(8).fillColor('#475569').text('This payslip is generated by the Geonixa Payroll system and is intended for employee record only.', 50, doc.y, { width: pageWidth });
+  drawSalaryRow(currentY, 'Earnings', `₹${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Deductions', 'Amount (₹)', true); currentY += 25;
+  drawSalaryRow(currentY, 'Basic Salary', `₹${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Provident Fund (PF)', `₹${Number(salary.pf || 0).toFixed(2)}`); currentY += 25;
+  drawSalaryRow(currentY, 'HRA', `₹${Number(salary.hra || 0).toFixed(2)}`, 'ESI', `₹${Number(salary.esi || 0).toFixed(2)}`); currentY += 25;
+  drawSalaryRow(currentY, 'Special Allowance', `₹${Number(salary.specialAllowance || 0).toFixed(2)}`, 'Professional Tax', `₹${Number(salary.professionalTax || 0).toFixed(2)}`); currentY += 25;
+  drawSalaryRow(currentY, 'Incentives', `₹${Number(salary.incentives || 0).toFixed(2)}`, 'TDS', `₹${Number(salary.tds || 0).toFixed(2)}`); currentY += 25;
+  drawSalaryRow(currentY, 'Other Allowances', `₹${Number(salary.otherAllowances || 0).toFixed(2)}`, 'Other Deductions', `₹${Number(salary.otherDeductions || 0).toFixed(2)}`); currentY += 25;
+  
+  const totalEarnings = (salary.basicSalary || salary.baseSalary || 0) + (salary.hra || 0) + (salary.specialAllowance || 0) + (salary.incentives || 0) + (salary.otherAllowances || 0) + (salary.bonus || 0);
+  const totalDeductions = (salary.pf || 0) + (salary.esi || 0) + (salary.professionalTax || 0) + (salary.tds || 0) + (salary.otherDeductions || 0);
+  const netPay = totalEarnings - totalDeductions;
+
+  drawSalaryRow(currentY, 'Total Earnings (A)', `₹${Number(totalEarnings).toFixed(2)}`, 'Total Deductions (B)', `₹${Number(totalDeductions).toFixed(2)}`); currentY += 25;
+
+  // Net Pay Row
+  doc.rect(margin, currentY, 250, 25).stroke();
+  doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, 25).stroke();
+  doc.font(titleFont).text('Net Salary Payable (A - B)', margin + 5, currentY + 8);
+  doc.font(titleFont).text(`₹${Number(netPay).toFixed(2)}`, margin + 255, currentY + 8);
+  currentY += 25;
+
+  // Words Row
+  doc.rect(margin, currentY, 250, 25).stroke();
+  doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, 25).stroke();
+  doc.font(bodyFont).text('Net Pay (In Words)', margin + 5, currentY + 8);
+  doc.font(titleFont).text(numToWords(netPay), margin + 255, currentY + 8);
+  currentY += 45;
+
+  doc.font(bodyFont).fontSize(10).text('Authorized Signatory For Geonixa Pvt. Ltd.', margin, currentY);
+  currentY += 20;
+  doc.font('Helvetica-Oblique').fontSize(10).text('Note: This is a system-generated salary slip.', margin, currentY);
 }
 
 async function populateSalaryDetails(salary) {

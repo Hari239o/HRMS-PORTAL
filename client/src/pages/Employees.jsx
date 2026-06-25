@@ -23,7 +23,13 @@ const Employees = () => {
     weekOff: 'Sunday',
     manager: '',
     hrManager: '',
-    teamLeader: ''
+    teamLeader: '',
+    empId: '',
+    designation: '',
+    pan: '',
+    uan: '',
+    bankName: '',
+    accountNumber: ''
   });
 
   useEffect(() => {
@@ -90,7 +96,13 @@ const Employees = () => {
       weekOff: emp.weekOff || 'Sunday',
       manager: emp.manager || '',
       hrManager: emp.hrManager || '',
-      teamLeader: emp.teamLeader || ''
+      teamLeader: emp.teamLeader || '',
+      empId: emp.empId || '',
+      designation: emp.designation || '',
+      pan: emp.pan || '',
+      uan: emp.uan || '',
+      bankName: emp.bankName || '',
+      accountNumber: emp.accountNumber || ''
     });
     setShowModal(true);
   };
@@ -119,7 +131,7 @@ const Employees = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', email: '', password: '', role: 'employee', department: 'Sales', avatar: '', assets: '', weekOff: 'Sunday', manager: '', hrManager: '', teamLeader: '' });
+    setFormData({ name: '', email: '', password: '', role: 'employee', department: 'Sales', avatar: '', assets: '', weekOff: 'Sunday', manager: '', hrManager: '', teamLeader: '', empId: '', designation: '', pan: '', uan: '', bankName: '', accountNumber: '' });
     setEditingId(null);
   };
 
@@ -275,6 +287,16 @@ const Employees = () => {
                       }`}>
                         {emp.role.replace('_', ' ')}
                       </span>
+                      {emp.empId && (
+                        <span className="text-[10px] font-black text-slate-700 bg-slate-100 border border-slate-300 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                          ID: {emp.empId}
+                        </span>
+                      )}
+                      {emp.designation && (
+                        <span className="text-[10px] font-black text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md tracking-wider">
+                          {emp.designation}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -431,6 +453,35 @@ const Employees = () => {
                     />
                   </div>
                 )}
+
+                {/* Section: Identity & Financials */}
+                <div className="col-span-1 md:col-span-2 mt-4">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-4 pb-2 border-b border-blue-100">Identity & Financials</h4>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Employee ID</label>
+                  <input type="text" value={formData.empId} onChange={(e) => setFormData({...formData, empId: e.target.value})} placeholder="EMP001" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Designation</label>
+                  <input type="text" value={formData.designation} onChange={(e) => setFormData({...formData, designation: e.target.value})} placeholder="Software Engineer" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">PAN</label>
+                  <input type="text" value={formData.pan} onChange={(e) => setFormData({...formData, pan: e.target.value})} placeholder="ABCDE1234F" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">UAN</label>
+                  <input type="text" value={formData.uan} onChange={(e) => setFormData({...formData, uan: e.target.value})} placeholder="100000000000" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Bank Name</label>
+                  <input type="text" value={formData.bankName} onChange={(e) => setFormData({...formData, bankName: e.target.value})} placeholder="HDFC Bank" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Account Number</label>
+                  <input type="text" value={formData.accountNumber} onChange={(e) => setFormData({...formData, accountNumber: e.target.value})} placeholder="1234567890" className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium" />
+                </div>
 
                 {/* Section: Employment Details */}
                 <div className="col-span-1 md:col-span-2 mt-4">

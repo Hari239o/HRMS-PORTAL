@@ -12,9 +12,17 @@ export default function Salary() {
   const [formData, setFormData] = useState({
     employeeId: '',
     month: new Date().toISOString().slice(0,7),
-    baseSalary: '',
+    basicSalary: '',
+    hra: '',
+    specialAllowance: '',
+    incentives: '',
+    otherAllowances: '',
     bonus: 0,
-    deductions: 0
+    pf: '',
+    esi: '',
+    professionalTax: '',
+    tds: '',
+    otherDeductions: ''
   });
 
   useEffect(() => {
@@ -47,14 +55,22 @@ export default function Salary() {
       const payload = {
         employeeId: formData.employeeId,
         month: formData.month,
-        baseSalary: Number(formData.baseSalary) || 0,
+        basicSalary: Number(formData.basicSalary) || 0,
+        hra: Number(formData.hra) || 0,
+        specialAllowance: Number(formData.specialAllowance) || 0,
+        incentives: Number(formData.incentives) || 0,
+        otherAllowances: Number(formData.otherAllowances) || 0,
         bonus: Number(formData.bonus) || 0,
-        deductions: Number(formData.deductions) || 0
+        pf: Number(formData.pf) || 0,
+        esi: Number(formData.esi) || 0,
+        professionalTax: Number(formData.professionalTax) || 0,
+        tds: Number(formData.tds) || 0,
+        otherDeductions: Number(formData.otherDeductions) || 0
       };
-      if (!payload.employeeId || !payload.month || payload.baseSalary <= 0) {
-        return toast.error('Please select employee, month and a valid base salary');
+      if (!payload.employeeId || !payload.month || payload.basicSalary <= 0) {
+        return toast.error('Please select employee, month and a valid basic salary');
       }
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/salary`, payload);
+      await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary`, payload);
       toast.success("Salary recorded successfully");
       setShowModal(false);
       fetchSalaries();
@@ -208,45 +224,67 @@ export default function Salary() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Base Salary</label>
-                  <input 
-                    type="number" 
-                    className="input-field" 
-                    required
-                    placeholder="e.g. 50000"
-                    step="0.01"
-                    value={formData.baseSalary}
-                    onChange={(e) => setFormData({...formData, baseSalary: e.target.value})}
-                  />
+                  <h4 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-2">Earnings</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium mb-1">Basic Salary *</label>
+                      <input type="number" className="input-field py-2" required placeholder="50000" step="0.01" value={formData.basicSalary} onChange={(e) => setFormData({...formData, basicSalary: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">HRA</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.hra} onChange={(e) => setFormData({...formData, hra: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">Special Allowance</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.specialAllowance} onChange={(e) => setFormData({...formData, specialAllowance: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">Incentives</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.incentives} onChange={(e) => setFormData({...formData, incentives: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">Other Allowances</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.otherAllowances} onChange={(e) => setFormData({...formData, otherAllowances: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">Bonus</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.bonus} onChange={(e) => setFormData({...formData, bonus: e.target.value})} />
+                    </div>
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Bonus</label>
-                  <input 
-                    type="number" 
-                    className="input-field"
-                    step="0.01"
-                    value={formData.bonus}
-                    onChange={(e) => setFormData({...formData, bonus: e.target.value})}
-                  />
+                  <h4 className="text-xs font-black uppercase tracking-widest text-rose-600 mb-2">Deductions</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium mb-1">Provident Fund (PF)</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.pf} onChange={(e) => setFormData({...formData, pf: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">ESI</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.esi} onChange={(e) => setFormData({...formData, esi: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">Professional Tax</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.professionalTax} onChange={(e) => setFormData({...formData, professionalTax: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">TDS</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.tds} onChange={(e) => setFormData({...formData, tds: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1">Other Deductions</label>
+                      <input type="number" className="input-field py-2" step="0.01" value={formData.otherDeductions} onChange={(e) => setFormData({...formData, otherDeductions: e.target.value})} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Deductions</label>
-                <input 
-                  type="number" 
-                  className="input-field"
-                  step="0.01"
-                  value={formData.deductions}
-                  onChange={(e) => setFormData({...formData, deductions: e.target.value})}
-                />
               </div>
               <div className="flex gap-3 mt-6">
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
                 <button
                   type="submit"
                   className="flex-1 btn-primary"
-                  disabled={!formData.employeeId || !formData.month || !formData.baseSalary}
-                  title={!formData.employeeId || !formData.month || !formData.baseSalary ? 'Select employee, month and base salary' : 'Save Record'}
+                  disabled={!formData.employeeId || !formData.month || !formData.basicSalary}
+                  title={!formData.employeeId || !formData.month || !formData.basicSalary ? 'Select employee, month and basic salary' : 'Save Record'}
                 >
                   Save Record
                 </button>

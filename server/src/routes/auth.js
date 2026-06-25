@@ -204,14 +204,21 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password, deviceId } = req.body;
   try {
-    const snapshot = await db.collection('employees').where('email', '==', email).get();
-    if (snapshot.empty) return res.status(400).json({ error: 'Invalid email or password' });
+    const isEmail = email.includes('@');
+    let snapshot;
+    if (isEmail) {
+      snapshot = await db.collection('employees').where('email', '==', email).get();
+    } else {
+      snapshot = await db.collection('employees').where('empId', '==', email).get();
+    }
+    
+    if (snapshot.empty) return res.status(400).json({ error: 'Invalid credentials' });
 
     const doc = snapshot.docs[0];
     const employee = { id: doc.id, ...doc.data() };
 
     const isMatch = await bcrypt.compare(password, employee.password);
-    if (!isMatch) return res.status(400).json({ error: 'Invalid email or password' });
+    if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
     const enforceDeviceLock = requiresDeviceLock(employee.role);
 

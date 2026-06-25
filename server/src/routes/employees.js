@@ -27,7 +27,13 @@ router.get('/', authenticate, authorize(['admin']), async (req, res) => {
         documents: data.documents || {},
         manager: data.manager || '',
         hrManager: data.hrManager || '',
-        teamLeader: data.teamLeader || ''
+        teamLeader: data.teamLeader || '',
+        empId: data.empId || '',
+        designation: data.designation || '',
+        pan: data.pan || '',
+        uan: data.uan || '',
+        bankName: data.bankName || '',
+        accountNumber: data.accountNumber || ''
       };
     });
     res.json(employees);
@@ -73,7 +79,9 @@ router.get('/directory', authenticate, async (req, res) => {
         email: data.email,
         weekOff: data.weekOff,
         assets: data.assets,
-        documents: data.documents || {}
+        documents: data.documents || {},
+        empId: data.empId || '',
+        designation: data.designation || ''
       };
     });
     res.json(directory);
@@ -148,7 +156,7 @@ router.get('/me', authenticate, async (req, res) => {
 });
 
 router.post('/', authenticate, authorize(['admin']), async (req, res) => {
-  const { name, email, password, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader } = req.body;
+  const { name, email, password, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const id = Date.now().toString();
@@ -160,6 +168,12 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
       manager: manager || '',
       hrManager: hrManager || '',
       teamLeader: teamLeader || '',
+      empId: empId || '',
+      designation: designation || '',
+      pan: pan || '',
+      uan: uan || '',
+      bankName: bankName || '',
+      accountNumber: accountNumber || '',
       documents: {}
     });
 
@@ -296,7 +310,7 @@ router.post('/upload-document', authenticate, uploadDocument.single('file'), asy
 });
 
 router.put('/:id', authenticate, authorize(['admin']), async (req, res) => {
-  const { name, email, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader } = req.body;
+  const { name, email, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
     await db.collection('employees').doc(req.params.id).update({
       name, email, role, department, 
@@ -305,7 +319,13 @@ router.put('/:id', authenticate, authorize(['admin']), async (req, res) => {
       weekOff: weekOff || 'Sunday',
       manager: manager || '',
       hrManager: hrManager || '',
-      teamLeader: teamLeader || ''
+      teamLeader: teamLeader || '',
+      empId: empId || '',
+      designation: designation || '',
+      pan: pan || '',
+      uan: uan || '',
+      bankName: bankName || '',
+      accountNumber: accountNumber || ''
     });
     res.json({ message: 'Employee updated' });
   } catch (error) {

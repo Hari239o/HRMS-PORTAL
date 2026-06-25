@@ -134,14 +134,14 @@ const Login = () => {
           )}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Corporate Email</label>
+              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Employee ID / Email</label>
               <input 
-                type="email" 
+                type="text" 
                 required 
                 className="input-field py-4 text-lg"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
+                placeholder="e.g. EMP001 or name@company.com"
               />
             </div>
             <div>
