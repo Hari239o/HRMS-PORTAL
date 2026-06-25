@@ -5,6 +5,7 @@ const PDFDocument = require('pdfkit');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 let HummusRecipe = null;
 // hummus-recipe removed due to native module crashes on Vercel
 
@@ -147,10 +148,9 @@ async function enrichSalary(salary) {
 
 function buildPayslipFile(salary) {
   return new Promise((resolve, reject) => {
-    const os = require('os');
-    const tempDir = path.join(os.tmpdir(), 'geonixa-temp');
+    const tempDir = path.join(os.tmpdir(), 'payslips');
     fs.mkdirSync(tempDir, { recursive: true });
-    const filePath = path.join(tempDir, `payslip-${salary.id}.pdf`);
+    const filePath = path.join(tempDir, `payslip-${salary.id}-${Date.now()}.pdf`);
     const doc = new PDFDocument({ margin: 50 });
     const writeStream = fs.createWriteStream(filePath);
 
