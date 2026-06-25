@@ -321,6 +321,7 @@ export default function Salary() {
             </div>
           </div>
         </div>
+        </div>
       )}
     </div>
   );
