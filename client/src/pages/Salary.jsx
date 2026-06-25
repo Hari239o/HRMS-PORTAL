@@ -186,110 +186,138 @@ export default function Salary() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-start justify-center pt-10 pb-10 p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 animate-in fade-in zoom-in duration-200">
-            <h2 className="text-xl font-bold mb-4 border-b border-slate-100 pb-4">Record Monthly Salary</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Employee</label>
-                <select 
-                  className="input-field" 
-                  required
-                  value={formData.employeeId}
-                  onChange={(e) => setFormData({...formData, employeeId: e.target.value})}
-                >
-                  <option value="">Select Employee</option>
-                  {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.name} ({emp.department})</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Month</label>
-                <div className="relative">
-                  <input
-                    type="month"
-                    value={formData.month}
-                    onChange={(e) => setFormData({...formData, month: e.target.value})}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    aria-label="Select month"
-                  />
-                  <div className="input-field flex items-center justify-between">
-                    <span className="text-slate-600">
-                      {formData.month ? new Date(formData.month + '-01').toLocaleString('en-GB', { month: 'long', year: 'numeric' }) : 'Select month'}
-                    </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M6 2a1 1 0 011 1v1h6V3a1 1 0 112 0v1h1.5A1.5 1.5 0 0118 5.5v10A1.5 1.5 0 0116.5 17H3.5A1.5 1.5 0 012 15.5v-10A1.5 1.5 0 013.5 4H5V3a1 1 0 011-1zM3.5 6A.5.5 0 003 6.5V8h14V6.5a.5.5 0 00-.5-.5H15v1a1 1 0 11-2 0V6H7v1a1 1 0 11-2 0V6H3.5z" clipRule="evenodd" />
-                    </svg>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setShowModal(false)}></div>
+          
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col animate-in fade-in zoom-in duration-200 overflow-hidden">
+            <div className="p-5 sm:p-6 border-b border-slate-100 shrink-0 bg-white flex justify-between items-center">
+              <h2 className="text-xl font-bold text-slate-800">Record Monthly Salary</h2>
+              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+            </div>
+            
+            <div className="p-5 sm:p-6 overflow-y-auto flex-1 min-h-0 bg-slate-50/30">
+              <form id="salaryForm" onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5 text-slate-700">Employee *</label>
+                    <select 
+                      className="input-field w-full bg-white" 
+                      required
+                      value={formData.employeeId}
+                      onChange={(e) => setFormData({...formData, employeeId: e.target.value})}
+                    >
+                      <option value="">Select Employee</option>
+                      {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.name} ({emp.department})</option>)}
+                    </select>
                   </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-2">Earnings</h4>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Basic Salary *</label>
-                      <input type="number" className="input-field py-2" required placeholder="50000" step="0.01" value={formData.basicSalary} onChange={(e) => setFormData({...formData, basicSalary: e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">HRA</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.hra} onChange={(e) => setFormData({...formData, hra: e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Special Allowance</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.specialAllowance} onChange={(e) => setFormData({...formData, specialAllowance: e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Incentives</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.incentives} onChange={(e) => setFormData({...formData, incentives: e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Other Allowances</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.otherAllowances} onChange={(e) => setFormData({...formData, otherAllowances: e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Bonus</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.bonus} onChange={(e) => setFormData({...formData, bonus: e.target.value})} />
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5 text-slate-700">Month *</label>
+                    <div className="relative">
+                      <input
+                        type="month"
+                        value={formData.month}
+                        onChange={(e) => setFormData({...formData, month: e.target.value})}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        required
+                      />
+                      <div className="input-field w-full bg-white flex items-center justify-between pointer-events-none">
+                        <span className="text-slate-700">
+                          {formData.month ? new Date(formData.month + '-01').toLocaleString('en-GB', { month: 'long', year: 'numeric' }) : 'Select month'}
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M6 2a1 1 0 011 1v1h6V3a1 1 0 112 0v1h1.5A1.5 1.5 0 0118 5.5v10A1.5 1.5 0 0116.5 17H3.5A1.5 1.5 0 012 15.5v-10A1.5 1.5 0 013.5 4H5V3a1 1 0 011-1zM3.5 6A.5.5 0 003 6.5V8h14V6.5a.5.5 0 00-.5-.5H15v1a1 1 0 11-2 0V6H7v1a1 1 0 11-2 0V6H3.5z" clipRule="evenodd" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-widest text-rose-600 mb-2">Deductions</h4>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Provident Fund (PF)</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.pf} onChange={(e) => setFormData({...formData, pf: e.target.value})} />
+
+                <div className="w-full h-px bg-slate-200"></div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Earnings Column */}
+                  <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                    <h4 className="text-sm font-black uppercase tracking-widest text-blue-600 mb-5 flex items-center gap-2">
+                       Earnings
+                    </h4>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">Basic Salary *</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" required placeholder="50000" step="0.01" value={formData.basicSalary} onChange={(e) => setFormData({...formData, basicSalary: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">HRA</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.hra} onChange={(e) => setFormData({...formData, hra: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">Special Allowance</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.specialAllowance} onChange={(e) => setFormData({...formData, specialAllowance: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">Incentives</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.incentives} onChange={(e) => setFormData({...formData, incentives: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">Other Allowances</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.otherAllowances} onChange={(e) => setFormData({...formData, otherAllowances: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">Bonus</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.bonus} onChange={(e) => setFormData({...formData, bonus: e.target.value})} />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">ESI</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.esi} onChange={(e) => setFormData({...formData, esi: e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Professional Tax</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.professionalTax} onChange={(e) => setFormData({...formData, professionalTax: e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">TDS</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.tds} onChange={(e) => setFormData({...formData, tds: e.target.value})} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium mb-1">Other Deductions</label>
-                      <input type="number" className="input-field py-2" step="0.01" value={formData.otherDeductions} onChange={(e) => setFormData({...formData, otherDeductions: e.target.value})} />
+                  </div>
+                  
+                  {/* Deductions Column */}
+                  <div className="bg-white p-5 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+                    <h4 className="text-sm font-black uppercase tracking-widest text-rose-600 mb-5 flex items-center gap-2">
+                       Deductions
+                    </h4>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">Provident Fund (PF)</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.pf} onChange={(e) => setFormData({...formData, pf: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">ESI</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.esi} onChange={(e) => setFormData({...formData, esi: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">Professional Tax</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.professionalTax} onChange={(e) => setFormData({...formData, professionalTax: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">TDS</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.tds} onChange={(e) => setFormData({...formData, tds: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold mb-1 text-slate-600">Other Deductions</label>
+                        <input type="number" className="input-field py-2.5 w-full bg-slate-50 focus:bg-white" step="0.01" value={formData.otherDeductions} onChange={(e) => setFormData({...formData, otherDeductions: e.target.value})} />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
-                <button
-                  type="submit"
-                  className="flex-1 btn-primary"
-                  disabled={!formData.employeeId || !formData.month || !formData.basicSalary}
-                  title={!formData.employeeId || !formData.month || !formData.basicSalary ? 'Select employee, month and basic salary' : 'Save Record'}
-                >
-                  Save Record
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
+            
+            <div className="p-5 sm:p-6 border-t border-slate-100 bg-white shrink-0 flex items-center justify-end gap-3 rounded-b-2xl">
+              <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 text-slate-600 hover:bg-slate-100 font-semibold rounded-xl transition-colors">
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="salaryForm"
+                className="btn-primary px-8 py-2.5 shadow-md shadow-blue-500/20"
+                disabled={!formData.employeeId || !formData.month || !formData.basicSalary}
+                title={!formData.employeeId || !formData.month || !formData.basicSalary ? 'Select employee, month and basic salary' : 'Save Record'}
+              >
+                Save Record
+              </button>
+            </div>
           </div>
         </div>
       )}
