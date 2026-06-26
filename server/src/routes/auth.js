@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate } = require('../middleware/auth');
 const router = express.Router();
 
@@ -13,94 +13,44 @@ const requiresDeviceLock = (role) => {
   return !hasMultiDeviceAccess(role);
 };
 
-// Seed admin users (Disabled to improve startup performance)
-/*
-(async () => {
-  try {
-    const admins = [
-      {
-        email: 'harikishoreddy9908@gmail.com',
-        pass: 'Hari@9908',
-        name: 'Harikishore Reddy',
-        id: 'admin-hari'
-      },
-      {
-        email: 'Admin@geonixa.com',
-        pass: 'GEO@2026',
-        name: 'Geonixa Admin',
-        id: 'admin-geonixa'
-      }
-    ];
-
-    for (const admin of admins) {
-      const hashedPassword = await bcrypt.hash(admin.pass, 10);
-      const snapshot = await db.collection('employees').where('email', '==', admin.email).get();
-      
-      if (snapshot.empty) {
-        await db.collection('employees').doc(admin.id).set({
-          name: admin.name,
-          email: admin.email,
-          password: hashedPassword,
-          role: 'admin',
-          department: 'HR'
-        });
-        console.log('✅ Admin account created:', admin.email);
-      } else {
-        // Force update password and role for this specific user
-        const docId = snapshot.docs[0].id;
-        await db.collection('employees').doc(docId).update({
-          password: hashedPassword,
-          role: 'admin'
-        });
-        console.log('✅ Admin account updated:', admin.email);
-      }
-    }
-  } catch (err) {
-    console.error('Error seeding admins:', err.message);
-  }
-})();
-*/
-
 router.post('/register', async (req, res) => {
   const { name, email, password, department, avatar, role: requestedRole } = req.body;
   try {
-    const snapshot = await db.collection('employees').where('email', '==', email).get();
-    if (!snapshot.empty) return res.status(400).json({ error: 'Email already exists' });
+    const existing = await prisma.employee.findUnique({ where: { email } });
+    if (existing) return res.status(400).json({ error: 'Email already exists' });
 
-    const allEmployees = await db.collection('employees').limit(1).get();
+    const allEmployeesCount = await prisma.employee.count();
     const availableRoles = ['admin', 'manager', 'employee', 'student'];
-    let role = availableRoles.includes(requestedRole) ? requestedRole : (allEmployees.empty ? 'admin' : 'employee');
-    if (role === 'admin' && !allEmployees.empty) {
+    let role = availableRoles.includes(requestedRole) ? requestedRole : (allEmployeesCount === 0 ? 'admin' : 'employee');
+    if (role === 'admin' && allEmployeesCount > 0) {
       role = 'employee';
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const id = Date.now().toString();
     const defaultWeekOff = 'Sunday';
     
     const { sendEmail } = require('../utils/email');
-    await db.collection('employees').doc(id).set({
-      name,
-      email,
-      password: hashedPassword,
-      role,
-      department: department || (role === 'student' ? 'Students' : 'HR'),
-      avatar: avatar || '',
-      weekOff: defaultWeekOff
+    const newEmployee = await prisma.employee.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        role,
+        department: department || (role === 'student' ? 'Students' : 'HR'),
+        avatar: avatar || '',
+        weekOff: defaultWeekOff
+      }
     });
 
     if (role === 'student') {
-      await db.collection('students').doc(id).set({
-        id,
-        full_name: name,
-        email,
-        program: '',
-        enrollment_id: '',
-        status: 'active',
-        documents: {},
-        certificates: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      await prisma.student.create({
+        data: {
+          id: newEmployee.id,
+          full_name: name,
+          email,
+          program: '',
+          enrollment_id: '',
+        }
       });
     }
 
@@ -192,8 +142,8 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ 
       message: 'User registered', 
-      user: { id, name, role, email, department, avatar },
-      token: jwt.sign({ id, role, name }, process.env.JWT_SECRET, { expiresIn: '24h' })
+      user: { id: newEmployee.id, name, role, email, department: newEmployee.department, avatar },
+      token: jwt.sign({ id: newEmployee.id, role, name }, process.env.JWT_SECRET, { expiresIn: '24h' })
     });
   } catch (error) {
     console.error('Registration error:', error.message);
@@ -205,17 +155,14 @@ router.post('/login', async (req, res) => {
   const { email, password, deviceId } = req.body;
   try {
     const isEmail = email.includes('@');
-    let snapshot;
+    let employee;
     if (isEmail) {
-      snapshot = await db.collection('employees').where('email', '==', email).get();
+      employee = await prisma.employee.findUnique({ where: { email } });
     } else {
-      snapshot = await db.collection('employees').where('empId', '==', email).get();
+      employee = await prisma.employee.findFirst({ where: { empId: email } });
     }
     
-    if (snapshot.empty) return res.status(400).json({ error: 'Invalid credentials' });
-
-    const doc = snapshot.docs[0];
-    const employee = { id: doc.id, ...doc.data() };
+    if (!employee) return res.status(400).json({ error: 'Invalid credentials' });
 
     const isMatch = await bcrypt.compare(password, employee.password);
     if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
@@ -228,7 +175,10 @@ router.post('/login', async (req, res) => {
       }
 
       if (!employee.deviceId) {
-        await db.collection('employees').doc(employee.id).update({ deviceId });
+        await prisma.employee.update({
+          where: { id: employee.id },
+          data: { deviceId }
+        });
         employee.deviceId = deviceId;
       } else if (employee.deviceId !== deviceId) {
         return res.status(403).json({ error: 'This account is linked to another registered device. Contact HR or Admin to reset device pairing.' });
@@ -247,29 +197,24 @@ router.post('/login', async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    if (error.message?.includes('RESOURCE_EXHAUSTED')) {
-      return res.status(503).json({
-        error: 'Firestore quota exceeded. Please check Firebase billing or use the local emulator for development.'
-      });
-    }
     res.status(500).json({ error: error.message });
   }
 });
 
-// User self-service change password
 router.put('/change-password', authenticate, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   try {
-    const doc = await db.collection('employees').doc(req.user.id).get();
-    if (!doc.exists) return res.status(404).json({ error: 'User not found' });
+    const employee = await prisma.employee.findUnique({ where: { id: req.user.id } });
+    if (!employee) return res.status(404).json({ error: 'User not found' });
     
-    const employee = doc.data();
     const isMatch = await bcrypt.compare(currentPassword, employee.password);
-    
     if (!isMatch) return res.status(400).json({ error: 'Incorrect current password' });
     
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await db.collection('employees').doc(req.user.id).update({ password: hashedPassword });
+    await prisma.employee.update({
+      where: { id: req.user.id },
+      data: { password: hashedPassword }
+    });
     
     res.json({ message: 'Password updated successfully' });
   } catch (error) {

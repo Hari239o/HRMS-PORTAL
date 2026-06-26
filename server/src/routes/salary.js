@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
 const PDFDocument = require('pdfkit');
 const nodemailer = require('nodemailer');
@@ -7,7 +7,6 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 let HummusRecipe = null;
-// hummus-recipe removed due to native module crashes on Vercel
 
 const router = express.Router();
 
@@ -26,37 +25,36 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
     const totalDeds = (parseFloat(pf) || 0) + (parseFloat(esi) || 0) + (parseFloat(professionalTax) || 0) + (parseFloat(tds) || 0) + (parseFloat(otherDeductions) || 0);
     const netSalary = totalEarnings - totalDeds;
 
-    const id = Date.now().toString();
-    await db.collection('salaries').doc(id).set({
-      id,
-      employeeId,
-      month,
-      basicSalary: parseFloat(basicSalary) || 0,
-      hra: parseFloat(hra) || 0,
-      specialAllowance: parseFloat(specialAllowance) || 0,
-      incentives: parseFloat(incentives) || 0,
-      otherAllowances: parseFloat(otherAllowances) || 0,
-      bonus: parseFloat(bonus) || 0,
-      pf: parseFloat(pf) || 0,
-      esi: parseFloat(esi) || 0,
-      professionalTax: parseFloat(professionalTax) || 0,
-      tds: parseFloat(tds) || 0,
-      otherDeductions: parseFloat(otherDeductions) || 0,
-      baseSalary: parseFloat(basicSalary) || 0, // Fallback for old code
-      deductions: totalDeds, // Fallback for old code
-      netSalary,
-      status: 'Pending',
-      createdAt: new Date().toISOString(),
-      releasedAt: null,
-      empId: empId || '',
-      designation: designation || '',
-      pan: pan || '',
-      uan: uan || '',
-      bankName: bankName || '',
-      accountNumber: accountNumber || ''
+    const newSalary = await prisma.salary.create({
+      data: {
+        employeeId,
+        month,
+        basicSalary: parseFloat(basicSalary) || 0,
+        hra: parseFloat(hra) || 0,
+        specialAllowance: parseFloat(specialAllowance) || 0,
+        incentives: parseFloat(incentives) || 0,
+        otherAllowances: parseFloat(otherAllowances) || 0,
+        bonus: parseFloat(bonus) || 0,
+        pf: parseFloat(pf) || 0,
+        esi: parseFloat(esi) || 0,
+        professionalTax: parseFloat(professionalTax) || 0,
+        tds: parseFloat(tds) || 0,
+        otherDeductions: parseFloat(otherDeductions) || 0,
+        baseSalary: parseFloat(basicSalary) || 0,
+        deductions: totalDeds,
+        netSalary,
+        status: 'Pending',
+        empId: empId || '',
+        designation: designation || '',
+        pan: pan || '',
+        uan: uan || '',
+        bankName: bankName || '',
+        accountNumber: accountNumber || ''
+      }
     });
-    res.status(201).json({ id, employeeId, month, netSalary, status: 'Pending' });
+    res.status(201).json({ id: newSalary.id, employeeId, month, netSalary, status: 'Pending' });
   } catch (error) {
+    console.error('Salary POST error:', error);
     res.status(400).json({ error: error.message });
   }
 });
@@ -69,36 +67,36 @@ router.put('/:salaryId', authenticate, authorize(['admin']), async (req, res) =>
     const totalDeds = (parseFloat(pf) || 0) + (parseFloat(esi) || 0) + (parseFloat(professionalTax) || 0) + (parseFloat(tds) || 0) + (parseFloat(otherDeductions) || 0);
     const netSalary = totalEarnings - totalDeds;
 
-    const salaryDocRef = db.collection('salaries').doc(salaryId);
-    const salaryDoc = await salaryDocRef.get();
-    
-    if (!salaryDoc.exists) return res.status(404).json({ error: 'Salary record not found' });
-    if (salaryDoc.data().status === 'Released') return res.status(400).json({ error: 'Cannot edit a released payslip' });
+    const salaryDoc = await prisma.salary.findUnique({ where: { id: salaryId } });
+    if (!salaryDoc) return res.status(404).json({ error: 'Salary record not found' });
+    if (salaryDoc.status === 'Released') return res.status(400).json({ error: 'Cannot edit a released payslip' });
 
-    await salaryDocRef.update({
-      employeeId,
-      month,
-      basicSalary: parseFloat(basicSalary) || 0,
-      hra: parseFloat(hra) || 0,
-      specialAllowance: parseFloat(specialAllowance) || 0,
-      incentives: parseFloat(incentives) || 0,
-      otherAllowances: parseFloat(otherAllowances) || 0,
-      bonus: parseFloat(bonus) || 0,
-      pf: parseFloat(pf) || 0,
-      esi: parseFloat(esi) || 0,
-      professionalTax: parseFloat(professionalTax) || 0,
-      tds: parseFloat(tds) || 0,
-      otherDeductions: parseFloat(otherDeductions) || 0,
-      baseSalary: parseFloat(basicSalary) || 0, 
-      deductions: totalDeds,
-      netSalary,
-      empId: empId || '',
-      designation: designation || '',
-      pan: pan || '',
-      uan: uan || '',
-      bankName: bankName || '',
-      accountNumber: accountNumber || '',
-      updatedAt: new Date().toISOString()
+    await prisma.salary.update({
+      where: { id: salaryId },
+      data: {
+        employeeId,
+        month,
+        basicSalary: parseFloat(basicSalary) || 0,
+        hra: parseFloat(hra) || 0,
+        specialAllowance: parseFloat(specialAllowance) || 0,
+        incentives: parseFloat(incentives) || 0,
+        otherAllowances: parseFloat(otherAllowances) || 0,
+        bonus: parseFloat(bonus) || 0,
+        pf: parseFloat(pf) || 0,
+        esi: parseFloat(esi) || 0,
+        professionalTax: parseFloat(professionalTax) || 0,
+        tds: parseFloat(tds) || 0,
+        otherDeductions: parseFloat(otherDeductions) || 0,
+        baseSalary: parseFloat(basicSalary) || 0,
+        deductions: totalDeds,
+        netSalary,
+        empId: empId || '',
+        designation: designation || '',
+        pan: pan || '',
+        uan: uan || '',
+        bankName: bankName || '',
+        accountNumber: accountNumber || ''
+      }
     });
     res.json({ message: 'Salary updated successfully', netSalary });
   } catch (error) {
@@ -111,27 +109,21 @@ router.get('/', authenticate, async (req, res) => {
   try {
     let salaries = [];
     if (role !== 'admin') {
-      const snap = await db.collection('salaries')
-        .where('employeeId', '==', id)
-        .get();
-      salaries = snap.docs
-        .map(doc => doc.data())
-        .filter(s => s.status === 'Released' || !s.status);
+      const records = await prisma.salary.findMany({
+        where: { employeeId: id },
+        include: { employee: true }
+      });
+      salaries = records.filter(s => s.status === 'Released' || !s.status);
     } else {
-      const snap = await db.collection('salaries').get();
-      salaries = snap.docs.map(doc => doc.data());
+      salaries = await prisma.salary.findMany({
+        include: { employee: true }
+      });
     }
     
     salaries.sort((a, b) => b.month.localeCompare(a.month));
 
-    const empSnap = await db.collection('employees').get();
-    const employeesMap = {};
-    empSnap.docs.forEach(doc => {
-      employeesMap[doc.id] = doc.data();
-    });
-
     const formatted = salaries.map(s => {
-      const emp = employeesMap[s.employeeId] || {};
+      const emp = s.employee || {};
       return {
         ...s,
         status: s.status || 'Pending',
@@ -147,14 +139,13 @@ router.get('/', authenticate, async (req, res) => {
 function formatDate(value) {
   if (!value) return 'N/A';
   if (value instanceof Date) return value.toLocaleDateString('en-GB');
-  if (value.toDate && typeof value.toDate === 'function') return value.toDate().toLocaleDateString('en-GB');
   return new Date(value).toLocaleDateString('en-GB');
 }
 
 function monthLabel(monthString) {
   const [year, month] = monthString.split('-');
   if (!year || !month) return monthString;
-  const date = new Date(`${year}-${month}-01`);
+  const date = new Date(\`\${year}-\${month}-01\`);
   return date.toLocaleString('en-GB', { month: 'long', year: 'numeric' });
 }
 
@@ -165,9 +156,8 @@ function drawKeyValue(doc, label, value, x, y) {
 }
 
 async function enrichSalary(salary) {
-  const empDoc = await db.collection('employees').doc(salary.employeeId).get();
-  if (empDoc.exists) {
-    const emp = empDoc.data();
+  const emp = await prisma.employee.findUnique({ where: { id: salary.employeeId } });
+  if (emp) {
     salary.name = emp.name;
     salary.department = emp.department;
     salary.employeeRole = emp.role === 'admin' ? 'Administrator' : 'Employee';
@@ -177,7 +167,7 @@ async function enrichSalary(salary) {
     salary.uan = salary.uan || emp.uan || 'N/A';
     salary.bankName = salary.bankName || emp.bankName || 'N/A';
     salary.accountNumber = salary.accountNumber || emp.accountNumber || 'N/A';
-    salary.joinDate = emp.createdAt || emp.joinDate || null;
+    salary.joinDate = emp.createdAt || null;
     salary.email = emp.email;
     salary.functionalArea = emp.department || 'Operations';
   } else {
@@ -201,7 +191,7 @@ function buildPayslipFile(salary) {
   return new Promise((resolve, reject) => {
     const tempDir = path.join(os.tmpdir(), 'payslips');
     fs.mkdirSync(tempDir, { recursive: true });
-    const filePath = path.join(tempDir, `payslip-${salary.id}-${Date.now()}.pdf`);
+    const filePath = path.join(tempDir, \`payslip-\${salary.id}-\${Date.now()}.pdf\`);
     const doc = new PDFDocument({ margin: 50 });
     const writeStream = fs.createWriteStream(filePath);
 
@@ -224,33 +214,28 @@ function buildPayslipFile(salary) {
 }
 
 async function protectPdfIfNeeded(inputPath) {
-  // Only protect when env var enabled and hummus-recipe is available
   if (process.env.PDF_PROTECT !== 'true' || !HummusRecipe) return inputPath;
-  const outPath = inputPath.replace(/\.pdf$/i, '-protected.pdf');
+  const outPath = inputPath.replace(/\\.pdf$/i, '-protected.pdf');
   try {
     const userPwd = process.env.PDF_USER_PASSWORD || '';
     const ownerPwd = process.env.PDF_OWNER_PASSWORD || userPwd || 'owner';
     const pdfDoc = new HummusRecipe(inputPath, outPath);
-    // Apply encryption: set both user and owner passwords and restrict printing/editing
     pdfDoc.encrypt({
       userPassword: userPwd,
       ownerPassword: ownerPwd,
       userProtectionFlag: 4
     });
     pdfDoc.endPDF();
-    // wait until protected file is written (hummus may write asynchronously)
     const start = Date.now();
-    const timeout = 5000; // 5s
+    const timeout = 5000;
     while (Date.now() - start < timeout) {
       try {
         if (fs.existsSync(outPath) && fs.statSync(outPath).size > 0) {
           return outPath;
         }
       } catch (e) {}
-      // small delay
       await new Promise(r => setTimeout(r, 150));
     }
-    // if file not ready, return inputPath as fallback
     console.warn('Protected PDF not ready within timeout, serving original');
     return inputPath;
   } catch (err) {
@@ -275,17 +260,15 @@ async function sendSalaryEmail(salary, subject, html) {
       to: salary.email,
       subject,
       html,
-      attachments: [{ filename: `payslip-${salary.month}.pdf`, path: attachmentPath }]
+      attachments: [{ filename: \`payslip-\${salary.month}.pdf\`, path: attachmentPath }]
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
-      // cleanup protected file too
       try {
         if (fs.existsSync(attachmentPath)) fs.unlinkSync(attachmentPath);
       } catch (e) {}
       if (error) {
         console.error('Email send failed for payslip:', error.message);
-        // Resolve instead of reject to prevent 500 errors when email config is missing/invalid
         return resolve({ warning: 'Email failed to send, but PDF generated successfully.', error: error.message });
       }
       resolve(info);
@@ -294,7 +277,7 @@ async function sendSalaryEmail(salary, subject, html) {
 }
 
 function numToWords(amount) {
-  return "Rupees " + Math.floor(amount).toString() + " Only"; // Simplified fallback, could add full library if needed
+  return "Rupees " + Math.floor(amount).toString() + " Only"; 
 }
 
 function generateProfessionalPDF(doc, salary) {
@@ -305,7 +288,6 @@ function generateProfessionalPDF(doc, salary) {
 
   const paddedMonth = monthLabel(salary.month);
 
-  // Header Left (Logo)
   const logoPath = path.join(__dirname, '../../../public/company-logo.jpeg');
   if (fs.existsSync(logoPath)) {
     doc.image(logoPath, margin, margin - 5, { width: 160 });
@@ -313,15 +295,12 @@ function generateProfessionalPDF(doc, salary) {
     doc.fillColor('#e84b25').font(titleFont).fontSize(28).text('GEONIXA', margin, margin);
   }
   
-  // Header Right (Address)
   doc.font(bodyFont).fontSize(9).fillColor('#333333').text('247, Trendz aspire, Madhapur, Hyderabad,500033', margin, margin + 10, { align: 'right' });
   doc.text('www.geonixa.com', margin, margin + 22, { align: 'right' });
   
-  // Divider
   doc.moveTo(margin, margin + 40).lineTo(doc.page.width - margin, margin + 40).lineWidth(1).stroke('#000000');
   
-  // Title
-  doc.font(titleFont).fontSize(14).fillColor('#000000').text(`Salary Slip – ${paddedMonth}`, margin, margin + 50, { align: 'center' });
+  doc.font(titleFont).fontSize(14).fillColor('#000000').text(\`Salary Slip – \${paddedMonth}\`, margin, margin + 50, { align: 'center' });
   
   doc.moveDown(1.5);
   doc.font(titleFont).fontSize(12).text('Employee Details', margin, doc.y);
@@ -332,7 +311,6 @@ function generateProfessionalPDF(doc, salary) {
     doc.rect(margin, y, 200, rowHeight).stroke();
     doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, rowHeight).stroke();
     
-    // Header cells styling
     if (isBoldLeft) doc.rect(margin, y, 200, rowHeight).fill('#e2e2e2').stroke();
     if (isBoldRight) doc.rect(margin + 200, y, doc.page.width - 2 * margin - 200, rowHeight).fill('#e2e2e2').stroke();
 
@@ -368,13 +346,11 @@ function generateProfessionalPDF(doc, salary) {
     const xOffsets = [margin, margin + w1, margin + w1 + w2, margin + w1 + w2 + w3];
     const rowHeight = 24;
     
-    // Draw borders
     for (let i = 0; i < 4; i++) {
       if (isHeader) {
         doc.rect(xOffsets[i], y, colWidths[i], rowHeight).fill('#e2e2e2').stroke();
       } else {
         doc.rect(xOffsets[i], y, colWidths[i], rowHeight).stroke();
-        // shaded cells for totals or empty
         if (col1 === 'Total Earnings (A)' || col3 === 'Total Deductions (B)') {
           doc.rect(xOffsets[i], y, colWidths[i], rowHeight).fill('#e2e2e2').stroke();
         }
@@ -393,26 +369,24 @@ function generateProfessionalPDF(doc, salary) {
   };
 
   drawSalaryRow(currentY, 'Earnings', 'Amount (Rs.)', 'Deductions', 'Amount (Rs.)', true); currentY += rowHeight;
-  drawSalaryRow(currentY, 'Basic Salary', `Rs. ${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Provident Fund (PF)', `Rs. ${Number(salary.pf || 0).toFixed(2)}`); currentY += rowHeight;
-  drawSalaryRow(currentY, 'HRA', `Rs. ${Number(salary.hra || 0).toFixed(2)}`, 'ESI', `Rs. ${Number(salary.esi || 0).toFixed(2)}`); currentY += rowHeight;
-  drawSalaryRow(currentY, 'Special Allowance', `Rs. ${Number(salary.specialAllowance || 0).toFixed(2)}`, 'Professional Tax', `Rs. ${Number(salary.professionalTax || 0).toFixed(2)}`); currentY += rowHeight;
-  drawSalaryRow(currentY, 'Incentives', `Rs. ${Number(salary.incentives || 0).toFixed(2)}`, 'TDS', `Rs. ${Number(salary.tds || 0).toFixed(2)}`); currentY += rowHeight;
-  drawSalaryRow(currentY, 'Other Allowances', `Rs. ${Number(salary.otherAllowances || 0).toFixed(2)}`, 'Other Deductions', `Rs. ${Number(salary.otherDeductions || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Basic Salary', \`Rs. \${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}\`, 'Provident Fund (PF)', \`Rs. \${Number(salary.pf || 0).toFixed(2)}\`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'HRA', \`Rs. \${Number(salary.hra || 0).toFixed(2)}\`, 'ESI', \`Rs. \${Number(salary.esi || 0).toFixed(2)}\`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Special Allowance', \`Rs. \${Number(salary.specialAllowance || 0).toFixed(2)}\`, 'Professional Tax', \`Rs. \${Number(salary.professionalTax || 0).toFixed(2)}\`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Incentives', \`Rs. \${Number(salary.incentives || 0).toFixed(2)}\`, 'TDS', \`Rs. \${Number(salary.tds || 0).toFixed(2)}\`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Other Allowances', \`Rs. \${Number(salary.otherAllowances || 0).toFixed(2)}\`, 'Other Deductions', \`Rs. \${Number(salary.otherDeductions || 0).toFixed(2)}\`); currentY += rowHeight;
   
   const totalEarnings = (salary.basicSalary || salary.baseSalary || 0) + (salary.hra || 0) + (salary.specialAllowance || 0) + (salary.incentives || 0) + (salary.otherAllowances || 0) + (salary.bonus || 0);
   const totalDeductions = (salary.pf || 0) + (salary.esi || 0) + (salary.professionalTax || 0) + (salary.tds || 0) + (salary.otherDeductions || 0);
   const netPay = totalEarnings - totalDeductions;
 
-  drawSalaryRow(currentY, 'Total Earnings (A)', `Rs. ${Number(totalEarnings).toFixed(2)}`, 'Total Deductions (B)', `Rs. ${Number(totalDeductions).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Total Earnings (A)', \`Rs. \${Number(totalEarnings).toFixed(2)}\`, 'Total Deductions (B)', \`Rs. \${Number(totalDeductions).toFixed(2)}\`); currentY += rowHeight;
 
-  // Net Pay Row
   doc.rect(margin, currentY, 250, rowHeight).stroke();
   doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, rowHeight).stroke();
   doc.font(titleFont).fontSize(12).text('Net Salary Payable (A - B)', margin + 8, currentY + 10);
-  doc.font(titleFont).fontSize(12).text(`Rs. ${Number(netPay).toFixed(2)}`, margin + 258, currentY + 10, { align: 'right', width: doc.page.width - 2 * margin - 274 });
+  doc.font(titleFont).fontSize(12).text(\`Rs. \${Number(netPay).toFixed(2)}\`, margin + 258, currentY + 10, { align: 'right', width: doc.page.width - 2 * margin - 274 });
   currentY += rowHeight;
 
-  // Words Row
   const wordsRowHeight = 40;
   doc.rect(margin, currentY, 250, wordsRowHeight).stroke();
   doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, wordsRowHeight).stroke();
@@ -428,16 +402,19 @@ function generateProfessionalPDF(doc, salary) {
 async function populateSalaryDetails(salary) {
   await enrichSalary(salary);
   const [year, month] = (salary.month || '').split('-');
-  const startDate = new Date(`${year}-${month}-01`);
+  const startDate = new Date(\`\${year}-\${month}-01\`);
   const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
   let attendanceRecords = [];
   try {
-    const attendanceSnap = await db.collection('attendance')
-      .where('employeeId', '==', salary.employeeId)
-      .where('date', '>=', startDate.toISOString().slice(0, 10))
-      .where('date', '<=', endDate.toISOString().slice(0, 10))
-      .get();
-    attendanceRecords = attendanceSnap.docs.map(doc => doc.data());
+    attendanceRecords = await prisma.attendance.findMany({
+      where: {
+        employeeId: salary.employeeId,
+        date: {
+          gte: startDate.toISOString().slice(0, 10),
+          lte: endDate.toISOString().slice(0, 10)
+        }
+      }
+    });
   } catch (err) {
     console.warn('Attendance query failed, defaulting to zeroes:', err.message);
     attendanceRecords = [];
@@ -454,10 +431,9 @@ router.get('/generate/:salaryId', authenticate, async (req, res) => {
   const { salaryId } = req.params;
   const { role, id } = req.user;
   try {
-    const salaryDoc = await db.collection('salaries').doc(salaryId).get();
-    if (!salaryDoc.exists) return res.status(404).json({ error: 'Salary record not found' });
+    const salary = await prisma.salary.findUnique({ where: { id: salaryId } });
+    if (!salary) return res.status(404).json({ error: 'Salary record not found' });
     
-    const salary = salaryDoc.data();
     if (role !== 'admin' && salary.employeeId !== id) {
       return res.status(403).json({ error: 'Unauthorized to access this payslip' });
     }
@@ -467,12 +443,11 @@ router.get('/generate/:salaryId', authenticate, async (req, res) => {
 
     await populateSalaryDetails(salary);
 
-    // Build PDF to temp file, optionally protect it, then stream.
     const generatedPath = await buildPayslipFile(salary);
     let toSendPath = generatedPath;
     try {
       await protectPdfIfNeeded(generatedPath);
-      const protectedPath = generatedPath.replace(/\.pdf$/i, '-protected.pdf');
+      const protectedPath = generatedPath.replace(/\\.pdf$/i, '-protected.pdf');
       const startWait = Date.now();
       const waitTimeout = 5000;
       while (Date.now() - startWait < waitTimeout) {
@@ -487,12 +462,12 @@ router.get('/generate/:salaryId', authenticate, async (req, res) => {
     if (!fs.existsSync(toSendPath)) return res.status(500).json({ error: 'Payslip file not found' });
 
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=payslip-${salary.month}.pdf`);
+    res.setHeader('Content-Disposition', \`attachment; filename=payslip-\${salary.month}.pdf\`);
     const readStream = fs.createReadStream(toSendPath);
     readStream.pipe(res);
     const cleanup = () => {
       try { if (fs.existsSync(generatedPath)) fs.unlinkSync(generatedPath); } catch (e) {}
-      try { const protectedPath = generatedPath.replace(/\.pdf$/i, '-protected.pdf'); if (fs.existsSync(protectedPath)) fs.unlinkSync(protectedPath); } catch (e) {}
+      try { const protectedPath = generatedPath.replace(/\\.pdf$/i, '-protected.pdf'); if (fs.existsSync(protectedPath)) fs.unlinkSync(protectedPath); } catch (e) {}
     };
     readStream.on('end', cleanup);
     readStream.on('close', cleanup);
@@ -504,32 +479,32 @@ router.get('/generate/:salaryId', authenticate, async (req, res) => {
 router.patch('/release/:salaryId', authenticate, authorize(['admin']), async (req, res) => {
   const { salaryId } = req.params;
   try {
-    const salaryDocRef = db.collection('salaries').doc(salaryId);
-    const salaryDoc = await salaryDocRef.get();
-    if (!salaryDoc.exists) return res.status(404).json({ error: 'Salary record not found' });
-
-    const salary = salaryDoc.data();
+    const salary = await prisma.salary.findUnique({ where: { id: salaryId } });
+    if (!salary) return res.status(404).json({ error: 'Salary record not found' });
     if (salary.status === 'Released') return res.status(400).json({ error: 'Payslip already released' });
     
     await populateSalaryDetails(salary);
 
-    const subject = `[CONFIDENTIAL] Your Geonixa Payslip for ${salary.month} is Released`;
-    const html = `
+    const subject = \`[CONFIDENTIAL] Your Geonixa Payslip for \${salary.month} is Released\`;
+    const html = \`
       <div style="font-family: sans-serif; padding: 20px;">
         <h2>Geonixa Salary Slip Released</h2>
-        <p>Hello <b>${salary.name}</b>,</p>
-        <p>Your payslip for the month of <b>${salary.month}</b> has been released and is available to download from the employee portal.</p>
+        <p>Hello <b>\${salary.name}</b>,</p>
+        <p>Your payslip for the month of <b>\${salary.month}</b> has been released and is available to download from the employee portal.</p>
         <p>Please log in to your Geonixa account and visit the Salary section to download your payslip.</p>
         <br>
         <p>Best Regards,<br>Finance & Payroll Department<br>Geonixa Technologies</p>
       </div>
-    `;
+    \`;
 
     await sendSalaryEmail(salary, subject, html);
-    await salaryDocRef.update({
-      status: 'Released',
-      releasedAt: new Date().toISOString(),
-      releasedBy: req.user.id
+    
+    await prisma.salary.update({
+      where: { id: salaryId },
+      data: {
+        status: 'Released',
+        releasedAt: new Date()
+      }
     });
 
     res.json({ message: 'Payslip released and employee notified successfully' });
@@ -541,32 +516,37 @@ router.patch('/release/:salaryId', authenticate, authorize(['admin']), async (re
 router.post('/send-email', authenticate, authorize(['admin']), async (req, res) => {
   const { salaryId } = req.body;
   try {
-    const salaryDocRef = db.collection('salaries').doc(salaryId);
-    const salaryDoc = await salaryDocRef.get();
-    if (!salaryDoc.exists) return res.status(404).json({ error: 'Salary record not found' });
+    const salary = await prisma.salary.findUnique({ where: { id: salaryId } });
+    if (!salary) return res.status(404).json({ error: 'Salary record not found' });
     
-    const salary = salaryDoc.data();
     await populateSalaryDetails(salary);
     
     if (!salary.email) {
       return res.status(400).json({ error: 'Employee does not have an email address' });
     }
 
-    const subject = `[CONFIDENTIAL] Monthly Payslip - ${salary.month} - Geonixa Technologies`;
-    const html = `
+    const subject = \`[CONFIDENTIAL] Monthly Payslip - \${salary.month} - Geonixa Technologies\`;
+    const html = \`
       <div style="font-family: sans-serif; padding: 20px;">
         <h2>Monthly Salary Credit Notice</h2>
-        <p>Hello <b>${salary.name}</b>,</p>
-        <p>Your salary for the month of <b>${salary.month}</b> has been processed and credited to your account.</p>
+        <p>Hello <b>\${salary.name}</b>,</p>
+        <p>Your salary for the month of <b>\${salary.month}</b> has been processed and credited to your account.</p>
         <p>Please find the detailed digital payslip attached to this email for your records.</p>
         <br>
         <p>Best Regards,<br>Finance & Payroll Department<br>Geonixa Technologies</p>
       </div>
-    `;
+    \`;
 
     await sendSalaryEmail(salary, subject, html);
+    
     if (salary.status !== 'Released') {
-      await salaryDocRef.update({ status: 'Released', releasedAt: new Date().toISOString() });
+      await prisma.salary.update({
+        where: { id: salaryId },
+        data: {
+          status: 'Released',
+          releasedAt: new Date()
+        }
+      });
     }
 
     res.json({ message: 'Professional payslip sent successfully' });
@@ -578,10 +558,10 @@ router.post('/send-email', authenticate, authorize(['admin']), async (req, res) 
 router.delete('/:salaryId', authenticate, authorize(['admin']), async (req, res) => {
   try {
     const { salaryId } = req.params;
-    const salaryDoc = await db.collection('salaries').doc(salaryId).get();
-    if (!salaryDoc.exists) return res.status(404).json({ error: 'Salary record not found' });
+    const salary = await prisma.salary.findUnique({ where: { id: salaryId } });
+    if (!salary) return res.status(404).json({ error: 'Salary record not found' });
     
-    await db.collection('salaries').doc(salaryId).delete();
+    await prisma.salary.delete({ where: { id: salaryId } });
     res.json({ message: 'Salary record deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });

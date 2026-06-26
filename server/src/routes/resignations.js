@@ -1,28 +1,31 @@
 const express = require('express');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
 const router = express.Router();
 
-// GET all resignations (Admin sees all, employee sees their own)
 router.get('/', authenticate, async (req, res) => {
   try {
-    let query = db.collection('resignations');
-    
+    let whereClause = {};
     if (req.user.role !== 'admin') {
-      query = query.where('employeeId', '==', req.user.id);
+      whereClause.employeeId = req.user.id;
     }
     
-    const snapshot = await query.orderBy('createdAt', 'desc').get();
-    const resignations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const records = await prisma.resignation.findMany({
+      where: whereClause,
+      orderBy: { createdAt: 'desc' }
+    });
 
-    // If admin, attach employee names
     if (req.user.role === 'admin') {
-      const empSnap = await db.collection('employees').get();
+      const employees = await prisma.employee.findMany();
       const employeesMap = {};
-      empSnap.docs.forEach(doc => { employeesMap[doc.id] = doc.data(); });
+      employees.forEach(emp => { employeesMap[emp.id] = emp; });
       
-      const enriched = resignations.map(r => ({
+      const enriched = records.map(r => ({
         ...r,
+        requestedLWD: r.requestedLWD ? r.requestedLWD.toISOString() : null,
+        officialLWD: r.officialLWD ? r.officialLWD.toISOString() : null,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString(),
         employeeName: employeesMap[r.employeeId]?.name || 'Unknown',
         employeeEmail: employeesMap[r.employeeId]?.email || 'Unknown',
         department: employeesMap[r.employeeId]?.department || 'Unknown'
@@ -30,74 +33,75 @@ router.get('/', authenticate, async (req, res) => {
       return res.json(enriched);
     }
 
-    res.json(resignations);
+    const formatted = records.map(r => ({
+      ...r,
+      requestedLWD: r.requestedLWD ? r.requestedLWD.toISOString() : null,
+      officialLWD: r.officialLWD ? r.officialLWD.toISOString() : null,
+      createdAt: r.createdAt.toISOString(),
+      updatedAt: r.updatedAt.toISOString()
+    }));
+    
+    res.json(formatted);
   } catch (error) {
     console.error('Error fetching resignations:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// POST submit a resignation
 router.post('/', authenticate, async (req, res) => {
   const { reason, requestedLWD, primaryReason, personalEmail } = req.body;
   if (!reason) return res.status(400).json({ error: 'Reason is required' });
 
   try {
-    // Check if they already have an active resignation
-    const existingSnap = await db.collection('resignations')
-      .where('employeeId', '==', req.user.id)
-      .where('status', 'in', ['Pending', 'Approved', 'Serving Notice'])
-      .get();
+    const existing = await prisma.resignation.findFirst({
+      where: {
+        employeeId: req.user.id,
+        status: { in: ['Pending', 'Approved', 'Serving Notice'] }
+      }
+    });
       
-    if (!existingSnap.empty) {
+    if (existing) {
       return res.status(400).json({ error: 'You already have an active resignation request.' });
     }
 
-    const newResignation = {
-      employeeId: req.user.id,
-      reason,
-      primaryReason: primaryReason || 'Other',
-      personalEmail: personalEmail || '',
-      requestedLWD: requestedLWD || null,
-      officialLWD: null,
-      status: 'Pending',
-      eligibleForRehire: true,
-      noticeWaived: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+    const newResignation = await prisma.resignation.create({
+      data: {
+        employeeId: req.user.id,
+        reason,
+        primaryReason: primaryReason || 'Other',
+        personalEmail: personalEmail || '',
+        requestedLWD: requestedLWD ? new Date(requestedLWD) : null,
+        status: 'Pending',
+        eligibleForRehire: true,
+        noticeWaived: false
+      }
+    });
 
-    const docRef = await db.collection('resignations').add(newResignation);
-    res.status(201).json({ id: docRef.id, ...newResignation });
+    res.status(201).json({ id: newResignation.id, ...newResignation });
   } catch (error) {
     console.error('Error submitting resignation:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// PATCH update resignation status (Admin only)
 router.patch('/:id', authenticate, authorize(['admin']), async (req, res) => {
   const { status, officialLWD, adminRemarks, eligibleForRehire, noticeWaived } = req.body;
   const { id } = req.params;
 
   try {
-    const docRef = db.collection('resignations').doc(id);
-    const doc = await docRef.get();
-    if (!doc.exists) return res.status(404).json({ error: 'Resignation record not found' });
+    const resignation = await prisma.resignation.findUnique({ where: { id } });
+    if (!resignation) return res.status(404).json({ error: 'Resignation record not found' });
 
-    const updateData = {
-      status,
-      updatedAt: new Date().toISOString()
-    };
-    if (officialLWD !== undefined) updateData.officialLWD = officialLWD;
+    const updateData = { status };
+    if (officialLWD !== undefined) updateData.officialLWD = officialLWD ? new Date(officialLWD) : null;
     if (adminRemarks !== undefined) updateData.adminRemarks = adminRemarks;
     if (eligibleForRehire !== undefined) updateData.eligibleForRehire = eligibleForRehire;
     if (noticeWaived !== undefined) updateData.noticeWaived = noticeWaived;
 
-    await docRef.update(updateData);
-    
-    // Optionally: if status is 'Offboarded', update employee role to 'ex_employee' or disable login
-    // This is a business rule decision.
+    await prisma.resignation.update({
+      where: { id },
+      data: updateData
+    });
 
     res.json({ message: 'Resignation updated successfully', ...updateData });
   } catch (error) {
@@ -106,25 +110,23 @@ router.patch('/:id', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-// Employee withdraw resignation
 router.patch('/:id/withdraw', authenticate, async (req, res) => {
   const { id } = req.params;
   try {
-    const docRef = db.collection('resignations').doc(id);
-    const doc = await docRef.get();
-    if (!doc.exists) return res.status(404).json({ error: 'Resignation record not found' });
+    const resignation = await prisma.resignation.findUnique({ where: { id } });
+    if (!resignation) return res.status(404).json({ error: 'Resignation record not found' });
     
-    if (doc.data().employeeId !== req.user.id) {
+    if (resignation.employeeId !== req.user.id) {
       return res.status(403).json({ error: 'Unauthorized to withdraw this request' });
     }
 
-    if (doc.data().status !== 'Pending') {
+    if (resignation.status !== 'Pending') {
       return res.status(400).json({ error: 'Only pending requests can be withdrawn' });
     }
 
-    await docRef.update({
-      status: 'Withdrawn',
-      updatedAt: new Date().toISOString()
+    await prisma.resignation.update({
+      where: { id },
+      data: { status: 'Withdrawn' }
     });
 
     res.json({ message: 'Resignation withdrawn successfully' });
@@ -134,23 +136,21 @@ router.patch('/:id/withdraw', authenticate, async (req, res) => {
   }
 });
 
-// Employee delete resignation
 router.delete('/:id', authenticate, async (req, res) => {
   const { id } = req.params;
   try {
-    const docRef = db.collection('resignations').doc(id);
-    const doc = await docRef.get();
-    if (!doc.exists) return res.status(404).json({ error: 'Resignation record not found' });
+    const resignation = await prisma.resignation.findUnique({ where: { id } });
+    if (!resignation) return res.status(404).json({ error: 'Resignation record not found' });
     
-    if (doc.data().employeeId !== req.user.id) {
+    if (resignation.employeeId !== req.user.id) {
       return res.status(403).json({ error: 'Unauthorized to delete this request' });
     }
 
-    if (doc.data().status !== 'Pending' && doc.data().status !== 'Withdrawn') {
+    if (resignation.status !== 'Pending' && resignation.status !== 'Withdrawn') {
       return res.status(400).json({ error: 'Cannot delete processed requests' });
     }
 
-    await docRef.delete();
+    await prisma.resignation.delete({ where: { id } });
     res.json({ message: 'Resignation deleted successfully' });
   } catch (error) {
     console.error('Error deleting resignation:', error);

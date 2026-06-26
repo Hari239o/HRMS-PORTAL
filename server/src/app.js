@@ -49,10 +49,10 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.get('/api/health', async (req, res) => {
-  const { db } = require('./db');
+  const prisma = require('../../prisma/client');
   try {
-    await db.collection('employees').limit(1).get();
-    res.json({ status: 'ok', message: 'Connected to Firestore' });
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', message: 'Connected to PostgreSQL' });
   } catch (err) {
     res.status(500).json({ status: 'error', error: err.message });
   }

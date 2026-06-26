@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate } = require('../middleware/auth');
 const { permitRoles } = require('../middleware/rbac');
 
@@ -8,15 +8,17 @@ const router = express.Router();
 // Get settings
 router.get('/', authenticate, async (req, res) => {
   try {
-    const doc = await db.collection('settings').doc('general').get();
-    if (!doc.exists) {
-      // Return defaults if not set
+    const setting = await prisma.setting.findUnique({
+      where: { key: 'general' }
+    });
+
+    if (!setting) {
       return res.json({
         officeStartTime: '11:00',
         officeEndTime: '20:00'
       });
     }
-    res.json(doc.data());
+    res.json(setting.value);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -24,14 +26,22 @@ router.get('/', authenticate, async (req, res) => {
 
 // Update settings (Admin only)
 router.post('/', authenticate, permitRoles(['admin']), async (req, res) => {
-
   const { officeStartTime, officeEndTime } = req.body;
+  
+  const newValue = {
+    officeStartTime: officeStartTime || '11:00',
+    officeEndTime: officeEndTime || '20:00'
+  };
+
   try {
-    await db.collection('settings').doc('general').set({
-      officeStartTime: officeStartTime || '11:00',
-      officeEndTime: officeEndTime || '20:00',
-      updatedAt: new Date().toISOString()
-    }, { merge: true });
+    await prisma.setting.upsert({
+      where: { key: 'general' },
+      update: { value: newValue },
+      create: {
+        key: 'general',
+        value: newValue
+      }
+    });
     
     res.json({ message: 'Settings updated successfully' });
   } catch (error) {

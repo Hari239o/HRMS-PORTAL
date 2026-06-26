@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
@@ -7,14 +7,14 @@ const router = express.Router();
 router.post('/', authenticate, authorize(['admin']), async (req, res) => {
   const { name, date, type } = req.body;
   try {
-    const id = Date.now().toString();
-    await db.collection('holiday').doc(id).set({
-      id,
-      name,
-      date,
-      type
+    const newHoliday = await prisma.holiday.create({
+      data: {
+        name,
+        date: new Date(date),
+        type
+      }
     });
-    res.status(201).json({ id, name, date, type });
+    res.status(201).json({ id: newHoliday.id, name, date, type });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -22,8 +22,13 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
 
 router.get('/', authenticate, async (req, res) => {
   try {
-    const snap = await db.collection('holiday').orderBy('date', 'asc').get();
-    const holidays = snap.docs.map(doc => doc.data());
+    const records = await prisma.holiday.findMany({
+      orderBy: { date: 'asc' }
+    });
+    const holidays = records.map(h => ({
+      ...h,
+      date: h.date.toISOString().split('T')[0]
+    }));
     res.json(holidays);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -32,7 +37,7 @@ router.get('/', authenticate, async (req, res) => {
 
 router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
   try {
-    await db.collection('holiday').doc(req.params.id).delete();
+    await prisma.holiday.delete({ where: { id: req.params.id } });
     res.json({ message: 'Holiday deleted' });
   } catch (error) {
     res.status(400).json({ error: error.message });

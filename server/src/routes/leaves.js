@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
 const { sendEmail } = require('../utils/email');
 const { uploadDocument } = require('../utils/cloudinary');
@@ -13,30 +13,31 @@ router.post('/', authenticate, uploadDocument.single('document'), async (req, re
       documentUrl = req.file.path.startsWith('http') ? req.file.path : `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     }
 
-    const id = Date.now().toString();
-    await db.collection('leaves').doc(id).set({
-      id,
-      employeeId: req.user.id,
-      type,
-      fromDate,
-      toDate,
-      reason,
-      documentUrl,
-      halfDay: halfDay === 'true' || halfDay === true,
-      status: 'Pending',
-      createdAt: new Date().toISOString()
+    const newLeave = await prisma.leave.create({
+      data: {
+        employeeId: req.user.id,
+        type,
+        fromDate: new Date(fromDate),
+        toDate: new Date(toDate),
+        reason,
+        documentUrl,
+        halfDay: halfDay === 'true' || halfDay === true,
+        status: 'Pending'
+      }
     });
 
     // Notify HR about the new leave request
     try {
-      const empSnap = await db.collection('employees').doc(req.user.id).get();
-      const emp = empSnap.exists ? empSnap.data() : { name: req.user.name || 'Employee', email: req.user.email || '' };
+      const emp = await prisma.employee.findUnique({ where: { id: req.user.id } });
+      const empName = emp ? emp.name : req.user.name || 'Employee';
+      const empEmail = emp ? emp.email : req.user.email || '';
+      
       const hrEmail = process.env.HR_EMAIL || process.env.EMAIL_USER;
-      const subject = `Leave Request: ${emp.name} (${type})`;
+      const subject = `Leave Request: ${empName} (${type})`;
       const html = `
         <p>New leave request submitted:</p>
         <ul>
-          <li><strong>Employee:</strong> ${emp.name} (${emp.email || req.user.email || 'N/A'})</li>
+          <li><strong>Employee:</strong> ${empName} (${empEmail || 'N/A'})</li>
           <li><strong>Type:</strong> ${type}</li>
           <li><strong>From:</strong> ${fromDate}</li>
           <li><strong>To:</strong> ${toDate}</li>
@@ -44,17 +45,16 @@ router.post('/', authenticate, uploadDocument.single('document'), async (req, re
         </ul>
       `;
       if (hrEmail) {
-        const employeeEmail = emp.email || req.user.email;
         await sendEmail(hrEmail, subject, html, [], {
-          from: `"${emp.name} via Geonixa" <${process.env.EMAIL_USER || 'your_email@gmail.com'}>`,
-          replyTo: employeeEmail
+          from: `"${empName} via Geonixa" <${process.env.EMAIL_USER || 'your_email@gmail.com'}>`,
+          replyTo: empEmail
         });
       }
     } catch (e) {
       console.error('Failed sending HR notification for leave apply:', e.message || e);
     }
 
-    res.json({ id });
+    res.json({ id: newLeave.id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -64,25 +64,24 @@ router.get('/', authenticate, async (req, res) => {
   try {
     let leaves = [];
     if (req.user.role !== 'admin') {
-      const snap = await db.collection('leaves').where('employeeId', '==', req.user.id).get();
-      leaves = snap.docs.map(doc => doc.data());
+      leaves = await prisma.leave.findMany({
+        where: { employeeId: req.user.id },
+        include: { employee: true },
+        orderBy: { createdAt: 'desc' }
+      });
     } else {
-      const snap = await db.collection('leaves').get();
-      leaves = snap.docs.map(doc => doc.data());
+      leaves = await prisma.leave.findMany({
+        include: { employee: true },
+        orderBy: { createdAt: 'desc' }
+      });
     }
 
-    leaves.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-
-    const empSnap = await db.collection('employees').get();
-    const employeesMap = {};
-    empSnap.docs.forEach(doc => {
-      employeesMap[doc.id] = doc.data();
-    });
-
     const formatted = leaves.map(l => {
-      const emp = employeesMap[l.employeeId] || {};
+      const emp = l.employee || {};
       return {
         ...l,
+        fromDate: l.fromDate.toISOString().split('T')[0], // format back for frontend
+        toDate: l.toDate.toISOString().split('T')[0],
         employee: { name: emp.name || 'Unknown', department: emp.department || 'Unknown' }
       };
     });
@@ -99,7 +98,10 @@ router.put('/:id/status', authenticate, authorize(['admin']), async (req, res) =
     if (adminComment) {
       updateData.adminComment = adminComment;
     }
-    await db.collection('leaves').doc(req.params.id).update(updateData);
+    await prisma.leave.update({
+      where: { id: req.params.id },
+      data: updateData
+    });
     res.json({ message: 'Status updated' });
   } catch (error) {
     res.status(500).json({ error: error.message });

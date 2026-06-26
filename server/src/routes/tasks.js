@@ -1,30 +1,29 @@
 const express = require('express');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
 const { ownerOrAdmin } = require('../middleware/rbac');
 const router = express.Router();
 
-// 1. Admin configures target (e.g., 30) for an employee
 router.post('/target', authenticate, authorize(['admin']), async (req, res) => {
   const { employeeId, month, targetCount } = req.body;
   try {
-    const existingSnap = await db.collection('targets')
-      .where('employeeId', '==', employeeId)
-      .where('month', '==', month)
-      .get();
+    const existing = await prisma.target.findFirst({
+      where: { employeeId, month }
+    });
       
-    if (!existingSnap.empty) {
-      await db.collection('targets').doc(existingSnap.docs[0].id).update({ 
-        targetCount: targetCount || 30 
+    if (existing) {
+      await prisma.target.update({
+        where: { id: existing.id },
+        data: { targetCount: targetCount || 30 }
       });
     } else {
-      const id = Date.now().toString();
-      await db.collection('targets').doc(id).set({
-        id,
-        employeeId,
-        month,
-        targetCount: targetCount || 30,
-        achievedCount: 0
+      await prisma.target.create({
+        data: {
+          employeeId,
+          month,
+          targetCount: targetCount || 30,
+          achievedCount: 0
+        }
       });
     }
     res.json({ success: true, message: 'Workforce target saved.' });
@@ -33,50 +32,51 @@ router.post('/target', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-// 2. Employee enters student records
 router.post('/submit', authenticate, async (req, res) => {
   const { studentName, domain, collegeName, mailId, phoneNumber, totalAmount, amountPaid, remainingAmount, remainingAmountDate } = req.body;
   const employeeId = req.user.id;
-  const month = new Date().toISOString().substring(0, 7); // YYYY-MM
-  const id = Date.now().toString();
+  const month = new Date().toISOString().substring(0, 7); 
 
   try {
-    // Save submission
-    await db.collection('student_submissions').doc(id).set({
-      id,
-      employeeId,
-      studentName,
-      domain: domain || '',
-      collegeName: collegeName || '',
-      mailId: mailId || '',
-      phoneNumber: phoneNumber || '',
-      totalAmount: totalAmount || 0,
-      amountPaid: amountPaid || 0,
-      remainingAmount: remainingAmount || 0,
-      remainingAmountDate: remainingAmountDate || '',
-      date: new Date().toISOString()
+    const target = await prisma.target.findFirst({
+      where: { employeeId, month }
     });
 
-    // Increment target achievements
-    const targetSnap = await db.collection('targets')
-      .where('employeeId', '==', employeeId)
-      .where('month', '==', month)
-      .get();
-
-    if (!targetSnap.empty) {
-      const doc = targetSnap.docs[0];
-      const newAchievedCount = (doc.data().achievedCount || 0) + 1;
-      await db.collection('targets').doc(doc.id).update({ achievedCount: newAchievedCount });
-    } else {
-      const targetId = (Date.now() + 1).toString();
-      await db.collection('targets').doc(targetId).set({
-        id: targetId,
-        employeeId,
-        month,
-        targetCount: 30,
-        achievedCount: 1
+    let targetId = null;
+    if (target) {
+      targetId = target.id;
+      await prisma.target.update({
+        where: { id: target.id },
+        data: { achievedCount: { increment: 1 } }
       });
+    } else {
+      const newTarget = await prisma.target.create({
+        data: {
+          employeeId,
+          month,
+          targetCount: 30,
+          achievedCount: 1
+        }
+      });
+      targetId = newTarget.id;
     }
+
+    await prisma.studentSubmission.create({
+      data: {
+        employeeId,
+        targetId,
+        studentName,
+        domain: domain || '',
+        collegeName: collegeName || '',
+        mailId: mailId || '',
+        phoneNumber: phoneNumber || '',
+        totalAmount: parseFloat(totalAmount) || 0,
+        amountPaid: parseFloat(amountPaid) || 0,
+        remainingAmount: parseFloat(remainingAmount) || 0,
+        remainingAmountDate: remainingAmountDate || '',
+        date: new Date()
+      }
+    });
 
     res.json({ success: true, message: 'Student metric recorded successfully.' });
   } catch (error) {
@@ -84,70 +84,58 @@ router.post('/submit', authenticate, async (req, res) => {
   }
 });
 
-// 3. Performance summary
 router.get('/performance', authenticate, async (req, res) => {
   const employeeId = req.query.employeeId || req.user.id;
   const month = req.query.month || new Date().toISOString().substring(0, 7);
 
   try {
-    const targetSnap = await db.collection('targets')
-      .where('employeeId', '==', employeeId)
-      .where('month', '==', month)
-      .get();
-      
-    let target = null;
-    if (!targetSnap.empty) {
-      target = targetSnap.docs[0].data();
-    }
+    const target = await prisma.target.findFirst({
+      where: { employeeId, month }
+    });
 
-    const subSnap = await db.collection('student_submissions')
-      .where('employeeId', '==', employeeId)
-      .get();
-      
-    let submissions = subSnap.docs.map(doc => doc.data());
-    submissions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const submissions = await prisma.studentSubmission.findMany({
+      where: { employeeId },
+      orderBy: { date: 'desc' }
+    });
     
     res.json({
       target: target || { targetCount: 30, achievedCount: 0 },
-      submissions: submissions || []
+      submissions: submissions.map(s => ({
+        ...s,
+        date: s.date.toISOString(),
+        createdAt: s.createdAt.toISOString(),
+        updatedAt: s.updatedAt.toISOString()
+      }))
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// 4. Delete a submission
 router.delete('/submit/:id', authenticate, ownerOrAdmin(async (req) => {
-  const doc = await db.collection('student_submissions').doc(req.params.id).get();
-  return doc.exists ? doc.data().employeeId : null;
+  const prisma = require('../../prisma/client');
+  const doc = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
+  return doc ? doc.employeeId : null;
 }), async (req, res) => {
   try {
-    const docRef = db.collection('student_submissions').doc(req.params.id);
-    const doc = await docRef.get();
-    
-    if (!doc.exists) {
+    const submission = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
+    if (!submission) {
       return res.status(404).json({ error: 'Submission not found' });
     }
 
-    const data = doc.data();
+    const month = submission.date.toISOString().substring(0, 7);
     
-    // ownerOrAdmin middleware enforces access
+    await prisma.studentSubmission.delete({ where: { id: req.params.id } });
 
-    const month = new Date(data.date).toISOString().substring(0, 7);
-    
-    // Delete the submission
-    await docRef.delete();
+    const target = await prisma.target.findFirst({
+      where: { employeeId: submission.employeeId, month }
+    });
 
-    // Decrement the target achievement
-    const targetSnap = await db.collection('targets')
-      .where('employeeId', '==', data.employeeId)
-      .where('month', '==', month)
-      .get();
-
-    if (!targetSnap.empty) {
-      const targetDoc = targetSnap.docs[0];
-      const newAchievedCount = Math.max((targetDoc.data().achievedCount || 1) - 1, 0);
-      await db.collection('targets').doc(targetDoc.id).update({ achievedCount: newAchievedCount });
+    if (target && target.achievedCount > 0) {
+      await prisma.target.update({
+        where: { id: target.id },
+        data: { achievedCount: { decrement: 1 } }
+      });
     }
 
     res.json({ success: true, message: 'Submission deleted' });
@@ -156,29 +144,26 @@ router.delete('/submit/:id', authenticate, ownerOrAdmin(async (req) => {
   }
 });
 
-// 5. Update submission status (Call / Payment)
 router.patch('/submit/:id/status', authenticate, ownerOrAdmin(async (req) => {
-  const doc = await db.collection('student_submissions').doc(req.params.id).get();
-  return doc.exists ? doc.data().employeeId : null;
+  const prisma = require('../../prisma/client');
+  const doc = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
+  return doc ? doc.employeeId : null;
 }), async (req, res) => {
   const { callStatus, paymentStatus } = req.body;
   try {
-    const docRef = db.collection('student_submissions').doc(req.params.id);
-    const doc = await docRef.get();
-    
-    if (!doc.exists) {
+    const submission = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
+    if (!submission) {
       return res.status(404).json({ error: 'Submission not found' });
     }
-
-    const data = doc.data();
-    
-    // ownerOrAdmin middleware enforces access
 
     const updates = {};
     if (callStatus !== undefined) updates.callStatus = callStatus;
     if (paymentStatus !== undefined) updates.paymentStatus = paymentStatus;
 
-    await docRef.update(updates);
+    await prisma.studentSubmission.update({
+      where: { id: req.params.id },
+      data: updates
+    });
 
     res.json({ success: true, message: 'Status updated' });
   } catch (error) {

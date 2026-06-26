@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
 const { uploadDocument } = require('../utils/cloudinary');
 const router = express.Router();
@@ -12,20 +12,20 @@ router.post('/', authenticate, uploadDocument.single('document'), async (req, re
       documentUrl = req.file.path.startsWith('http') ? req.file.path : `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     }
 
-    const id = Date.now().toString();
-    await db.collection('problems').doc(id).set({
-      id,
-      employeeId: req.user.id,
-      category,
-      title,
-      description,
-      priority,
-      status: 'Pending',
-      documentUrl,
-      createdAt: new Date().toISOString()
+    const problem = await prisma.problem.create({
+      data: {
+        employeeId: req.user.id,
+        category,
+        title,
+        description,
+        priority,
+        status: 'Pending',
+        documentUrl,
+        comments: []
+      }
     });
 
-    res.json({ id });
+    res.json({ id: problem.id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -33,27 +33,28 @@ router.post('/', authenticate, uploadDocument.single('document'), async (req, re
 
 router.get('/', authenticate, async (req, res) => {
   try {
-    let problems = [];
+    let whereClause = {};
     if (req.user.role !== 'admin') {
-      const snap = await db.collection('problems').where('employeeId', '==', req.user.id).get();
-      problems = snap.docs.map(doc => doc.data());
-    } else {
-      const snap = await db.collection('problems').get();
-      problems = snap.docs.map(doc => doc.data());
+      whereClause.employeeId = req.user.id;
     }
 
-    problems.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    const problems = await prisma.problem.findMany({
+      where: whereClause,
+      orderBy: { createdAt: 'desc' }
+    });
 
-    const empSnap = await db.collection('employees').get();
+    const employees = await prisma.employee.findMany();
     const employeesMap = {};
-    empSnap.docs.forEach(doc => {
-      employeesMap[doc.id] = doc.data();
+    employees.forEach(emp => {
+      employeesMap[emp.id] = emp;
     });
 
     const formatted = problems.map(p => {
       const emp = employeesMap[p.employeeId] || {};
       return {
         ...p,
+        createdAt: p.createdAt.toISOString(),
+        updatedAt: p.updatedAt.toISOString(),
         employee: { name: emp.name || 'Unknown', department: emp.department || 'Unknown' }
       };
     });
@@ -70,7 +71,10 @@ router.put('/:id/status', authenticate, authorize(['admin']), async (req, res) =
     if (resolutionNotes) {
       updateData.resolutionNotes = resolutionNotes;
     }
-    await db.collection('problems').doc(req.params.id).update(updateData);
+    await prisma.problem.update({
+      where: { id: req.params.id },
+      data: updateData
+    });
     res.json({ message: 'Status updated' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -81,12 +85,11 @@ router.post('/:id/comments', authenticate, async (req, res) => {
   const { text } = req.body;
   if (!text) return res.status(400).json({ error: 'Comment text is required' });
   try {
-    const docRef = db.collection('problems').doc(req.params.id);
-    const doc = await docRef.get();
-    if (!doc.exists) return res.status(404).json({ error: 'Problem not found' });
+    const problem = await prisma.problem.findUnique({ where: { id: req.params.id } });
+    if (!problem) return res.status(404).json({ error: 'Problem not found' });
     
-    const empDoc = await db.collection('employees').doc(req.user.id).get();
-    const empName = empDoc.exists ? empDoc.data().name : 'Unknown';
+    const emp = await prisma.employee.findUnique({ where: { id: req.user.id } });
+    const empName = emp ? emp.name : 'Unknown';
 
     const newComment = {
       id: Date.now().toString(),
@@ -97,10 +100,14 @@ router.post('/:id/comments', authenticate, async (req, res) => {
       createdAt: new Date().toISOString()
     };
     
-    const comments = doc.data().comments || [];
-    comments.push(newComment);
+    const currentComments = problem.comments && Array.isArray(problem.comments) ? problem.comments : [];
+    currentComments.push(newComment);
     
-    await docRef.update({ comments });
+    await prisma.problem.update({
+      where: { id: req.params.id },
+      data: { comments: currentComments }
+    });
+
     res.json({ message: 'Comment added', comment: newComment });
   } catch (error) {
     res.status(500).json({ error: error.message });

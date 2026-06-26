@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 
 const hasMultiDeviceAccess = (role) => {
   return role === 'admin' || role === 'manager' || role.endsWith('_manager');
@@ -11,10 +11,8 @@ const authenticate = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const doc = await db.collection('employees').doc(decoded.id).get();
-    if (!doc.exists) return res.status(401).json({ error: 'User not found.' });
-
-    const employee = doc.data();
+    const employee = await prisma.employee.findUnique({ where: { id: decoded.id } });
+    if (!employee) return res.status(401).json({ error: 'User not found.' });
     const enforceDeviceLock = !hasMultiDeviceAccess(employee.role);
     if (enforceDeviceLock && employee.deviceId && decoded.deviceId !== employee.deviceId) {
       return res.status(401).json({ error: 'Device mismatch detected. Please login from your assigned device.' });

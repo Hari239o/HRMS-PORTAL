@@ -1,35 +1,32 @@
 const express = require('express');
 const crypto = require('crypto');
-const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
 function genToken() {
   return crypto.randomUUID().replace(/-/g, '');
 }
 
-// ─── PUBLIC: Load onboarding form by token ────────────────────────────────────
-// GET /api/onboarding/:token
 router.get('/:token', async (req, res) => {
   try {
     const { token } = req.params;
     if (!token || token.length < 8) return res.status(400).json({ error: 'Invalid token' });
 
-    const snap = await db.collection('onboarding_forms').where('token', '==', token).limit(1).get();
-    if (snap.empty) return res.status(404).json({ error: 'Form not found' });
-
-    const formDoc = snap.docs[0];
-    const form = { id: formDoc.id, ...formDoc.data() };
+    const form = await prisma.onboardingForm.findUnique({
+      where: { token }
+    });
+    
+    if (!form) return res.status(404).json({ error: 'Form not found' });
 
     let student = null;
     if (form.student_id) {
-      const sDoc = await db.collection('students').doc(form.student_id).get();
-      if (sDoc.exists) student = { id: sDoc.id, ...sDoc.data() };
+      student = await prisma.student.findUnique({
+        where: { id: form.student_id }
+      });
     }
 
-    // Return only safe fields
     res.json({
       form: {
         id: form.id,
@@ -40,7 +37,7 @@ router.get('/:token', async (req, res) => {
         phone: form.phone,
         whatsapp: form.whatsapp,
         email: form.email,
-        submitted_at: form.submitted_at || null,
+        submitted_at: form.submitted_at ? form.submitted_at.toISOString() : null,
       },
       student: student
         ? {
@@ -57,13 +54,10 @@ router.get('/:token', async (req, res) => {
   }
 });
 
-// ─── PUBLIC: Submit onboarding form + referrals ───────────────────────────────
-// POST /api/onboarding/submit
 router.post('/submit', async (req, res) => {
   try {
     const { token, full_name, phone, whatsapp, email, referrals = [] } = req.body;
 
-    // Validate required fields
     if (!token || token.length < 8) return res.status(400).json({ error: 'Invalid token' });
     if (!full_name || full_name.trim().length < 1) return res.status(400).json({ error: 'full_name is required' });
     if (!phone || phone.trim().length < 5) return res.status(400).json({ error: 'phone is required' });
@@ -71,36 +65,37 @@ router.post('/submit', async (req, res) => {
     if (!email || !email.includes('@')) return res.status(400).json({ error: 'Valid email is required' });
     if (!Array.isArray(referrals) || referrals.length > 20) return res.status(400).json({ error: 'referrals must be an array of max 20' });
 
-    // Find the form
-    const snap = await db.collection('onboarding_forms').where('token', '==', token).limit(1).get();
-    if (snap.empty) return res.status(404).json({ error: 'Invalid or expired form link' });
-
-    const formDoc = snap.docs[0];
-    const form = formDoc.data();
-
+    const form = await prisma.onboardingForm.findUnique({
+      where: { token }
+    });
+    
+    if (!form) return res.status(404).json({ error: 'Invalid or expired form link' });
     if (form.submitted_at) return res.status(400).json({ error: 'This form has already been submitted' });
 
-    const now = new Date().toISOString();
+    const now = new Date();
 
-    // Update onboarding form record
-    await db.collection('onboarding_forms').doc(formDoc.id).update({
-      full_name: full_name.trim(),
-      phone: phone.trim(),
-      whatsapp: whatsapp.trim(),
-      email: email.trim(),
-      submitted_at: now,
+    await prisma.onboardingForm.update({
+      where: { id: form.id },
+      data: {
+        full_name: full_name.trim(),
+        phone: phone.trim(),
+        whatsapp: whatsapp.trim(),
+        email: email.trim(),
+        submitted_at: now,
+      }
     });
 
-    // Sync the canonical student record
     if (form.student_id) {
-      await db.collection('students').doc(form.student_id).update({
-        full_name: full_name.trim(),
-        phone: (whatsapp || phone).trim(),
-        email: email.trim(),
+      await prisma.student.update({
+        where: { id: form.student_id },
+        data: {
+          full_name: full_name.trim(),
+          phone: (whatsapp || phone).trim(),
+          email: email.trim(),
+        }
       });
     }
 
-    // Insert referrals — clean and filter valid ones
     const cleaned = referrals
       .map((r) => ({
         name: (r.name || '').trim(),
@@ -111,19 +106,18 @@ router.post('/submit', async (req, res) => {
 
     let inserted_referrals = 0;
     if (cleaned.length > 0) {
-      const batch = db.batch();
-      for (const r of cleaned) {
-        const ref = db.collection('referrals').doc();
-        batch.set(ref, {
-          referrer_student_id: form.student_id,
-          referred_name: r.name,
-          referred_phone: r.phone || null,
-          referred_email: r.email || null,
-          status: 'pending',
-          created_at: now,
-        });
-      }
-      await batch.commit();
+      const referralData = cleaned.map(r => ({
+        referrer_student_id: form.student_id,
+        referred_name: r.name,
+        referred_phone: r.phone || null,
+        referred_email: r.email || null,
+        status: 'pending',
+        created_at: now,
+      }));
+      
+      await prisma.referral.createMany({
+        data: referralData
+      });
       inserted_referrals = cleaned.length;
     }
 
@@ -134,8 +128,6 @@ router.post('/submit', async (req, res) => {
   }
 });
 
-// ─── STAFF: (Re)send onboarding form for a paid student ──────────────────────
-// POST /api/onboarding/send  (requires auth)
 router.post('/send', authenticate, async (req, res) => {
   try {
     const { student_id, base_url } = req.body;
@@ -143,36 +135,36 @@ router.post('/send', authenticate, async (req, res) => {
 
     if (!student_id) return res.status(400).json({ error: 'student_id is required' });
 
-    // Load student
-    const sDoc = await db.collection('students').doc(student_id).get();
-    if (!sDoc.exists) return res.status(404).json({ error: 'Student not found' });
-    const student = { id: sDoc.id, ...sDoc.data() };
+    const student = await prisma.student.findUnique({
+      where: { id: student_id }
+    });
+    
+    if (!student) return res.status(404).json({ error: 'Student not found' });
 
-    // Reuse an unsubmitted form if one exists, else create a fresh token
-    const existingSnap = await db
-      .collection('onboarding_forms')
-      .where('student_id', '==', student.id)
-      .where('submitted_at', '==', null)
-      .orderBy('created_at', 'desc')
-      .limit(1)
-      .get();
+    const existingForm = await prisma.onboardingForm.findFirst({
+      where: {
+        student_id: student.id,
+        submitted_at: null
+      },
+      orderBy: { created_at: 'desc' }
+    });
 
     let token;
-    if (!existingSnap.empty) {
-      token = existingSnap.docs[0].data().token;
+    if (existingForm) {
+      token = existingForm.token;
     } else {
       token = genToken();
-      const now = new Date().toISOString();
-      await db.collection('onboarding_forms').add({
-        token,
-        student_id: student.id,
-        lead_id: student.lead_id || null,
-        full_name: student.full_name || student.name,
-        phone: student.phone || null,
-        whatsapp: null,
-        email: student.email || null,
-        submitted_at: null,
-        created_at: now,
+      await prisma.onboardingForm.create({
+        data: {
+          token,
+          student_id: student.id,
+          lead_id: student.lead_id || null,
+          full_name: student.full_name || student.name,
+          phone: student.phone || null,
+          whatsapp: null,
+          email: student.email || null,
+          submitted_at: null,
+        }
       });
     }
 
@@ -190,14 +182,14 @@ router.post('/send', authenticate, async (req, res) => {
       ? `https://wa.me/${phoneDigits}?text=${encodeURIComponent(msg)}`
       : null;
 
-    // Log to whatsapp_logs so it shows in the WhatsApp logs page
-    await db.collection('whatsapp_logs').add({
-      student_id: student.id,
-      employee_id: userId || null,
-      message: msg,
-      payment_link: url,
-      status: 'sent',
-      created_at: new Date().toISOString(),
+    await prisma.whatsappLog.create({
+      data: {
+        student_id: student.id,
+        employee_id: userId || null,
+        message: msg,
+        payment_link: url,
+        status: 'sent',
+      }
     });
 
     res.json({ url, wa_link: waLink, phone: student.phone, name: studentName });
@@ -207,13 +199,18 @@ router.post('/send', authenticate, async (req, res) => {
   }
 });
 
-// ─── STAFF: List all onboarding forms ─────────────────────────────────────────
-// GET /api/onboarding  (requires auth)
 router.get('/', authenticate, async (req, res) => {
   try {
-    const snap = await db.collection('onboarding_forms').orderBy('created_at', 'desc').limit(200).get();
-    const forms = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    res.json(forms);
+    const forms = await prisma.onboardingForm.findMany({
+      orderBy: { created_at: 'desc' },
+      take: 200
+    });
+    
+    res.json(forms.map(f => ({
+      ...f,
+      submitted_at: f.submitted_at ? f.submitted_at.toISOString() : null,
+      created_at: f.created_at.toISOString()
+    })));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

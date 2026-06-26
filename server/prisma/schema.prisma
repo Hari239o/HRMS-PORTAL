@@ -8,16 +8,31 @@ datasource db {
 }
 
 model Employee {
-  id         String       @id @default(uuid())
-  name       String
-  email      String       @unique
-  password   String
-  role       String       @default("employee") // admin or employee
-  department String
-  createdAt  DateTime     @default(now())
-  attendance Attendance[]
-  leaves     Leave[]
-  salaries   Salary[]
+  id            String       @id @default(uuid())
+  name          String
+  email         String       @unique
+  password      String
+  role          String       @default("employee") // admin or employee
+  department    String
+  avatar        String?
+  assets        String?
+  weekOff       String       @default("Sunday")
+  starPerformer String?
+  deviceId      String?
+  manager       String?
+  hrManager     String?
+  teamLeader    String?
+  empId         String?
+  designation   String?
+  pan           String?
+  uan           String?
+  bankName      String?
+  accountNumber String?
+  documents     Json?
+  createdAt     DateTime     @default(now())
+  attendance    Attendance[]
+  leaves        Leave[]
+  salaries      Salary[]
 }
 
 model Attendance {
@@ -27,11 +42,14 @@ model Attendance {
   date          String   // YYYY-MM-DD
   checkIn       DateTime
   checkOut      DateTime?
-  checkInPhoto  String?
-  checkOutPhoto String?
-  latitude      Float?
-  longitude     Float?
-  status        String   // Present, Absent, Late, On Leave
+  checkInPhoto      String?
+  checkOutPhoto     String?
+  checkInLatitude   Float?
+  checkInLongitude  Float?
+  checkOutLatitude  Float?
+  checkOutLongitude Float?
+  adminEdited       Boolean  @default(false)
+  status            String   // Present, Absent, Late, On Leave
 }
 
 model Leave {
@@ -41,9 +59,12 @@ model Leave {
   type       String   // Sick, Casual, Paid
   fromDate   DateTime
   toDate     DateTime
-  reason     String
-  status     String   @default("Pending") // Pending, Approved, Rejected
-  createdAt  DateTime @default(now())
+  reason      String
+  documentUrl String?
+  halfDay      Boolean  @default(false)
+  status       String   @default("Pending") // Pending, Approved, Rejected
+  adminComment String?
+  createdAt    DateTime @default(now())
 }
 
 model Holiday {
@@ -54,13 +75,255 @@ model Holiday {
 }
 
 model Salary {
+  id                String    @id @default(uuid())
+  employeeId        String
+  employee          Employee  @relation(fields: [employeeId], references: [id])
+  month             String    // YYYY-MM
+  baseSalary        Float     // Fallback/Legacy
+  basicSalary       Float     @default(0)
+  hra               Float     @default(0)
+  specialAllowance  Float     @default(0)
+  incentives        Float     @default(0)
+  otherAllowances   Float     @default(0)
+  pf                Float     @default(0)
+  esi               Float     @default(0)
+  professionalTax   Float     @default(0)
+  tds               Float     @default(0)
+  otherDeductions   Float     @default(0)
+  deductions        Float     @default(0) // Fallback/Legacy
+  bonus             Float     @default(0)
+  netSalary         Float
+  status            String    @default("Pending")
+  releasedAt        DateTime?
+  empId             String?
+  designation       String?
+  pan               String?
+  uan               String?
+  bankName          String?
+  accountNumber     String?
+  createdAt         DateTime  @default(now())
+}
+
+model Target {
+  id            String              @id @default(uuid())
+  employeeId    String
+  month         String
+  title         String?
+  description   String?
+  targetCount   Int                 @default(30)
+  achievedCount Int                 @default(0)
+  deadline      DateTime?
+  status        String              @default("Pending")
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  submissions   StudentSubmission[]
+}
+
+model StudentSubmission {
+  id                  String   @id @default(uuid())
+  targetId            String?
+  target              Target?  @relation(fields: [targetId], references: [id])
+  employeeId          String
+  studentName         String
+  domain              String?
+  collegeName         String?
+  mailId              String?
+  phoneNumber         String?
+  totalAmount         Float    @default(0)
+  amountPaid          Float    @default(0)
+  remainingAmount     Float    @default(0)
+  remainingAmountDate String?
+  callStatus          String?
+  paymentStatus       String?
+  date                DateTime @default(now())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Approval {
+  id               String   @id @default(uuid())
+  type             String
+  title            String?
+  description      String?
+  requestedAmount  Float?
+  approvedAmount   Float?
+  relatedEntity    String?
+  relatedId        String?
+  details          Json?
+  requestedBy      String
+  requestedByName  String?
+  requestedByEmail String?
+  requestedByRole  String?
+  status           String   @default("pending")
+  actionReason     String?
+  timeline         Json?
+  lastActionAt     DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ApprovalAuditLog {
+  id              String   @id @default(uuid())
+  requestId       String
+  event           String
+  performedBy     String
+  performedByName String?
+  performedByRole String?
+  details         Json?
+  createdAt       DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  data      Json?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model OnboardingForm {
+  id           String    @id @default(uuid())
+  token        String    @unique
+  student_id   String?
+  lead_id      String?
+  full_name    String?
+  phone        String?
+  whatsapp     String?
+  email        String?
+  submitted_at DateTime?
+  created_at   DateTime  @default(now())
+}
+
+model Student {
+  id            String   @id @default(uuid())
+  full_name     String?
+  name          String?
+  enrollment_id String?
+  program       String?
+  phone         String?
+  email         String?
+  lead_id       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Referral {
+  id                  String   @id @default(uuid())
+  referrer_student_id String?
+  referred_name       String?
+  referred_phone      String?
+  referred_email      String?
+  status              String   @default("pending")
+  created_at          DateTime @default(now())
+}
+
+model WhatsappLog {
+  id           String   @id @default(uuid())
+  student_id   String?
+  employee_id  String?
+  message      String?
+  payment_link String?
+  status       String   @default("sent")
+  created_at   DateTime @default(now())
+}
+
+model Resignation {
+  id                String    @id @default(uuid())
+  employeeId        String
+  reason            String?
+  primaryReason     String?
+  personalEmail     String?
+  requestedLWD      DateTime?
+  officialLWD       DateTime?
+  status            String    @default("Pending")
+  adminRemarks      String?
+  eligibleForRehire Boolean   @default(true)
+  noticeWaived      Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Lead {
+  id         String     @id @default(uuid())
+  name       String
+  email      String?
+  phone      String?
+  source     String?
+  status     String     @default("New")
+  assignedTo String?
+  notes      String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  callLogs   CallLog[]
+  followups  Followup[]
+  payments   Payment[]
+}
+
+model CallLog {
   id         String   @id @default(uuid())
   employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  month      String   // YYYY-MM
-  baseSalary Float
-  deductions Float    @default(0)
-  bonus      Float    @default(0)
-  netSalary  Float
+  leadId     String
+  lead       Lead     @relation(fields: [leadId], references: [id])
+  duration   Int?
+  outcome    String?
+  notes      String?
   createdAt  DateTime @default(now())
+}
+
+model Followup {
+  id                 String   @id @default(uuid())
+  leadId             String
+  lead               Lead     @relation(fields: [leadId], references: [id])
+  assignedEmployeeId String
+  date               DateTime
+  status             String   @default("Pending")
+  notes              String?
+  createdAt          DateTime @default(now())
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  leadId        String
+  lead          Lead     @relation(fields: [leadId], references: [id])
+  amount        Float
+  status        String   @default("Completed")
+  createdBy     String
+  screenshotUrl String?
+  createdAt     DateTime @default(now())
+}
+
+model Problem {
+  id              String   @id @default(uuid())
+  employeeId      String
+  category        String?
+  title           String
+  description     String?
+  priority        String   @default("Medium")
+  status          String   @default("Pending")
+  documentUrl     String?
+  resolutionNotes String?
+  comments        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Message {
+  id             String   @id @default(uuid())
+  senderId       String
+  receiverId     String
+  content        String
+  conversationId String
+  timestamp      DateTime @default(now())
+  senderName     String?
+  senderRole     String?
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
 }
