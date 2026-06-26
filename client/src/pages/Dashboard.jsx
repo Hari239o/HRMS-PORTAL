@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -91,11 +91,11 @@ export default function Dashboard() {
       setLoading(true);
       if (user.role === 'admin') {
         const [statsRes, analyticsRes, activityRes, employeesRes, starsRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/reports/dashboard-stats`),
-          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/reports/analytics/monthly?month=${new Date().getMonth() + 1}&year=${new Date().getFullYear()}`),
-          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/reports/recent-activity`),
-          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees`),
-          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/star-performers`)
+          api.get(`/api/reports/dashboard-stats`),
+          api.get(`/api/reports/analytics/monthly?month=${new Date().getMonth() + 1}&year=${new Date().getFullYear()}`),
+          api.get(`/api/reports/recent-activity`),
+          api.get(`/api/employees`),
+          api.get(`/api/employees/star-performers`)
         ]);
         
         setAdminStats(statsRes.data);
@@ -112,11 +112,11 @@ export default function Dashboard() {
       } else {
         // Employee Dashboard Data
         const [attendanceRes, leavesRes, payslipsRes, starsRes, meRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/attendance`),
-          axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/leaves`),
-          axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/salary`),
-          axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/employees/star-performers`),
-          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/me`)
+          api.get(`${import.meta.env.VITE_API_URL || ``}/api/attendance`),
+          api.get(`${import.meta.env.VITE_API_URL || ``}/api/leaves`),
+          api.get(`${import.meta.env.VITE_API_URL || ``}/api/salary`),
+          api.get(`${import.meta.env.VITE_API_URL || ``}/api/employees/star-performers`),
+          api.get(`/api/employees/me`)
         ]);
 
         const personalAttendance = attendanceRes.data || [];
@@ -166,7 +166,7 @@ export default function Dashboard() {
   const downloadPayslip = async (salaryId, month) => {
     try {
       const response = await axios({
-        url: `${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary/generate/${salaryId}`,
+        url: `/api/salary/generate/${salaryId}`,
         method: 'GET',
         responseType: 'blob', // Important for file download
       });
@@ -186,7 +186,7 @@ export default function Dashboard() {
     e.preventDefault();
     if (!starDeclarationForm.employeeId) return toast.error('Please select an employee');
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${starDeclarationForm.employeeId}/badge`, { starPerformer: starDeclarationForm.badge });
+      await api.patch(`/api/employees/${starDeclarationForm.employeeId}/badge`, { starPerformer: starDeclarationForm.badge });
       toast.success('Star Performer declared successfully!');
       fetchData();
     } catch (err) {
@@ -197,7 +197,7 @@ export default function Dashboard() {
   const removeStarPerformer = async (id) => {
     if (!window.confirm('Remove this badge?')) return;
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${id}/badge`, { starPerformer: 'none' });
+      await api.patch(`/api/employees/${id}/badge`, { starPerformer: 'none' });
       toast.success('Badge removed');
       fetchData();
     } catch (err) {
@@ -213,7 +213,7 @@ export default function Dashboard() {
     if (!newPassword) return;
 
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/auth/change-password`, { currentPassword, newPassword });
+      await api.put(`/api/auth/change-password`, { currentPassword, newPassword });
       toast.success('Password changed successfully! Please use it on your next login.');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to change password');

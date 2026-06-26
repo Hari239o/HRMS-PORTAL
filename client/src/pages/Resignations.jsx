@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { 
@@ -36,7 +36,7 @@ const Resignations = () => {
 
   const fetchResignations = async () => {
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/resignations`);
+      const { data } = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/resignations`);
       if (Array.isArray(data)) {
         setResignations(data);
       } else {
@@ -60,7 +60,7 @@ const Resignations = () => {
     if (!formData.reason) return toast.error('Please provide a reason for resignation');
     
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/resignations`, formData);
+      await api.post(`${import.meta.env.VITE_API_URL || ``}/api/resignations`, formData);
       toast.success('Resignation request submitted successfully');
       setShowResignationForm(false);
       setFormData({ primaryReason: '', reason: '', requestedLWD: '', personalEmail: '' });
@@ -75,7 +75,7 @@ const Resignations = () => {
     if (!actionData.status) return toast.error('Please select an action');
     
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/resignations/${selectedResignation.id}`, actionData);
+      await api.patch(`/api/resignations/${selectedResignation.id}`, actionData);
       toast.success('Resignation updated successfully');
       setShowActionModal(false);
       setSelectedResignation(null);
@@ -90,11 +90,11 @@ const Resignations = () => {
     try {
       if (action === 'withdraw') {
         if (!window.confirm('Are you sure you want to withdraw your resignation request?')) return;
-        await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/resignations/${id}/withdraw`);
+        await api.patch(`/api/resignations/${id}/withdraw`);
         toast.success('Resignation request withdrawn');
       } else if (action === 'delete') {
         if (!window.confirm('Are you sure you want to delete this record permanently?')) return;
-        await axios.delete(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/resignations/${id}`);
+        await api.delete(`/api/resignations/${id}`);
         toast.success('Record deleted successfully');
       }
       fetchResignations();

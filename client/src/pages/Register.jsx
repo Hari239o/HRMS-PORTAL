@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { UserPlus, ArrowRight, Shield } from 'lucide-react';
@@ -21,7 +21,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/auth/register`, formData);
+      const res = await api.post(`${import.meta.env.VITE_API_URL || ``}/api/auth/register`, formData);
       login(res.data.user, res.data.token);
       toast.success('Workforce Account Activated!');
       navigate('/dashboard');

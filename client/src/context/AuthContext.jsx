@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Refresh latest user data in background
-      axios.get(`${import.meta.env.VITE_API_URL || ""}/api/employees/me`)
+      api.get(`/api/employees/me`)
         .then(res => {
           if (res.data) {
             const updated = { ...parsedUser, ...res.data };

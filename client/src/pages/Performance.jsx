@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles } from 'lucide-react';
@@ -99,7 +99,7 @@ export default function Performance() {
   const fetchPerformance = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/tasks/performance`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/tasks/performance`);
       setTargetData(res.data.target);
       setSubmissions(res.data.submissions);
     } catch (err) {
@@ -111,7 +111,7 @@ export default function Performance() {
 
   const fetchWorkforce = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/employees`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/employees`);
       setEmployees(res.data || []);
     } catch (err) {
       console.error(err);
@@ -121,7 +121,7 @@ export default function Performance() {
   const handleStudentSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/tasks/submit`, form);
+      await api.post(`${import.meta.env.VITE_API_URL || ``}/api/tasks/submit`, form);
       toast.success('Sale registered successfully!');
       setForm({ studentName: '', domain: '', collegeName: '', mailId: '', phoneNumber: '', totalAmount: '', amountPaid: '', remainingAmount: '', remainingAmountDate: '' });
       fetchPerformance();
@@ -133,7 +133,7 @@ export default function Performance() {
   const handleTargetAssign = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/tasks/target`, adminForm);
+      await api.post(`${import.meta.env.VITE_API_URL || ``}/api/tasks/target`, adminForm);
       toast.success('Target provisioned successfully.');
       fetchPerformance();
     } catch (err) {
@@ -143,7 +143,7 @@ export default function Performance() {
 
   const grantBadge = async (id, level) => {
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${id}/badge`, { starPerformer: level });
+      await api.patch(`/api/employees/${id}/badge`, { starPerformer: level });
       toast.success(`Badge updated to ${level}`);
       fetchWorkforce();
     } catch (err) {
@@ -153,7 +153,7 @@ export default function Performance() {
 
   const unlockDevice = async (id) => {
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${id}/reset-device`);
+      await api.patch(`/api/employees/${id}/reset-device`);
       toast.success('Hardware pair cleared.');
       fetchWorkforce();
     } catch (err) {
@@ -168,7 +168,7 @@ export default function Performance() {
       return;
     }
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/tasks/performance?employeeId=${empId}`);
+      const res = await api.get(`/api/tasks/performance?employeeId=${empId}`);
       setAdminIntakes(res.data.submissions || []);
     } catch (err) {
       toast.error('Failed to load employee intakes');
@@ -178,7 +178,7 @@ export default function Performance() {
   const handleDeleteSubmission = async (id, isAdminView = false) => {
     if (!window.confirm('Are you sure you want to delete this intake?')) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/tasks/submit/${id}`);
+      await api.delete(`/api/tasks/submit/${id}`);
       toast.success('Intake deleted successfully');
       if (isAdminView) {
         fetchAdminIntakes(selectedEmpForIntakes);
@@ -192,7 +192,7 @@ export default function Performance() {
 
   const handleUpdateStatus = async (id, field, value, isAdminView = false) => {
     try {
-      await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/tasks/submit/${id}/status`, { [field]: value });
+      await api.patch(`/api/tasks/submit/${id}/status`, { [field]: value });
       toast.success('Status updated');
       if (isAdminView) {
         fetchAdminIntakes(selectedEmpForIntakes);

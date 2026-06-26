@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { Settings as SettingsIcon, Clock, Save } from 'lucide-react';
 
@@ -17,7 +17,7 @@ const Settings = () => {
 
   const fetchSettings = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/settings`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/settings`);
       if (res.data) {
         setTimings({
           officeStartTime: res.data.officeStartTime || '11:00',
@@ -34,7 +34,7 @@ const Settings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/settings`, timings);
+      await api.post(`${import.meta.env.VITE_API_URL || ``}/api/settings`, timings);
       toast.success('Settings updated successfully!');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update settings');

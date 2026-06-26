@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { IndianRupee, Download, Mail, Plus, User, Trash2, Edit2 } from 'lucide-react';
@@ -44,7 +44,7 @@ export default function Salary() {
 
   const fetchSalaries = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/salary`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/salary`);
       setSalaries(res.data);
     } catch (err) {
       toast.error("Failed to load salaries");
@@ -53,7 +53,7 @@ export default function Salary() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/employees`); // Corrected endpoint
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/employees`); // Corrected endpoint
       setEmployees(res.data);
     } catch (err) {
       console.error(err);
@@ -89,10 +89,10 @@ export default function Salary() {
       }
 
       if (editSalaryId) {
-        await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary/${editSalaryId}`, payload);
+        await api.put(`/api/salary/${editSalaryId}`, payload);
         toast.success("Salary updated successfully");
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary`, payload);
+        await api.post(`/api/salary`, payload);
         toast.success("Salary recorded successfully");
       }
       
@@ -107,13 +107,13 @@ export default function Salary() {
     if (user.role !== 'admin' && salary.status !== 'Released') {
       return toast.error('Payslip is not yet released.');
     }
-    window.open(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary/generate/${salary.id}`, '_blank');
+    window.open(`/api/salary/generate/${salary.id}`, '_blank');
   };
 
   const releasePayslip = async (salaryId) => {
     try {
       setIsReleasing(salaryId);
-      await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary/release/${salaryId}`);
+      await api.patch(`/api/salary/release/${salaryId}`);
       toast.success('Payslip released and employee notified');
       fetchSalaries();
     } catch (err) {
@@ -125,7 +125,7 @@ export default function Salary() {
 
   const sendEmail = async (salaryId) => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/salary/send-email`, { salaryId });
+      await api.post(`${import.meta.env.VITE_API_URL || ``}/api/salary/send-email`, { salaryId });
       toast.success('Payslip sent to employee email');
       fetchSalaries();
     } catch (err) {
@@ -136,7 +136,7 @@ export default function Salary() {
   const handleDelete = async (salaryId) => {
     if (!window.confirm("Are you sure you want to delete this salary record?")) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/salary/${salaryId}`);
+      await api.delete(`/api/salary/${salaryId}`);
       toast.success("Salary record deleted successfully");
       fetchSalaries();
     } catch (err) {

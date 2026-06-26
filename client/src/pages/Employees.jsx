@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { Plus, Edit, Trash2, Mail, Briefcase, User, ShieldCheck, Folder, CheckCircle, XCircle, File, AlertTriangle, Bell, Key, Activity, Users, Building2, MapPin, Smartphone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -45,7 +45,7 @@ const Employees = () => {
 
   const fetchAttendanceData = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/attendance`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/attendance`);
       const todayDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
       const todayRecords = res.data.filter(a => a.date === todayDate);
       setAttendanceToday(todayRecords);
@@ -57,7 +57,7 @@ const Employees = () => {
   const fetchEmployees = async () => {
     try {
       const endpoint = user.role === 'admin' ? '/api/employees' : '/api/employees/directory';
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}${endpoint}`);
+      const res = await api.get(`${endpoint}`);
       setEmployees(res.data);
     } catch (err) {
       console.error('Failed to fetch employees');
@@ -69,10 +69,10 @@ const Employees = () => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${editingId}`, formData);
+        await api.put(`/api/employees/${editingId}`, formData);
         toast.success('Employee updated');
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/employees`, formData);
+        await api.post(`${import.meta.env.VITE_API_URL || ``}/api/employees`, formData);
         toast.success('Employee added');
       }
       setShowModal(false);
@@ -110,7 +110,7 @@ const Employees = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Remove this employee permanently?')) {
       try {
-        await axios.delete(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${id}`);
+        await api.delete(`/api/employees/${id}`);
         fetchEmployees();
         toast.success('Employee deleted');
       } catch (err) {
@@ -122,7 +122,7 @@ const Employees = () => {
   const handleResetDevice = async (id) => {
     if (window.confirm('Reset device lock? This will allow the employee to log in from a new device.')) {
       try {
-        await axios.patch(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${id}/reset-device`);
+        await api.patch(`/api/employees/${id}/reset-device`);
         toast.success('Device lock reset successfully');
       } catch (err) {
         toast.error('Failed to reset device lock');
@@ -146,7 +146,7 @@ const Employees = () => {
 
   const sendNotice = async (id) => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${id}/send-notice`);
+      await api.post(`/api/employees/${id}/send-notice`);
       toast.success('Notice Period Reminder Sent');
     } catch (err) {
       toast.error('Failed to send notice');
@@ -155,7 +155,7 @@ const Employees = () => {
 
   const sendWarning = async (id) => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${id}/send-warning`);
+      await api.post(`/api/employees/${id}/send-warning`);
       toast.success('Official Warning Sent');
     } catch (err) {
       toast.error('Failed to send warning');
@@ -166,7 +166,7 @@ const Employees = () => {
     const newPassword = window.prompt("Enter new password for this employee:");
     if (!newPassword) return;
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/employees/${id}/reset-password`, { newPassword });
+      await api.put(`/api/employees/${id}/reset-password`, { newPassword });
       toast.success('Password reset successfully');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to reset password');

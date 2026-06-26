@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { FileText, CheckCircle, UploadCloud, File, AlertCircle, Image as ImageIcon, Briefcase, PenTool, DownloadCloud, Search } from 'lucide-react';
@@ -38,7 +38,7 @@ export default function Documents() {
   const fetchAdminData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/employees`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/employees`);
       setAllEmployees(res.data);
       if (res.data.length > 0) {
         setSelectedEmpId(res.data[0].id);
@@ -53,7 +53,7 @@ export default function Documents() {
   const fetchMyDocuments = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/employees/me`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/employees/me`);
       setDocuments(res.data.documents || {});
     } catch (err) {
       toast.error('Failed to load documents');
@@ -77,7 +77,7 @@ export default function Documents() {
 
     try {
       setUploading(selectedDocType);
-      const uploadRes = await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/employees/upload-document`, formData, {
+      const uploadRes = await api.post(`${import.meta.env.VITE_API_URL || ``}/api/employees/upload-document`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

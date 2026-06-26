@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { CalendarDays, Trash2, Plus, Calendar, Bell, Palmtree, Clock, Info, UploadCloud, Heart, Image as ImageIcon, Sparkles } from 'lucide-react';
@@ -21,7 +21,7 @@ export default function Holidays() {
   const fetchHolidays = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/holidays`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/holidays`);
       setHolidays(res.data || []);
     } catch (err) {
       toast.error('Failed to load holidays');
@@ -53,7 +53,7 @@ export default function Holidays() {
     }
     setIsSubmitting(true);
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/holidays`, formData);
+      await api.post(`${import.meta.env.VITE_API_URL || ``}/api/holidays`, formData);
       toast.success('Holiday scheduled successfully!');
       setFormData({ name: '', date: '', type: 'Custom', image: '' });
       setShowModal(false);
@@ -68,7 +68,7 @@ export default function Holidays() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this holiday?')) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/holidays/${id}`);
+      await api.delete(`/api/holidays/${id}`);
       toast.success('Holiday deleted successfully');
       fetchHolidays();
     } catch (err) {

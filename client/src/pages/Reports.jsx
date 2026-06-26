@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import toast from 'react-hot-toast';
 
 import { Download, Filter, Calendar, Users, FileSpreadsheet, Search, ChevronRight, X } from 'lucide-react';
@@ -31,7 +31,7 @@ const Reports = () => {
   const fetchReport = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/reports/monthly`, { params: filters });
+      const res = await api.get(`/api/reports/monthly`, { params: filters });
       setReportData(res.data);
     } catch (err) {
       toast.error('Failed to generate workforce analytics');
@@ -44,7 +44,7 @@ const Reports = () => {
     setSelectedEmp(emp);
     setModalLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/tasks/performance`, {
+      const res = await api.get(`/api/tasks/performance`, {
         params: { 
           employeeId: emp.id, 
           month: `${filters.year}-${String(filters.month).padStart(2, '0')}` 
@@ -61,7 +61,7 @@ const Reports = () => {
   const handleExport = async () => {
     try {
       toast.loading('Generating Enterprise Report...');
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/reports/export`, {
+      const response = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/reports/export`, {
         responseType: 'blob'
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));

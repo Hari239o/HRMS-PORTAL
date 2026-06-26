@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { 
@@ -46,7 +46,7 @@ const Leaves = () => {
 
   const fetchLeaves = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/leaves`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/leaves`);
       setLeaves(res.data);
     } catch (err) {
       toast.error('Failed to fetch leaves');
@@ -55,7 +55,7 @@ const Leaves = () => {
 
   const fetchProblems = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/problems`);
+      const res = await api.get(`${import.meta.env.VITE_API_URL || ``}/api/problems`);
       setProblems(res.data);
     } catch (err) {
       toast.error('Failed to fetch problems');
@@ -74,7 +74,7 @@ const Leaves = () => {
         formData.append('document', leaveFormData.document);
       }
       
-      await axios.post(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:5002"}`}/api/leaves`, formData, {
+      await api.post(`${import.meta.env.VITE_API_URL || ``}/api/leaves`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       toast.success('Leave application submitted successfully');
@@ -98,7 +98,7 @@ const Leaves = () => {
         formData.append('document', problemFormData.document);
       }
 
-      await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/problems`, formData, {
+      await api.post(`/api/problems`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       toast.success('Issue raised successfully. Our team will review it.');
@@ -112,7 +112,7 @@ const Leaves = () => {
 
   const handleUpdateLeaveStatus = async (id, status) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/leaves/${id}/status`, { status });
+      await api.put(`/api/leaves/${id}/status`, { status });
       toast.success(`Leave ${status}`);
       fetchLeaves();
     } catch (err) {
@@ -122,7 +122,7 @@ const Leaves = () => {
 
   const handleUpdateProblemStatus = async (id, status) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL || "http://localhost:5002"}/api/problems/${id}/status`, { status });
+      await api.put(`/api/problems/${id}/status`, { status });
       toast.success(`Problem marked as ${status}`);
       fetchProblems();
     } catch (err) {

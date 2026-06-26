@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { LogIn, ShieldCheck, User, ArrowRight, Lock, Smartphone, AlertTriangle } from 'lucide-react';
@@ -29,7 +29,7 @@ const Login = () => {
     setDeviceLocked(false);
     try {
       const deviceId = getDeviceId();
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || ""}/api/auth/login`, { email, password, deviceId });
+      const res = await api.post(`/api/auth/login`, { email, password, deviceId });
       
       // Verification: Ensure user logged in through the correct portal tab
       if (role === 'admin' && res.data.user.role !== 'admin') {

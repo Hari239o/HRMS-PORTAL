@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const REPORTS = [
   { key: 'leads', label: 'Lead Report' },
@@ -42,7 +42,7 @@ export default function ReportsCenter() {
       const params = getParams();
       const url = `/api/reports/${reportEndpoint(report)}`;
       if (format === 'csv' || format === 'excel' || format === 'pdf') {
-        const res = await axios.get(url, { params, responseType: 'blob' });
+        const res = await api.get(url, { params, responseType: 'blob' });
         const blob = new Blob([res.data], { type: res.headers['content-type'] });
         const href = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -54,7 +54,7 @@ export default function ReportsCenter() {
         a.remove();
         URL.revokeObjectURL(href);
       } else {
-        const res = await axios.get(url, { params });
+        const res = await api.get(url, { params });
         setResult(res.data);
       }
     } catch (err) {
