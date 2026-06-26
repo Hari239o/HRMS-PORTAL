@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const { db } = require('../db');
+const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
 const { uploadDocument } = require('../utils/cloudinary');
 const { sendEmail } = require('../utils/email');
@@ -9,31 +10,41 @@ const router = express.Router();
 
 router.get('/', authenticate, authorize(['admin']), async (req, res) => {
   try {
-    const snapshot = await db.collection('employees').orderBy('name', 'asc').get();
-    const employees = snapshot.docs.map(doc => {
-      const data = doc.data();
+    const prismaEmployees = await prisma.employee.findMany({
+      orderBy: { name: 'asc' }
+    });
+
+    // TODO: Temporarily keep document/extra operations in Firebase until Prisma schema is fully updated
+    const fbSnapshot = await db.collection('employees').get();
+    const fbDataMap = {};
+    fbSnapshot.docs.forEach(doc => {
+      fbDataMap[doc.id] = doc.data();
+    });
+
+    const employees = prismaEmployees.map(emp => {
+      const fb = fbDataMap[emp.id] || {};
       return {
-        id: doc.id,
-        name: data.name,
-        email: data.email,
-        role: data.role,
-        department: data.department,
-        avatar: data.avatar,
-        assets: data.assets,
-        weekOff: data.weekOff,
-        starPerformer: data.starPerformer,
-        deviceId: data.deviceId,
-        joinedAt: data.createdAt || data.joinDate || null,
-        documents: data.documents || {},
-        manager: data.manager || '',
-        hrManager: data.hrManager || '',
-        teamLeader: data.teamLeader || '',
-        empId: data.empId || '',
-        designation: data.designation || '',
-        pan: data.pan || '',
-        uan: data.uan || '',
-        bankName: data.bankName || '',
-        accountNumber: data.accountNumber || ''
+        id: emp.id,
+        name: emp.name,
+        email: emp.email,
+        role: emp.role,
+        department: emp.department,
+        avatar: fb.avatar || '',
+        assets: fb.assets || '',
+        weekOff: fb.weekOff || 'Sunday',
+        starPerformer: fb.starPerformer || 'none',
+        deviceId: fb.deviceId || null,
+        joinedAt: emp.createdAt || null,
+        documents: fb.documents || {},
+        manager: fb.manager || '',
+        hrManager: fb.hrManager || '',
+        teamLeader: fb.teamLeader || '',
+        empId: fb.empId || '',
+        designation: fb.designation || '',
+        pan: fb.pan || '',
+        uan: fb.uan || '',
+        bankName: fb.bankName || '',
+        accountNumber: fb.accountNumber || ''
       };
     });
     res.json(employees);
@@ -44,18 +55,32 @@ router.get('/', authenticate, authorize(['admin']), async (req, res) => {
 
 router.get('/star-performers', authenticate, async (req, res) => {
   try {
+    // TODO: starPerformer is not in Prisma schema. Using Firebase to find IDs, then fetching core data from Prisma.
     const snapshot = await db.collection('employees')
       .where('starPerformer', 'in', ['week', 'month'])
       .get();
       
-    const performers = snapshot.docs.map(doc => {
-      const data = doc.data();
+    if (snapshot.empty) return res.json([]);
+
+    const fbDataMap = {};
+    snapshot.docs.forEach(doc => {
+      fbDataMap[doc.id] = doc.data();
+    });
+
+    const starIds = snapshot.docs.map(doc => doc.id);
+
+    const prismaEmployees = await prisma.employee.findMany({
+      where: { id: { in: starIds } }
+    });
+
+    const performers = prismaEmployees.map(emp => {
+      const fb = fbDataMap[emp.id] || {};
       return {
-        id: doc.id,
-        name: data.name,
-        department: data.department,
-        starPerformer: data.starPerformer,
-        avatar: data.avatar
+        id: emp.id,
+        name: emp.name,
+        department: emp.department,
+        starPerformer: fb.starPerformer,
+        avatar: fb.avatar || ''
       };
     });
     res.json(performers);
@@ -67,21 +92,31 @@ router.get('/star-performers', authenticate, async (req, res) => {
 // Get basic directory for all employees (non-admin access)
 router.get('/directory', authenticate, async (req, res) => {
   try {
-    const snapshot = await db.collection('employees').orderBy('name', 'asc').get();
-    const directory = snapshot.docs.map(doc => {
-      const data = doc.data();
+    const prismaEmployees = await prisma.employee.findMany({
+      orderBy: { name: 'asc' }
+    });
+
+    // TODO: Temporarily keep document operations in Firebase
+    const fbSnapshot = await db.collection('employees').get();
+    const fbDataMap = {};
+    fbSnapshot.docs.forEach(doc => {
+      fbDataMap[doc.id] = doc.data();
+    });
+
+    const directory = prismaEmployees.map(emp => {
+      const fb = fbDataMap[emp.id] || {};
       return {
-        id: doc.id,
-        name: data.name,
-        role: data.role,
-        department: data.department,
-        avatar: data.avatar,
-        email: data.email,
-        weekOff: data.weekOff,
-        assets: data.assets,
-        documents: data.documents || {},
-        empId: data.empId || '',
-        designation: data.designation || ''
+        id: emp.id,
+        name: emp.name,
+        role: emp.role,
+        department: emp.department,
+        avatar: fb.avatar || '',
+        email: emp.email,
+        weekOff: fb.weekOff || 'Sunday',
+        assets: fb.assets || '',
+        documents: fb.documents || {},
+        empId: fb.empId || '',
+        designation: fb.designation || ''
       };
     });
     res.json(directory);
@@ -92,19 +127,25 @@ router.get('/directory', authenticate, async (req, res) => {
 
 router.get('/me', authenticate, async (req, res) => {
   try {
-    const doc = await db.collection('employees').doc(req.user.id).get();
-    if (!doc.exists) return res.status(404).json({ error: 'User not found' });
+    const prismaEmp = await prisma.employee.findUnique({
+      where: { id: req.user.id }
+    });
     
-    const data = doc.data();
+    if (!prismaEmp) return res.status(404).json({ error: 'User not found' });
     
+    // TODO: Fetch missing fields from Firebase
+    const fbDoc = await db.collection('employees').doc(req.user.id).get();
+    const fbData = fbDoc.exists ? fbDoc.data() : {};
+
     // Resolve profile data for reporting structure
     const resolveProfile = async (id) => {
       if (!id) return null;
       try {
-        const emp = await db.collection('employees').doc(id).get();
-        if (emp.exists) {
-          const empData = emp.data();
-          return { name: empData.name, avatar: empData.avatar, email: empData.email, role: empData.role };
+        const emp = await prisma.employee.findUnique({ where: { id } });
+        if (emp) {
+          const fb = await db.collection('employees').doc(id).get();
+          const avatar = fb.exists ? fb.data().avatar : '';
+          return { name: emp.name, avatar: avatar || '', email: emp.email, role: emp.role };
         }
         return null;
       } catch (e) {
@@ -112,39 +153,64 @@ router.get('/me', authenticate, async (req, res) => {
       }
     };
 
-    const managerProfile = await resolveProfile(data.manager);
-    const hrProfile = await resolveProfile(data.hrManager);
-    const teamLeaderProfile = await resolveProfile(data.teamLeader);
+    const managerProfile = await resolveProfile(fbData.manager);
+    const hrProfile = await resolveProfile(fbData.hrManager);
+    const teamLeaderProfile = await resolveProfile(fbData.teamLeader);
 
     // Fetch Team Members
     let teamMembers = [];
     try {
-      let teamQuery;
-      if (data.teamLeader) {
-        teamQuery = await db.collection('employees').where('teamLeader', '==', data.teamLeader).get();
-      } else if (data.manager) {
-        teamQuery = await db.collection('employees').where('manager', '==', data.manager).get();
+      let fbTeamQuery;
+      if (fbData.teamLeader) {
+        fbTeamQuery = await db.collection('employees').where('teamLeader', '==', fbData.teamLeader).get();
+      } else if (fbData.manager) {
+        fbTeamQuery = await db.collection('employees').where('manager', '==', fbData.manager).get();
       } else {
         // If they are the manager/leader, fetch people reporting to them
-        teamQuery = await db.collection('employees').where('manager', '==', doc.id).get();
-        if (teamQuery.empty) {
-          teamQuery = await db.collection('employees').where('teamLeader', '==', doc.id).get();
+        fbTeamQuery = await db.collection('employees').where('manager', '==', req.user.id).get();
+        if (fbTeamQuery.empty) {
+          fbTeamQuery = await db.collection('employees').where('teamLeader', '==', req.user.id).get();
         }
       }
       
-      if (teamQuery && !teamQuery.empty) {
-        teamMembers = teamQuery.docs.map(d => {
-          const empData = d.data();
-          return { id: d.id, name: empData.name, avatar: empData.avatar, role: empData.role, email: empData.email };
-        });
+      if (fbTeamQuery && !fbTeamQuery.empty) {
+        const tIds = fbTeamQuery.docs.map(d => d.id);
+        const fbTData = {};
+        fbTeamQuery.docs.forEach(d => fbTData[d.id] = d.data());
+
+        const tPrisma = await prisma.employee.findMany({ where: { id: { in: tIds } } });
+        teamMembers = tPrisma.map(t => ({
+          id: t.id,
+          name: t.name,
+          avatar: fbTData[t.id]?.avatar || '',
+          role: t.role,
+          email: t.email
+        }));
       }
     } catch (err) {
       console.log('Error fetching team members', err);
     }
 
     res.json({ 
-      id: doc.id, 
-      ...data,
+      id: prismaEmp.id, 
+      name: prismaEmp.name,
+      email: prismaEmp.email,
+      role: prismaEmp.role,
+      department: prismaEmp.department,
+      createdAt: prismaEmp.createdAt,
+      avatar: fbData.avatar || '',
+      assets: fbData.assets || '',
+      weekOff: fbData.weekOff || 'Sunday',
+      manager: fbData.manager || '',
+      hrManager: fbData.hrManager || '',
+      teamLeader: fbData.teamLeader || '',
+      empId: fbData.empId || '',
+      designation: fbData.designation || '',
+      pan: fbData.pan || '',
+      uan: fbData.uan || '',
+      bankName: fbData.bankName || '',
+      accountNumber: fbData.accountNumber || '',
+      documents: fbData.documents || {},
       managerProfile,
       hrProfile,
       teamLeaderProfile,
@@ -159,9 +225,20 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
   const { name, email, password, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const id = Date.now().toString();
-    await db.collection('employees').doc(id).set({
-      name, email, password: hashedPassword, role, department, 
+    
+    // 1. Create in Prisma
+    const newEmployee = await prisma.employee.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        role,
+        department
+      }
+    });
+
+    // 2. Temporarily save extra fields in Firebase to preserve existing functionality
+    await db.collection('employees').doc(newEmployee.id).set({
       avatar: avatar || '', 
       assets: assets || '', 
       weekOff: weekOff || 'Sunday',
@@ -291,6 +368,7 @@ router.post('/upload-document', authenticate, uploadDocument.single('file'), asy
 
     const employeeRef = db.collection('employees').doc(employeeId);
     
+    // TODO: Migrate document fields to Prisma
     // Use dot notation to update the specific nested field inside the documents map
     const updates = {
       [`documents.${docType}`]: fileUrl
@@ -312,8 +390,14 @@ router.post('/upload-document', authenticate, uploadDocument.single('file'), asy
 router.put('/:id', authenticate, authorize(['admin']), async (req, res) => {
   const { name, email, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
+    // 1. Update in Prisma
+    await prisma.employee.update({
+      where: { id: req.params.id },
+      data: { name, email, role, department }
+    });
+
+    // 2. Temporarily update extra fields in Firebase
     await db.collection('employees').doc(req.params.id).update({
-      name, email, role, department, 
       avatar: avatar || '', 
       assets: assets || '', 
       weekOff: weekOff || 'Sunday',
@@ -340,7 +424,10 @@ router.put('/:id/reset-password', authenticate, authorize(['admin']), async (req
   
   try {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await db.collection('employees').doc(req.params.id).update({ password: hashedPassword });
+    await prisma.employee.update({
+      where: { id: req.params.id },
+      data: { password: hashedPassword }
+    });
     res.json({ message: 'Password reset successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -349,6 +436,9 @@ router.put('/:id/reset-password', authenticate, authorize(['admin']), async (req
 
 router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
   try {
+    await prisma.employee.delete({
+      where: { id: req.params.id }
+    });
     await db.collection('employees').doc(req.params.id).delete();
     res.json({ message: 'Employee deleted' });
   } catch (error) {
@@ -377,9 +467,10 @@ router.patch('/:id/badge', authenticate, authorize(['admin']), async (req, res) 
 
 router.post('/:id/send-notice', authenticate, authorize(['admin']), async (req, res) => {
   try {
-    const doc = await db.collection('employees').doc(req.params.id).get();
-    if (!doc.exists) return res.status(404).json({ error: 'Employee not found' });
-    const emp = doc.data();
+    const emp = await prisma.employee.findUnique({
+      where: { id: req.params.id }
+    });
+    if (!emp) return res.status(404).json({ error: 'Employee not found' });
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -412,9 +503,10 @@ router.post('/:id/send-notice', authenticate, authorize(['admin']), async (req, 
 // MNC Professional Warning Letter
 router.post('/:id/send-warning', authenticate, authorize(['admin']), async (req, res) => {
   try {
-    const doc = await db.collection('employees').doc(req.params.id).get();
-    if (!doc.exists) return res.status(404).json({ error: 'Employee not found' });
-    const emp = doc.data();
+    const emp = await prisma.employee.findUnique({
+      where: { id: req.params.id }
+    });
+    if (!emp) return res.status(404).json({ error: 'Employee not found' });
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
