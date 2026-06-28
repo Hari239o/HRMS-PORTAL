@@ -1,7 +1,8 @@
 const { Storage } = require('@google-cloud/storage');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
 
+const uuidv4 = randomUUID;
 const storageOptions = {};
 if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
   try {
