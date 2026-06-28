@@ -21,7 +21,7 @@ export default function GlobalSplash() {
       {/* Background Shadow Logo */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none scale-[2.5] md:scale-[3.5] -rotate-12 transition-transform duration-1000">
         <Image 
-          src="/geonixa-logo.png" 
+          src="/logo-only.png" 
           alt="Background Logo" 
           width={800} 
           height={800} 
