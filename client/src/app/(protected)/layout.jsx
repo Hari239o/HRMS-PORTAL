@@ -42,10 +42,10 @@ export default function ProtectedLayout({ children }) {
         <header className="md:hidden bg-white border-b border-slate-100 flex items-center justify-between p-3 z-50 sticky top-0 w-full shadow-sm">
           <div className="flex items-center gap-3">
             <button onClick={() => setIsMobileMenuOpen(true)} className="p-1 -ml-1 text-slate-500 hover:text-[#ff5a1f] focus:outline-none transition-colors">
-              <Menu size={24} />
+              <Menu size={26} />
             </button>
             <div className="flex items-center">
-              <img src="/geonixa-logo.png" alt="Geonixa" className="h-6 w-auto object-contain" />
+              <img src="/logo-only.png" alt="Geonixa" className="h-9 w-auto object-contain" />
             </div>
           </div>
           
