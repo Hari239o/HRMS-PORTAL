@@ -11,6 +11,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     strategy:
       matrix:
         node-version:
@@ -29,18 +43,26 @@ jobs:
         run: npm ci
         working-directory: server
 
+      - name: Push Prisma Schema
+        env:
+          DATABASE_URL: postgresql://testuser:testpassword@localhost:5432/testdb
+        run: npx prisma db push
+        working-directory: server
+
       - name: Run server tests
         env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          DATABASE_URL: postgresql://testuser:testpassword@localhost:5432/testdb
         run: npm test
         working-directory: server
+        
       - name: Start server in background for integration tests
         env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          DATABASE_URL: postgresql://testuser:testpassword@localhost:5432/testdb
         run: |
           cd server
           node src/index.js &
           echo $! > server.pid
+          
       - name: Wait for server to be healthy
         run: |
           for i in {1..30}; do
@@ -49,9 +71,13 @@ jobs:
             fi
             sleep 1
           done
+          
       - name: Run integration tests
+        env:
+          DATABASE_URL: postgresql://testuser:testpassword@localhost:5432/testdb
         run: npm run test:integration
         working-directory: server
+        
       - name: Kill server
         if: always()
         run: |
@@ -61,3 +87,4 @@ jobs:
           else
             pkill -f "node src/index.js" || true
           fi
+

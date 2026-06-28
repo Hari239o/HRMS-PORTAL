@@ -3,28 +3,21 @@
   "builds": [
     {
       "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+      "use": "@vercel/next"
     },
     {
-      "src": "server/src/app.js",
+      "src": "client/api/index.js",
       "use": "@vercel/node"
     }
   ],
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/server/src/app.js"
-    },
-    {
-      "source": "/(.*)\\.(.*)",
-      "destination": "/client/$1.$2"
+      "destination": "/client/api/index.js"
     },
     {
       "source": "/(.*)",
-      "destination": "/client/index.html"
+      "destination": "/client/$1"
     }
   ]
 }

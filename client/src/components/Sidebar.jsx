@@ -1,5 +1,8 @@
-import { NavLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+"use client";
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import { 
   LayoutDashboard, 
   CalendarCheck, 
@@ -29,12 +32,12 @@ import {
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const { user, logout, portalMode, setPortalMode } = useAuth();
+  const pathname = usePathname();
 
   const menuItems = [
     { name: 'Command Center', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'My Attendance', icon: CalendarCheck, path: '/attendance' },
     { name: 'Time Off', icon: FileText, path: '/leaves' },
-    { name: 'Workforce Directory', icon: Users, path: '/employees' },
     { name: 'Resignations', icon: UserMinus, path: '/resignations' },
     { name: 'Holidays', icon: CalendarDays, path: '/holidays' },
     { name: 'Performance', icon: Trophy, path: '/performance' },
@@ -42,6 +45,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   ];
 
   const adminItems = [
+    { name: 'Workforce Directory', icon: Users, path: '/employees' },
     { name: 'Intelligence', icon: BarChart3, path: '/reports' },
     { name: 'Payroll', icon: ShieldCheck, path: '/salary' },
   ];
@@ -114,18 +118,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         <div>
           <p className="px-4 mb-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Core Modules</p>
           <div className="space-y-1.5">
-            {(isStudent ? studentMenuItems : menuItems).map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${getThemeClasses(isActive)}`
-                }
-              >
-                <item.icon size={20} className="transition-transform group-hover:scale-110" />
-                <span className="font-bold text-sm tracking-tight">{item.name}</span>
-              </NavLink>
-            ))}
+            {(isStudent ? studentMenuItems : menuItems).map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${getThemeClasses(isActive)}`}
+                >
+                  <item.icon size={20} className="transition-transform group-hover:scale-110" />
+                  <span className="font-bold text-sm tracking-tight">{item.name}</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -133,18 +138,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <div>
             <p className="px-4 mb-4 mt-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Administration</p>
             <div className="space-y-1.5">
-              {adminItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${getThemeClasses(isActive)}`
-                  }
-                >
-                  <item.icon size={20} className="transition-transform group-hover:scale-110" />
-                  <span className="font-bold text-sm tracking-tight">{item.name}</span>
-                </NavLink>
-              ))}
+              {adminItems.map((item) => {
+                const isActive = pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 group ${getThemeClasses(isActive)}`}
+                  >
+                    <item.icon size={20} className="transition-transform group-hover:scale-110" />
+                    <span className="font-bold text-sm tracking-tight">{item.name}</span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}
@@ -179,14 +185,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           
           <div className="grid grid-cols-3 gap-2">
             {user.role === 'admin' ? (
-              <NavLink 
-                to="/settings"
-                className={({ isActive }) => 
-                  `p-2 rounded-xl transition-all flex items-center justify-center border ${isActive ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-white text-slate-400 hover:text-indigo-600 hover:shadow-md border-slate-100'}`
-                }
+              <Link 
+                href="/settings"
+                className={`p-2 rounded-xl transition-all flex items-center justify-center border ${pathname === '/settings' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-white text-slate-400 hover:text-indigo-600 hover:shadow-md border-slate-100'}`}
               >
                 <Settings size={18} />
-              </NavLink>
+              </Link>
             ) : (
               <button className={`p-2 bg-white rounded-xl text-slate-400 hover:text-indigo-600 hover:shadow-md transition-all flex items-center justify-center border border-slate-100`}>
                 <Settings size={18} />

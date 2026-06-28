@@ -1,5 +1,7 @@
+"use client";
+
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../utils/api';
+import api from '@/utils/api';
 
 const AuthContext = createContext();
 
@@ -16,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     if (token && userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       if (parsedUser.role === 'student') {
         sessionStorage.setItem('portalMode', 'student');
@@ -53,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   const login = (userData, token) => {
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('user', JSON.stringify(userData));
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     setUser(userData);
 
     if (userData.role === 'student') {
@@ -75,7 +77,7 @@ export const AuthProvider = ({ children }) => {
     // Clear session synchronously to prevent interceptor loops
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
+    delete api.defaults.headers.common['Authorization'];
     setUser(null);
   };
 

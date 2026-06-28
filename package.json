@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "install:all": "npm install && cd server && npm install && cd ../client && npm install",
-    "dev": "concurrently \"npm run dev:emulator\" \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:emulator": "cd server && firebase emulators:start --only firestore --import=./firestore-data --export-on-exit=./firestore-data",
-    "dev:server": "cd server && npm install && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
     "dev:client": "cd client && npm run dev",
     "prisma:generate": "cd server && npx prisma generate",
     "prisma:push": "cd server && npx prisma db push",

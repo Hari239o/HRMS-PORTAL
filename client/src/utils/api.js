@@ -2,8 +2,8 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import toast from 'react-hot-toast';
 
-// Basic configuration
-const API_URL = import.meta.env.VITE_API_URL || '';
+// Force empty baseURL to use Next.js rewrites proxy
+const API_URL = '';
 
 const api = axios.create({
   baseURL: API_URL,
