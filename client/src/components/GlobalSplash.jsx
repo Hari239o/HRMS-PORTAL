@@ -19,7 +19,7 @@ export default function GlobalSplash() {
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-white">
       {/* Background Shadow Logo */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none scale-[2.5] md:scale-[3.5] -rotate-12 transition-transform duration-1000">
+      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none scale-125 md:scale-150 transition-transform duration-1000">
         <Image 
           src="/logo-only.png" 
           alt="Background Logo" 
