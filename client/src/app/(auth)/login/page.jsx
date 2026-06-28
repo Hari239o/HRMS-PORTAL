@@ -28,13 +28,28 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    // Client-side validation for Employee login
+    if (!isAdminView) {
+      const isValidEmail = trimmedEmail.endsWith('@geonixa.com');
+      const isValidEmpId = trimmedEmail.toUpperCase().startsWith('GN');
+      
+      if (!isValidEmail && !isValidEmpId) {
+        toast.error('Invalid Format: Please use your @geonixa.com email or your GN employee ID.');
+        return;
+      }
+    }
+
     setLoading(true);
     setDeviceLocked(false);
     try {
       const deviceId = getDeviceId();
       const res = await api.post(`/api/auth/login`, { 
-        email: email.trim(), 
-        password: password.trim(), 
+        email: trimmedEmail, 
+        password: trimmedPassword, 
         deviceId 
       });
       
@@ -69,13 +84,13 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
       <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
         <div className="bg-white p-10 rounded-2xl shadow-xl border border-slate-100">
-          <div className="flex justify-center mb-8 w-full">
+          <div className="flex justify-center mb-10 w-full">
             <Image 
               src="/geonixa-logo.png" 
               alt="Geonixa" 
-              width={220}
-              height={70}
-              className="w-56 h-auto object-contain" 
+              width={280}
+              height={90}
+              className="w-64 h-auto object-contain drop-shadow-sm" 
             />
           </div>
           
@@ -97,7 +112,7 @@ const Login = () => {
                 className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5a1f] focus:border-[#ff5a1f] transition-all text-slate-900"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={isAdminView ? "admin@geonixa.com" : "e.g. EMP001 or name@company.com"}
+                placeholder={isAdminView ? "admin@geonixa.com" : "e.g. GN001 or name@geonixa.com"}
               />
             </div>
             <div>
