@@ -1,17 +1,17 @@
 "use client";
 
-import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { LogIn, ShieldCheck, User, ArrowRight, Lock, Smartphone, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Lock, Smartphone, AlertTriangle } from 'lucide-react';
+import Image from 'next/image';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('employee'); // Default role
+  const [isAdminView, setIsAdminView] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deviceLocked, setDeviceLocked] = useState(false);
   const { login } = useAuth();
@@ -32,27 +32,16 @@ const Login = () => {
     setDeviceLocked(false);
     try {
       const deviceId = getDeviceId();
-      const trimmedEmail = email.trim();
-      const trimmedPassword = password.trim();
-      const res = await api.post(`/api/auth/login`, { email: trimmedEmail, password: trimmedPassword, deviceId });
+      const res = await api.post(`/api/auth/login`, { 
+        email: email.trim(), 
+        password: password.trim(), 
+        deviceId 
+      });
       
-      // Verification: Ensure user logged in through the correct portal tab
-      if (role === 'admin' && res.data.user.role !== 'admin') {
-        toast.error('Unauthorized: Please use the Administrator tab.');
-        setLoading(false);
-        return;
-      } else if (role === 'employee' && ['admin', 'student'].includes(res.data.user.role)) {
-        toast.error('Unauthorized: Please use the correct portal tab for your account type.');
-        setLoading(false);
-        return;
-      } else if (role === 'student' && res.data.user.role !== 'student') {
-        toast.error('Unauthorized: Please use the Student tab.');
-        setLoading(false);
-        return;
-      }
-
+      // Auto-route based on actual backend role
       login(res.data.user, res.data.token);
       toast.success('Access Granted. Welcome back!');
+      
       if (res.data.user.role === 'student') {
         navigate.push('/student/dashboard');
       } else {
@@ -60,7 +49,7 @@ const Login = () => {
       }
     } catch (err) {
       if (!err.response) {
-        toast.error('Connection Refused: Please ensure the backend server is running on port 5002.');
+        toast.error('Connection Refused: Please ensure the backend server is running.');
       } else if (err.response?.status === 403 && typeof err.response?.data?.error === 'string' && err.response.data.error.includes('device')) {
         setDeviceLocked(true);
       } else {
@@ -77,84 +66,46 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] p-6">
-      <div className="w-full max-w-xl animate-in fade-in zoom-in duration-500">
-        <div className="bg-white p-12 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100">
-          <div className="flex justify-center mb-10 w-full">
-            <img src="/geonixa-logo.png" alt="Geonixa" className="w-64 max-w-full h-auto object-contain drop-shadow-sm" />
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+      <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
+        <div className="bg-white p-10 rounded-2xl shadow-xl border border-slate-100">
+          <div className="flex justify-center mb-8 w-full">
+            <Image 
+              src="/geonixa-logo.png" 
+              alt="Geonixa" 
+              width={220}
+              height={70}
+              className="w-56 h-auto object-contain" 
+            />
           </div>
           
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Enterprise Portal</h2>
-            <p className="text-slate-500 font-medium">Secure access to Geonixa HR Systems</p>
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-bold text-slate-800 tracking-tight mb-1">
+              {isAdminView ? "Administrator Access" : "Employee Portal"}
+            </h2>
+            <p className="text-slate-500 text-sm">Secure access to Geonixa HR Systems</p>
           </div>
 
-          {/* Role Selection Tabs */}
-          <div className="flex p-1.5 bg-slate-50 rounded-2xl mb-4 overflow-hidden">
-            <button 
-              type="button"
-              onClick={() => setRole('employee')}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${
-                role === 'employee' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              <User size={18} /> Employee
-            </button>
-            <button 
-              type="button"
-              onClick={() => setRole('student')}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${
-                role === 'student' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              <ShieldCheck size={18} /> Student
-            </button>
-            <button 
-              type="button"
-              onClick={() => setRole('admin')}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${
-                role === 'admin' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              <ShieldCheck size={18} /> Administrator
-            </button>
-          </div>
-          {role === 'employee' && (
-            <div className="mb-6 rounded-3xl border border-amber-100 bg-amber-50 px-5 py-4 text-sm text-amber-900">
-              <p className="font-semibold">Device Restriction Notice</p>
-              <p className="mt-2 leading-6">Employee accounts are restricted to a single registered device. Admin and manager accounts can use multiple devices.</p>
-            </div>
-          )}
-          {role === 'student' && (
-            <div className="mb-6 rounded-3xl border border-sky-100 bg-sky-50 px-5 py-4 text-sm text-sky-900">
-              <p className="font-semibold">Student Portal Access</p>
-              <p className="mt-2 leading-6">Login here to access your Student Portal for payments, enrollment documents, certificates, tickets, and realtime updates.</p>
-            </div>
-          )}
-          {role === 'admin' && (
-            <div className="mb-6 rounded-3xl border border-emerald-100 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
-              <p className="font-semibold">✓ Administrator Access</p>
-              <p className="mt-2 leading-6">You have full administrative privileges including CRM management, employee records, and system configuration.</p>
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Employee ID / Email</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                {isAdminView ? "Admin Email" : "Employee ID / Email"}
+              </label>
               <input 
                 type="text" 
                 required 
-                className="input-field py-4 text-lg"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5a1f] focus:border-[#ff5a1f] transition-all text-slate-900"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. EMP001 or name@company.com"
+                placeholder={isAdminView ? "admin@geonixa.com" : "e.g. EMP001 or name@company.com"}
               />
             </div>
             <div>
-              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Security Key</label>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Password</label>
               <input 
                 type="password" 
                 required 
-                className="input-field py-4 text-lg"
+                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5a1f] focus:border-[#ff5a1f] transition-all text-slate-900"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
@@ -164,63 +115,55 @@ const Login = () => {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full btn-primary py-5 mt-6 text-xl rounded-2xl font-black tracking-tight"
+              className="w-full bg-[#ff5a1f] hover:bg-[#e64a10] text-white py-3.5 mt-2 rounded-xl font-bold transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
             >
               {loading ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   <span>Authenticating...</span>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <span>Sign In</span>
-                  <ArrowRight size={24} />
+                  <ArrowRight size={20} />
                 </div>
               )}
             </button>
           </form>
 
-          <div className="mt-12 pt-8 border-t border-slate-50 text-center">
-            <p className="text-slate-500 font-medium">
-              New to Geonixa?{' '}
-              <Link href="/register" className="text-blue-600 font-black hover:underline underline-offset-4">
-                Register Workforce Account
-              </Link>
-            </p>
+          <div className="mt-10 text-center">
+            <span 
+              className="text-slate-400 text-xs cursor-pointer hover:text-slate-600 transition-colors"
+              onClick={() => setIsAdminView(!isAdminView)}
+              title="Secret Admin Toggle"
+            >
+              New to Geonixa?
+            </span>
           </div>
-        </div>
-        
-        <p className="mt-8 text-center text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">
-          © 2026 Geonixa Technologies • Secured by Enterprise Shield
-        </p>
-
-        {/* Brand Banner */}
-        <div className="absolute top-0 left-0 w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white text-center py-2 text-xs font-bold tracking-[0.2em] shadow-md z-10 uppercase">
-          Geonixa Enterprise Systems
         </div>
       </div>
 
       {/* Device Lock Modal */}
       {deviceLocked && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white rounded-[32px] w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="p-8 text-center">
-              <div className="mx-auto w-24 h-24 bg-rose-50 rounded-[24px] flex flex-col items-center justify-center text-rose-500 mb-6 relative">
-                <Smartphone size={32} strokeWidth={2} />
-                <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center border border-rose-100">
-                  <Lock size={20} strokeWidth={2.5} className="text-rose-600 animate-bounce" />
+              <div className="mx-auto w-20 h-20 bg-red-50 rounded-full flex flex-col items-center justify-center text-red-500 mb-6 relative">
+                <Smartphone size={28} strokeWidth={2} />
+                <div className="absolute -bottom-1 -right-1 w-10 h-10 bg-white rounded-full shadow flex items-center justify-center border border-red-100">
+                  <Lock size={16} strokeWidth={2.5} className="text-red-600" />
                 </div>
               </div>
-              <h3 className="text-2xl font-black text-slate-900 mb-2">Device Lock Violation</h3>
-              <p className="text-slate-500 mb-6 font-medium leading-relaxed">
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Device Lock Violation</h3>
+              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
                 Security systems indicate this account is permanently bound to another device. For your protection and to prevent unauthorized access, login from this new device has been blocked.
               </p>
               
-              <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100 flex gap-3 text-left mb-8">
-                <AlertTriangle size={24} className="text-amber-600 shrink-0 mt-0.5" />
+              <div className="bg-amber-50 rounded-xl p-4 border border-amber-200 flex gap-3 text-left mb-8">
+                <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-bold text-amber-900">Action Required</p>
-                  <p className="text-xs font-medium text-amber-700 mt-1">
+                  <p className="text-xs text-amber-800 mt-1">
                     You must contact your Administrator or HR Manager to unpair your previous device before you can log in here.
                   </p>
                 </div>
@@ -228,7 +171,7 @@ const Login = () => {
 
               <button 
                 onClick={() => setDeviceLocked(false)}
-                className="w-full py-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-all active:scale-[0.98]"
+                className="w-full py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-all"
               >
                 Acknowledge & Return
               </button>
