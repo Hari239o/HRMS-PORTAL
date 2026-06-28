@@ -364,13 +364,13 @@ export default function Dashboard() {
           <AppGridItem title="Leave" emoji="🏖️" link="/leaves" />
           <AppGridItem title="Reimbursement" emoji="💸" link="#" />
           <AppGridItem title="Performance" emoji="📈" link="#" />
-          <AppGridItem title="Feedback" emoji="💬" link="#" />
+          <AppGridItem title="Holidays" emoji="🎉" link="/holidays" />
           <AppGridItem title="HR Documents" emoji="📑" link="/documents" />
           <AppGridItem title="HR Policies" emoji="📜" link="#" />
           <AppGridItem title="Recruitment" emoji="🤝" link="#" />
-          <AppGridItem title="Helpdesk" emoji="🎧" link="#" />
+          <AppGridItem title="Separation" emoji="👋" link="/resignations" />
           <AppGridItem title="Member" emoji="👥" link="#" />
-          <AppGridItem title="Vibe" emoji="🎉" link="#" />
+          <AppGridItem title="Vibe" emoji="✨" link="#" />
         </div>
 
       </div>

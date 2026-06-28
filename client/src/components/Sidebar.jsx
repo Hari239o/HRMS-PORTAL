@@ -35,13 +35,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname();
 
   const menuItems = [
-    { name: 'Command Center', icon: LayoutDashboard, path: '/dashboard' },
-    { name: 'My Attendance', icon: CalendarCheck, path: '/attendance' },
-    { name: 'Time Off', icon: FileText, path: '/leaves' },
-    { name: 'Resignations', icon: UserMinus, path: '/resignations' },
+    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { name: 'Attendance', icon: CalendarCheck, path: '/attendance' },
+    { name: 'Leave', icon: FileText, path: '/leaves' },
+    { name: 'Separation', icon: UserMinus, path: '/resignations' },
     { name: 'Holidays', icon: CalendarDays, path: '/holidays' },
     { name: 'Performance', icon: Trophy, path: '/performance' },
-    { name: 'My Documents', icon: FileText, path: '/documents' },
+    { name: 'HR Documents', icon: FileText, path: '/documents' },
   ];
 
   const adminItems = [
