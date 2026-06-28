@@ -288,14 +288,7 @@ export default function Dashboard() {
   };
 
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 animate-in fade-in duration-500">
-        <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-        <p className="text-slate-500 font-bold tracking-widest uppercase text-xs">Loading Dashboard...</p>
-      </div>
-    );
-  }
+  // Removed blocking loading spinner to allow instant rendering
 
   if (dashboardError) {
     return (
@@ -347,12 +340,12 @@ export default function Dashboard() {
         {/* Big Check Out Button */}
         <Link href="/attendance" className="w-full bg-gradient-to-r from-[#ff5a1f] via-[#ff6f3b] to-[#ff8b5e] rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-[#ff5a1f]/20 hover:shadow-2xl hover:shadow-[#ff5a1f]/30 transition-all active:scale-[0.98] group">
           <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm border border-white/30 group-hover:rotate-12 transition-transform">
+            <div className="bg-white/20 p-2 rounded-full border border-white/30 group-hover:rotate-12 transition-transform">
               <Clock size={24} className="text-white" />
             </div>
             <span className="text-white font-medium text-lg tracking-wide">Check In / Out</span>
           </div>
-          <span className="text-white text-[11px] font-medium bg-black/10 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/10 flex items-center gap-1 group-hover:bg-black/20 transition-colors">
+          <span className="text-white text-[11px] font-medium bg-black/10 px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-1 group-hover:bg-black/20 transition-colors">
             Click here <ArrowUpRight size={12} />
           </span>
         </Link>
