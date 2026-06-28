@@ -21,7 +21,12 @@ const nextConfig = {
         }
       ]
     }
-    return []
+    return [
+      {
+        source: '/api/:path*',
+        destination: '/api/index'
+      }
+    ]
   },
   turbopack: {}
 }
