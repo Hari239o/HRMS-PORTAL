@@ -41,14 +41,16 @@ export default function SplashScreen() {
 
       {/* Main Centered Logo */}
       <div className="z-10 flex flex-col items-center justify-center animate-pulse" style={{ animationDuration: '3s' }}>
-        <Image 
-          src="/geonixa-logo.png" 
-          alt="Geonixa" 
-          width={320} 
-          height={120} 
-          className="object-contain brightness-0 invert drop-shadow-lg"
-          priority
-        />
+        <div className="bg-white rounded-3xl p-6 px-8 shadow-2xl">
+          <Image 
+            src="/geonixa-logo.png" 
+            alt="Geonixa" 
+            width={280} 
+            height={90} 
+            className="object-contain"
+            priority
+          />
+        </div>
       </div>
       
       {/* Loading indicator */}
