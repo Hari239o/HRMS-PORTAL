@@ -13,6 +13,12 @@
   }
   body {
     @apply bg-[#f8fafc] text-slate-900 font-sans antialiased;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    overscroll-behavior: none;
+    margin: 0;
+    padding: 0;
   }
 }
 

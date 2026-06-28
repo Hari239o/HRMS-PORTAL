@@ -35,7 +35,7 @@ export default function ProtectedLayout({ children }) {
 
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-sky-50">
+    <div className="flex h-[100dvh] w-full overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-sky-50">
       <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
       <div className="flex-1 flex flex-col overflow-hidden relative">
         {/* Mobile Header */}

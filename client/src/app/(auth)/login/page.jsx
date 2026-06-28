@@ -81,7 +81,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-6">
+    <div className="h-[100dvh] w-full flex items-center justify-center bg-white p-6 overflow-hidden">
       <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
         <div className="py-10 px-2">
           <div className="flex justify-center mb-12 w-full">
