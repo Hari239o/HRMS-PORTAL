@@ -68,7 +68,7 @@ router.post('/checkin', authenticate, upload.single('photo'), async (req, res) =
     }
 
     let officeStartTime = '11:00';
-    let officeEndTime = '20:00';
+    let officeEndTime = '20:30';
     try {
       const settingsDoc = await prisma.setting.findUnique({ where: { key: 'general' } });
       if (settingsDoc) {
@@ -180,7 +180,7 @@ router.post('/checkout', authenticate, upload.single('photo'), async (req, res) 
     }
 
     const officeStartTime = '11:00';
-    const officeEndTime = '20:00';
+    const officeEndTime = '20:30';
     const [endHour, endMinute] = officeEndTime.split(':').map(Number);
     const shiftEnd = now.set({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 });
     if (now > shiftEnd) {
@@ -318,7 +318,7 @@ router.get('/', authenticate, async (req, res) => {
     
     const officeLat = OFFICE_LAT;
     const officeLong = OFFICE_LONG;
-    const officeEndTime = '20:00';
+    const officeEndTime = '20:30';
     const [endHour, endMinute] = officeEndTime.split(':').map(Number);
     const afterOffice = DateTime.now().setZone('Asia/Kolkata').set({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 });
     const currentTime = DateTime.now().setZone('Asia/Kolkata');
