@@ -26,7 +26,7 @@ export default function SplashScreen() {
   if (!mounted) return null;
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#ff5a1f] bg-gradient-to-br from-[#ff5a1f] to-[#e64a10]">
+    <div className="relative flex h-[100dvh] w-screen flex-col items-center justify-center overflow-hidden bg-[#ff5a1f] bg-gradient-to-br from-[#ff5a1f] to-[#e64a10]">
       {/* Background Shadow Logo */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.06] pointer-events-none scale-[2.5] md:scale-[3.5] -rotate-12 transition-transform duration-1000">
         <Image 

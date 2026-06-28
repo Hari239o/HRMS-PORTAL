@@ -2,10 +2,10 @@
   "name": "Geonixa HR Portal",
   "short_name": "Geonixa HR",
   "description": "HR Management System by Geonixa",
-  "start_url": "/dashboard",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#4f46e5",
+  "background_color": "#ff5a1f",
+  "theme_color": "#ff5a1f",
   "orientation": "portrait",
   "icons": [
     {
