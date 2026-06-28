@@ -39,37 +39,20 @@ export default function ProtectedLayout({ children }) {
       <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
       <div className="flex-1 flex flex-col overflow-hidden relative">
         {/* Mobile Header */}
-        <header className="md:hidden bg-white border-b border-slate-100 flex items-center justify-between p-3 z-40 relative">
-          <div className="flex items-center gap-2">
-            <button onClick={() => setIsMobileMenuOpen(true)} className="p-1 -ml-1 text-slate-500 hover:text-blue-600 focus:outline-none">
-              <Menu size={20} />
+        <header className="md:hidden bg-white border-b border-slate-100 flex items-center justify-between p-3 z-50 sticky top-0 w-full shadow-sm">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="p-1 -ml-1 text-slate-500 hover:text-[#ff5a1f] focus:outline-none transition-colors">
+              <Menu size={24} />
             </button>
-            <div className="w-8 h-8 bg-slate-900 rounded-full flex items-center justify-center text-white font-serif italic font-bold border-2 border-white shadow-sm ring-1 ring-slate-200">
-              G
+            <div className="flex items-center">
+              <img src="/geonixa-logo.png" alt="Geonixa" className="h-6 w-auto object-contain" />
             </div>
           </div>
           
           <div className="flex items-center gap-4">
-            <button className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-sm ring-2 ring-blue-100 relative">
-              <Star size={16} className="fill-white" />
-              <div className="absolute inset-0 rounded-full bg-blue-400 opacity-20 animate-ping"></div>
-            </button>
-            
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
-              {user?.avatar ? (
-                <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-blue-600 font-bold text-xs">{user?.name?.charAt(0)}</div>
-              )}
+            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-slate-100">
+              <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=ff5a1f&color=fff`} alt="Profile" className="w-full h-full object-cover" />
             </div>
-            
-            <button className="text-blue-500 hover:text-blue-600">
-              <QrCode size={22} />
-            </button>
-            
-            <button className="text-blue-500 hover:text-blue-600">
-              <HelpCircle size={22} />
-            </button>
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 md:pb-8 pb-24">

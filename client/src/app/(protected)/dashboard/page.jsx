@@ -342,16 +342,7 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Purple Banner */}
-        <div className="w-full bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] rounded-2xl p-4 flex items-center justify-between shadow-lg shadow-purple-500/20">
-          <div className="flex items-center gap-2.5">
-            <span className="text-xl animate-pulse">✨</span>
-            <span className="text-white font-medium text-[13px] tracking-wide">Your tailored dashboard awaits!</span>
-          </div>
-          <button className="bg-white text-purple-600 px-5 py-2 rounded-full text-xs font-black shadow-sm hover:scale-105 active:scale-95 transition-all">
-            Try now
-          </button>
-        </div>
+        {/* Banner Removed */}
 
         {/* Big Check Out Button */}
         <Link href="/attendance" className="w-full bg-gradient-to-r from-[#0ea5e9] via-[#0284c7] to-[#10b981] rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-emerald-500/20 hover:shadow-2xl hover:shadow-emerald-500/30 transition-all active:scale-[0.98] group">

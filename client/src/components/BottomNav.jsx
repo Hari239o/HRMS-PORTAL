@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LayoutDashboard, CalendarCheck, FileText, Folder } from 'lucide-react';
+import { LayoutDashboard, CalendarCheck, FileText, TrendingUp } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -16,7 +16,7 @@ export default function BottomNav() {
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Attendance', icon: CalendarCheck, path: '/attendance' },
     { name: 'Time Off', icon: FileText, path: '/leaves' },
-    { name: 'Documents', icon: Folder, path: '/documents' },
+    { name: 'Performance', icon: TrendingUp, path: '/performance' },
   ];
 
   return (

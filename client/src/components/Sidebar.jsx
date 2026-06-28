@@ -183,29 +183,31 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-2">
+          <div className="flex gap-2 mb-3">
             {user.role === 'admin' ? (
               <Link 
                 href="/settings"
-                className={`p-2 rounded-xl transition-all flex items-center justify-center border ${pathname === '/settings' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-white text-slate-400 hover:text-indigo-600 hover:shadow-md border-slate-100'}`}
+                className={`flex-1 p-2 rounded-xl transition-all flex items-center justify-center border ${pathname === '/settings' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-white text-slate-500 hover:text-indigo-600 hover:shadow-sm border-slate-200'}`}
+                title="Settings"
               >
                 <Settings size={18} />
               </Link>
             ) : (
-              <button className={`p-2 bg-white rounded-xl text-slate-400 hover:text-indigo-600 hover:shadow-md transition-all flex items-center justify-center border border-slate-100`}>
+              <button className={`flex-1 p-2 bg-white rounded-xl text-slate-500 hover:text-indigo-600 hover:shadow-sm transition-all flex items-center justify-center border border-slate-200`} title="Settings">
                 <Settings size={18} />
               </button>
             )}
-            <button className={`p-2 bg-white rounded-xl text-slate-400 hover:text-indigo-600 hover:shadow-md transition-all flex items-center justify-center border border-slate-100`}>
+            <button className={`flex-1 p-2 bg-white rounded-xl text-slate-500 hover:text-indigo-600 hover:shadow-sm transition-all flex items-center justify-center border border-slate-200`} title="Notifications">
               <Bell size={18} />
             </button>
-            <button
-              onClick={logout}
-              className="p-2 bg-rose-50 rounded-xl text-rose-500 hover:bg-rose-100 hover:shadow-md transition-all flex items-center justify-center border border-rose-100"
-            >
-              <LogOut size={18} />
-            </button>
           </div>
+          
+          <button
+            onClick={logout}
+            className="w-full py-2.5 bg-rose-50 rounded-xl text-rose-600 hover:bg-rose-100 hover:shadow-sm transition-all flex items-center justify-center gap-2 border border-rose-100 font-bold text-sm"
+          >
+            <LogOut size={18} /> Logout
+          </button>
         </div>
       </div>
       </aside>
