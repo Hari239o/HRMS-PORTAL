@@ -345,7 +345,7 @@ export default function Dashboard() {
         {/* Banner Removed */}
 
         {/* Big Check Out Button */}
-        <Link href="/attendance" className="w-full bg-gradient-to-r from-[#0ea5e9] via-[#0284c7] to-[#10b981] rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-emerald-500/20 hover:shadow-2xl hover:shadow-emerald-500/30 transition-all active:scale-[0.98] group">
+        <Link href="/attendance" className="w-full bg-gradient-to-r from-[#ff5a1f] via-[#ff6f3b] to-[#ff8b5e] rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-[#ff5a1f]/20 hover:shadow-2xl hover:shadow-[#ff5a1f]/30 transition-all active:scale-[0.98] group">
           <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm border border-white/30 group-hover:rotate-12 transition-transform">
               <Clock size={24} className="text-white" />
@@ -362,15 +362,15 @@ export default function Dashboard() {
           <AppGridItem title="Task Box" emoji="📝" link="#" />
           <AppGridItem title="Attendance" emoji="📅" link="/attendance" />
           <AppGridItem title="Leave" emoji="🏖️" link="/leaves" />
-          <AppGridItem title="Reimbursement" emoji="💸" link="#" />
-          <AppGridItem title="Performance" emoji="📈" link="#" />
-          <AppGridItem title="Holidays" emoji="🎉" link="/holidays" />
+          <AppGridItem title="Payroll" emoji="💸" link="/salary" />
+          <AppGridItem title="Performance" emoji="📈" link="/performance" />
+          <AppGridItem title="Holidays" emoji="📅" link="/holidays" />
           <AppGridItem title="HR Documents" emoji="📑" link="/documents" />
           <AppGridItem title="HR Policies" emoji="📜" link="#" />
           <AppGridItem title="Recruitment" emoji="🤝" link="#" />
           <AppGridItem title="Separation" emoji="👋" link="/resignations" />
           <AppGridItem title="Member" emoji="👥" link="#" />
-          <AppGridItem title="Vibe" emoji="✨" link="#" />
+          <AppGridItem title="Vibe" emoji="🎉" link="#" />
         </div>
 
       </div>

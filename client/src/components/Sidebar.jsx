@@ -66,12 +66,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       if (isStudent) {
         return 'bg-gradient-to-r from-sky-500 to-sky-400 text-white shadow-lg shadow-sky-500/30 translate-x-1';
       }
-      return 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-lg shadow-indigo-500/30 translate-x-1';
+      return 'bg-gradient-to-r from-[#ff5a1f] to-[#e04812] text-white shadow-lg shadow-[#ff5a1f]/30 translate-x-1';
     }
     if (isStudent) {
       return 'text-slate-500 hover:bg-white/50 hover:text-sky-600';
     }
-    return 'text-slate-500 hover:bg-white/50 hover:text-indigo-600';
+    return 'text-slate-500 hover:bg-white/50 hover:text-[#ff5a1f]';
   };
 
   return (
@@ -100,7 +100,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <div className="flex bg-white/40 backdrop-blur-sm border border-white/60 p-1 rounded-xl overflow-hidden shadow-inner mt-2 mx-4">
             <button 
               onClick={() => setPortalMode('hr')}
-              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${!isStudent ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${!isStudent ? 'bg-white text-[#ff5a1f] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
               HR Portal
             </button>
@@ -159,7 +159,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       <div className="p-6 mt-auto">
         <div className="bg-slate-50 rounded-[20px] p-4 border border-slate-100">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-indigo-600 relative overflow-hidden">
+            <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-[#ff5a1f] relative overflow-hidden">
               {user.avatar ? (
                 <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -187,17 +187,17 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             {user.role === 'admin' ? (
               <Link 
                 href="/settings"
-                className={`flex-1 p-2 rounded-xl transition-all flex items-center justify-center border ${pathname === '/settings' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-white text-slate-500 hover:text-indigo-600 hover:shadow-sm border-slate-200'}`}
+                className={`flex-1 p-2 rounded-xl transition-all flex items-center justify-center border ${pathname === '/settings' ? 'bg-[#ff5a1f]/10 text-[#ff5a1f] border-[#ff5a1f]/20' : 'bg-white text-slate-500 hover:text-[#ff5a1f] hover:shadow-sm border-slate-200'}`}
                 title="Settings"
               >
                 <Settings size={18} />
               </Link>
             ) : (
-              <button className={`flex-1 p-2 bg-white rounded-xl text-slate-500 hover:text-indigo-600 hover:shadow-sm transition-all flex items-center justify-center border border-slate-200`} title="Settings">
+              <button className={`flex-1 p-2 bg-white rounded-xl text-slate-500 hover:text-[#ff5a1f] hover:shadow-sm transition-all flex items-center justify-center border border-slate-200`} title="Settings">
                 <Settings size={18} />
               </button>
             )}
-            <button className={`flex-1 p-2 bg-white rounded-xl text-slate-500 hover:text-indigo-600 hover:shadow-sm transition-all flex items-center justify-center border border-slate-200`} title="Notifications">
+            <button className={`flex-1 p-2 bg-white rounded-xl text-slate-500 hover:text-[#ff5a1f] hover:shadow-sm transition-all flex items-center justify-center border border-slate-200`} title="Notifications">
               <Bell size={18} />
             </button>
           </div>
