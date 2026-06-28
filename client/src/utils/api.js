@@ -40,7 +40,9 @@ const toggleLoading = (isLoading) => {
 // Request Interceptor
 api.interceptors.request.use(
   (config) => {
-    toggleLoading(true);
+    if (config.method?.toLowerCase() !== 'get') {
+      toggleLoading(true);
+    }
     const token = sessionStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -48,7 +50,9 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    toggleLoading(false);
+    if (error.config?.method?.toLowerCase() !== 'get') {
+      toggleLoading(false);
+    }
     return Promise.reject(error);
   }
 );
@@ -56,11 +60,15 @@ api.interceptors.request.use(
 // Response Interceptor
 api.interceptors.response.use(
   (response) => {
-    toggleLoading(false);
+    if (response.config?.method?.toLowerCase() !== 'get') {
+      toggleLoading(false);
+    }
     return response;
   },
   async (error) => {
-    toggleLoading(false);
+    if (error.config?.method?.toLowerCase() !== 'get') {
+      toggleLoading(false);
+    }
     const originalRequest = error.config;
 
     if (!error.response) {
