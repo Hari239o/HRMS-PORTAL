@@ -81,46 +81,46 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-white p-6">
       <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
-        <div className="bg-white p-10 rounded-2xl shadow-xl border border-slate-100">
-          <div className="flex justify-center mb-10 w-full">
+        <div className="py-10 px-2">
+          <div className="flex justify-center mb-12 w-full">
             <Image 
               src="/geonixa-logo.png" 
               alt="Geonixa" 
-              width={280}
-              height={90}
-              className="w-64 h-auto object-contain drop-shadow-sm" 
+              width={400}
+              height={120}
+              className="w-80 h-auto object-contain drop-shadow-sm" 
             />
           </div>
           
-          <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-slate-800 tracking-tight mb-1">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">
               {isAdminView ? "Administrator Access" : "Employee Portal"}
             </h2>
-            <p className="text-slate-500 text-sm">Secure access to Geonixa HR Systems</p>
+            <p className="text-slate-500 text-sm font-medium">Secure access to Geonixa HR Systems</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
                 {isAdminView ? "Admin Email" : "Employee ID / Email"}
               </label>
               <input 
                 type="text" 
                 required 
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5a1f] focus:border-[#ff5a1f] transition-all text-slate-900"
+                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5a1f] focus:border-[#ff5a1f] transition-all text-slate-900 text-lg"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={isAdminView ? "admin@geonixa.com" : "e.g. GN001 or name@geonixa.com"}
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Password</label>
+              <label className="block text-sm font-bold text-slate-700 mb-2">Password</label>
               <input 
                 type="password" 
                 required 
-                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5a1f] focus:border-[#ff5a1f] transition-all text-slate-900"
+                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ff5a1f] focus:border-[#ff5a1f] transition-all text-slate-900 text-lg"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
