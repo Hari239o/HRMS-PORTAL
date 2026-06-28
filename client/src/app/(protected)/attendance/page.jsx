@@ -148,6 +148,17 @@ export default function Attendance() {
     return Math.min((elapsedHours / 8) * 100, 100);
   };
 
+  const getElapsedTimeString = () => {
+    if (!todayRecord || !todayRecord.checkIn) return "00:00:00";
+    const checkInTime = new Date(todayRecord.checkIn).getTime();
+    const now = todayRecord.checkOut ? new Date(todayRecord.checkOut).getTime() : currentTime.getTime();
+    const diff = now - checkInTime;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const fillPercentage = getFillPercentage();
   const topOffset = 100 - fillPercentage;
 
@@ -168,28 +179,28 @@ export default function Attendance() {
       `}</style>
       
       {/* Top Header Section */}
-      <div className="flex justify-between items-start md:items-end">
+      <div className="flex justify-between items-center px-1">
         <div>
-          <h2 className="text-[28px] md:text-3xl font-black text-slate-900 tracking-tight leading-tight">
-            Attendance <span className="text-[#ff5a1f]">Terminal</span>
+          <h2 className="text-[26px] md:text-3xl font-black text-slate-900 tracking-tight leading-none mb-1">
+            Attendance <br/><span className="text-[#ff5a1f]">Terminal</span>
           </h2>
-          <p className="text-slate-500 font-medium text-xs md:text-sm mt-1">Biometric and Location verified logs</p>
+          <p className="text-slate-500 font-medium text-[10px] md:text-sm mt-2">Biometric and Location verified logs</p>
         </div>
-        <div className="text-right flex flex-col items-end">
+        <div className="text-right flex flex-col justify-center">
           <p className="text-[28px] md:text-4xl font-black text-slate-800 tracking-tighter tabular-nums leading-none">
             {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </p>
-          <p className="text-[10px] md:text-xs font-bold text-slate-400 mt-1">
+          <p className="text-[10px] md:text-xs font-bold text-slate-400 mt-2">
             {currentTime.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric', weekday: 'long' })}
           </p>
         </div>
       </div>
 
       {user.role !== 'admin' ? (
-        <div className="flex flex-col items-center justify-center py-12 md:py-20 relative">
+        <div className="flex flex-col items-center justify-center py-6 md:py-12 relative">
           
           {/* Animated Background Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-[#ff5a1f]/5 rounded-full blur-3xl -z-10"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-blue-500/5 rounded-full blur-3xl -z-10"></div>
           
           {!todayRecord ? (
             /* PUNCH IN STATE */
@@ -210,50 +221,56 @@ export default function Attendance() {
             </div>
           ) : (
             /* PUNCH OUT / WATER FILL STATE */
-            <div 
-              onClick={handleCheckOut}
-              className={`relative w-72 h-72 rounded-full overflow-hidden border-8 border-white bg-slate-50 shadow-[0_20px_60px_-15px_rgba(255,90,31,0.15)] flex flex-col items-center justify-center transition-all duration-300 ${!todayRecord.checkOut ? 'cursor-pointer hover:scale-105 active:scale-95 hover:shadow-[0_20px_60px_-10px_rgba(255,90,31,0.25)]' : 'opacity-80'}`}
-            >
-              {/* Back layer wave */}
-              <div 
-                className="absolute w-[250%] h-[250%] left-1/2 rounded-[43%] bg-[#ff5a1f]/30 animate-[spin-wave_8s_linear_infinite]" 
-                style={{ top: `${topOffset + 3}%` }}
-              />
-              {/* Front layer wave */}
-              <div 
-                className="absolute w-[250%] h-[250%] left-1/2 rounded-[40%] bg-gradient-to-t from-[#ff5a1f] to-[#ff8b5e] animate-[spin-wave_5s_linear_infinite]" 
-                style={{ top: `${topOffset}%` }}
-              />
-
-              <div className="relative z-10 flex flex-col items-center mt-6">
-                <div className={`p-4 rounded-full mb-2 ${fillPercentage > 50 ? 'bg-white/20 text-white' : 'bg-[#ff5a1f]/10 text-[#ff5a1f]'}`}>
-                  <Fingerprint size={48} strokeWidth={1.5} />
-                </div>
-                <span className={`text-2xl font-black tracking-tight ${fillPercentage > 50 ? 'text-white' : 'text-slate-800'}`}>
-                  {todayRecord.checkOut ? 'COMPLETED' : 'PUNCH OUT'}
-                </span>
+            <div className="flex flex-col items-center gap-8">
+              <div className={`relative w-72 h-72 rounded-full overflow-hidden border-8 border-white bg-slate-50 shadow-[0_20px_60px_-15px_rgba(59,130,246,0.2)] flex flex-col items-center justify-center transition-all duration-500 ${todayRecord.checkOut ? 'opacity-80 grayscale scale-95' : 'scale-100'}`}>
                 
-                {!todayRecord.checkOut && (
-                  <div className={`flex flex-col items-center mt-2 ${fillPercentage > 50 ? 'text-white' : 'text-slate-500'}`}>
-                    <span className="text-xs font-bold uppercase tracking-widest opacity-80">
-                      {Math.floor(fillPercentage)}% of 8hr shift
+                {/* Back layer wave - BLUE WATER */}
+                <div 
+                  className="absolute w-[250%] h-[250%] left-1/2 rounded-[43%] bg-blue-400/40 animate-[spin-wave_8s_linear_infinite]" 
+                  style={{ top: `${topOffset + 3}%` }}
+                />
+                {/* Front layer wave - BLUE WATER */}
+                <div 
+                  className="absolute w-[250%] h-[250%] left-1/2 rounded-[40%] bg-gradient-to-t from-blue-600 to-blue-400 opacity-90 animate-[spin-wave_5s_linear_infinite]" 
+                  style={{ top: `${topOffset}%` }}
+                />
+
+                <div className="relative z-10 flex flex-col items-center mt-2">
+                  <div className={`p-4 rounded-full mb-2 transition-colors duration-500 ${fillPercentage > 40 ? 'bg-white/20 text-white shadow-sm' : 'bg-blue-50 text-blue-500'}`}>
+                    <Fingerprint size={42} strokeWidth={1.5} />
+                  </div>
+                  
+                  <span className={`text-4xl font-black tabular-nums tracking-tighter drop-shadow-sm transition-colors duration-500 ${fillPercentage > 50 ? 'text-white' : 'text-slate-800'}`}>
+                    {getElapsedTimeString()}
+                  </span>
+                  
+                  <div className={`flex flex-col items-center mt-2 transition-colors duration-500 ${fillPercentage > 60 ? 'text-white' : 'text-slate-500'}`}>
+                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-90">
+                      Elapsed Time
                     </span>
-                    <span className="text-[10px] font-semibold mt-1 opacity-70">
+                    <span className="text-[10px] font-semibold mt-1 opacity-80">
                       In: {new Date(todayRecord.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                )}
-                {todayRecord.checkOut && (
-                  <div className={`flex flex-col items-center mt-2 ${fillPercentage > 50 ? 'text-white' : 'text-slate-500'}`}>
-                    <span className="text-xs font-bold uppercase tracking-widest flex items-center gap-1">
-                      <CheckCircle size={12}/> Checked Out
-                    </span>
-                    <span className="text-[10px] font-semibold mt-1 opacity-80">
-                      Out: {new Date(todayRecord.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-                )}
+                </div>
               </div>
+
+              {/* SEPARATE PUNCH OUT BUTTON */}
+              {!todayRecord.checkOut ? (
+                <button 
+                  onClick={handleCheckOut}
+                  disabled={scanning}
+                  className={`w-64 py-4 rounded-2xl font-black tracking-widest uppercase transition-all duration-300 shadow-xl shadow-[#ff5a1f]/20 bg-gradient-to-r from-[#ff5a1f] to-[#ff7543] text-white hover:shadow-2xl hover:shadow-[#ff5a1f]/30 active:scale-95 flex items-center justify-center gap-3 ${scanning ? 'opacity-70 pointer-events-none scale-95' : ''}`}
+                >
+                  <Fingerprint size={22} />
+                  Secure Punch Out
+                </button>
+              ) : (
+                <div className="w-64 py-4 rounded-2xl font-black tracking-widest uppercase bg-slate-100 text-slate-400 flex items-center justify-center gap-2 border border-slate-200">
+                  <CheckCircle size={20} />
+                  Shift Completed
+                </div>
+              )}
             </div>
           )}
           
