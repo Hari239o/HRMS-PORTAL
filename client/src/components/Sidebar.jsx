@@ -96,22 +96,22 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <img src="/geonixa-logo.png" alt="Geonixa" className="w-48 h-auto object-contain drop-shadow-sm" />
           </div>
 
-        <div className="flex bg-white/40 backdrop-blur-sm border border-white/60 p-1 rounded-xl overflow-hidden shadow-inner">
-          <button 
-            onClick={() => setPortalMode('hr')}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${!isStudent ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-          >
-            HR Portal
-          </button>
-          {user.role === 'student' && (
+        {user.role === 'student' && (
+          <div className="flex bg-white/40 backdrop-blur-sm border border-white/60 p-1 rounded-xl overflow-hidden shadow-inner mt-2 mx-4">
+            <button 
+              onClick={() => setPortalMode('hr')}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${!isStudent ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            >
+              HR Portal
+            </button>
             <button 
               onClick={() => setPortalMode('student')}
               className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${isStudent ? 'bg-sky-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
               Student
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <nav className="flex-1 px-4 py-4 space-y-4 overflow-y-auto">
