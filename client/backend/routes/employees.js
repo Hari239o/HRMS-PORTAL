@@ -307,6 +307,16 @@ router.post('/upload-document', authenticate, upload.single('file'), async (req,
 router.put('/:id', authenticate, authorize(['admin']), async (req, res) => {
   const { name, email, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
+    const empToUpdate = await prisma.employee.findUnique({ where: { id: req.params.id } });
+    if (empToUpdate) {
+      if (empToUpdate.email === 'harikishorereddy9908@gmail.com' && req.user.email !== 'harikishorereddy9908@gmail.com') {
+        return res.status(403).json({ error: 'Super Admin account cannot be modified by others.' });
+      }
+      if (empToUpdate.email === 'admin@geonixa.com' && req.user.email !== 'harikishorereddy9908@gmail.com' && req.user.email !== 'admin@geonixa.com') {
+        return res.status(403).json({ error: 'Permanent Admin account cannot be modified by others.' });
+      }
+    }
+
     await prisma.employee.update({
       where: { id: req.params.id },
       data: { 
@@ -337,6 +347,16 @@ router.put('/:id/reset-password', authenticate, authorize(['admin']), async (req
   if (!newPassword) return res.status(400).json({ error: 'New password is required' });
   
   try {
+    const empToUpdate = await prisma.employee.findUnique({ where: { id: req.params.id } });
+    if (empToUpdate) {
+      if (empToUpdate.email === 'harikishorereddy9908@gmail.com' && req.user.email !== 'harikishorereddy9908@gmail.com') {
+        return res.status(403).json({ error: 'Super Admin password cannot be reset by others.' });
+      }
+      if (empToUpdate.email === 'admin@geonixa.com' && req.user.email !== 'harikishorereddy9908@gmail.com' && req.user.email !== 'admin@geonixa.com') {
+        return res.status(403).json({ error: 'Permanent Admin password cannot be reset by others.' });
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await prisma.employee.update({
       where: { id: req.params.id },
@@ -351,6 +371,16 @@ router.put('/:id/reset-password', authenticate, authorize(['admin']), async (req
 
 router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
   try {
+    const empToDelete = await prisma.employee.findUnique({ where: { id: req.params.id } });
+    if (empToDelete) {
+      if (empToDelete.email === 'harikishorereddy9908@gmail.com') {
+        return res.status(403).json({ error: 'Super Admin account is permanent and cannot be deleted.' });
+      }
+      if (empToDelete.email === 'admin@geonixa.com') {
+        return res.status(403).json({ error: 'Permanent Admin account cannot be deleted.' });
+      }
+    }
+
     await prisma.$transaction([
       prisma.employee.delete({
         where: { id: req.params.id }
