@@ -1,7 +1,7 @@
 {
   "name": "attendance-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "dev:frontend": "next dev",
     "dev:backend": "nodemon backend/index.js",
