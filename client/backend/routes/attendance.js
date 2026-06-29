@@ -389,8 +389,8 @@ router.get('/', authenticate, async (req, res) => {
       return {
         ...a,
         status: effectiveStatus,
-        checkInPhoto: a.checkInPhoto ? await generateSignedUrl(a.checkInPhoto, 60) : null,
-        checkOutPhoto: a.checkOutPhoto ? await generateSignedUrl(a.checkOutPhoto, 60) : null,
+        checkInPhoto: a.checkInPhoto || null,
+        checkOutPhoto: a.checkOutPhoto || null,
         employee: { name: a.employee?.name || 'Unknown', department: a.employee?.department || 'Unknown' },
         checkInLocation: checkInLat != null ? { latitude: checkInLat, longitude: checkInLong } : null,
         checkOutLocation: checkOutLat != null ? { latitude: checkOutLat, longitude: checkOutLong } : null,

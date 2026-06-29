@@ -16,9 +16,7 @@ router.get('/', authenticate, authorize(['admin']), async (req, res) => {
 
     const formattedEmployees = await Promise.all(employees.map(async (emp) => {
       let docs = typeof emp.documents === 'string' ? JSON.parse(emp.documents) : (emp.documents || {});
-      for (const [key, value] of Object.entries(docs)) {
-        docs[key] = await generateSignedUrl(value, 60);
-      }
+      // Note: We no longer sign documents here for performance. They are fetched on demand.
       return {
         ...emp,
         joinedAt: emp.createdAt,
@@ -76,9 +74,7 @@ router.get('/directory', authenticate, async (req, res) => {
 
     const directory = await Promise.all(employees.map(async emp => {
       let docs = typeof emp.documents === 'string' ? JSON.parse(emp.documents) : (emp.documents || {});
-      for (const [key, value] of Object.entries(docs)) {
-        docs[key] = await generateSignedUrl(value, 60);
-      }
+      // Note: Documents are not signed here for performance.
       return {
         id: emp.id,
         name: emp.name,
@@ -97,6 +93,24 @@ router.get('/directory', authenticate, async (req, res) => {
     res.json(directory);
   } catch (error) {
     console.error('Error fetching directory:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/:id/documents', authenticate, async (req, res) => {
+  try {
+    const emp = await prisma.employee.findUnique({
+      where: { id: req.params.id }
+    });
+    if (!emp) return res.status(404).json({ error: 'Employee not found' });
+    
+    let docs = typeof emp.documents === 'string' ? JSON.parse(emp.documents) : (emp.documents || {});
+    for (const [key, value] of Object.entries(docs)) {
+      docs[key] = await generateSignedUrl(value, 60);
+    }
+    res.json(docs);
+  } catch (error) {
+    console.error('Error fetching documents:', error);
     res.status(500).json({ error: error.message });
   }
 });

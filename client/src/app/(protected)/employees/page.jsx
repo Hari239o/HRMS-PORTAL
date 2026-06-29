@@ -175,6 +175,17 @@ const Employees = () => {
     }
   };
 
+  const handleShowDocs = async (emp) => {
+    try {
+      setShowDocsModal({ ...emp, loadingDocs: true });
+      const res = await api.get(`/api/employees/${emp.id}/documents`);
+      setShowDocsModal({ ...emp, documents: res.data, loadingDocs: false });
+    } catch (err) {
+      toast.error('Failed to load documents');
+      setShowDocsModal(null);
+    }
+  };
+
   const getEmployeeStatus = (empId) => {
     const record = attendanceToday.find(a => a.employeeId === empId);
     if (!record) return { status: 'Offline', color: 'bg-slate-300' };
@@ -304,7 +315,7 @@ const Employees = () => {
                 </div>
 
                 <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity absolute right-4 top-4 bg-white/95 backdrop-blur-md p-1 rounded-xl shadow-lg border border-slate-100 z-20">
-                <button onClick={() => setShowDocsModal(emp)} className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="View Documents">
+                <button onClick={() => handleShowDocs(emp)} className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="View Documents">
                   <Folder size={16} />
                 </button>
                 <a href={`mailto:${emp.email}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Send Direct Email">
@@ -354,7 +365,7 @@ const Employees = () => {
               
               <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100/80 gap-3">
                 <button 
-                  onClick={() => setShowDocsModal(emp)} 
+                  onClick={() => handleShowDocs(emp)} 
                   className="flex-1 py-2 px-3 bg-white hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-2 border border-slate-200 hover:border-blue-200 shadow-sm"
                 >
                   <Folder size={14} /> View KYC Docs
@@ -609,34 +620,41 @@ const Employees = () => {
                 <Trash2 size={18} className="rotate-45" /> {/* Using Trash2 rotated as a close button or we can just use text */}
               </button>
             </div>
-            <div className="p-6 bg-slate-50/50">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { id: 'tenth', title: '10th Certificate' },
-                  { id: 'inter', title: 'Intermediate Certificate' },
-                  { id: 'btech', title: 'B.Tech Certificate' },
-                  { id: 'offerLetter', title: 'Offer Letter' },
-                  { id: 'photo', title: 'Passport Photo' },
-                  { id: 'signaturedOffer', title: 'Signatured Offer Letter' },
-                ].map(doc => {
-                  const url = showDocsModal.documents?.[doc.id];
-                  return (
-                    <div key={doc.id} className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-3">
-                        {url ? <CheckCircle size={20} className="text-emerald-500" /> : <XCircle size={20} className="text-rose-400" />}
-                        <span className="font-bold text-sm text-slate-700">{doc.title}</span>
+            <div className="p-6 bg-slate-50/50 min-h-[200px]">
+              {showDocsModal.loadingDocs ? (
+                <div className="flex flex-col items-center justify-center h-full space-y-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <p className="text-sm font-bold text-slate-500 animate-pulse">Decrypting and securely loading documents...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { id: 'tenth', title: '10th Certificate' },
+                    { id: 'inter', title: 'Intermediate Certificate' },
+                    { id: 'btech', title: 'B.Tech Certificate' },
+                    { id: 'offerLetter', title: 'Offer Letter' },
+                    { id: 'photo', title: 'Passport Photo' },
+                    { id: 'signaturedOffer', title: 'Signatured Offer Letter' },
+                  ].map(doc => {
+                    const url = showDocsModal.documents?.[doc.id];
+                    return (
+                      <div key={doc.id} className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3">
+                          {url ? <CheckCircle size={20} className="text-emerald-500" /> : <XCircle size={20} className="text-rose-400" />}
+                          <span className="font-bold text-sm text-slate-700">{doc.title}</span>
+                        </div>
+                        {url ? (
+                          <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
+                            <File size={14} /> View
+                          </a>
+                        ) : (
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-1 rounded-md">Missing</span>
+                        )}
                       </div>
-                      {url ? (
-                        <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors">
-                          <File size={14} /> View
-                        </a>
-                      ) : (
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-1 rounded-md">Missing</span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
