@@ -29,7 +29,7 @@ export default function ProtectedLayout({ children }) {
     );
   }
 
-  const adminOnlyRoutes = ['/settings', '/reports'];
+  const adminOnlyRoutes = ['/reports'];
   if (adminOnlyRoutes.some(route => pathname?.startsWith(route)) && user.role !== 'admin') {
     router.replace('/dashboard');
     return null;
