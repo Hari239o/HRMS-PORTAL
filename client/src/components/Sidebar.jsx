@@ -42,6 +42,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Holidays', icon: CalendarDays, path: '/holidays' },
     { name: 'Performance', icon: Trophy, path: '/performance' },
     { name: 'HR Documents', icon: FileText, path: '/documents' },
+    { name: 'HR Policies', icon: ClipboardList, path: '/hr-policies' },
   ];
 
   const adminItems = [
