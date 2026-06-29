@@ -317,10 +317,23 @@ export default function Dashboard() {
     );
   }
 
-  const AppGridItem = ({ title, icon: Icon, link }) => (
+  const colorMap = {
+    blue: "bg-blue-50 text-blue-600 group-hover:bg-blue-100",
+    emerald: "bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100",
+    amber: "bg-amber-50 text-amber-600 group-hover:bg-amber-100",
+    purple: "bg-purple-50 text-purple-600 group-hover:bg-purple-100",
+    rose: "bg-rose-50 text-rose-600 group-hover:bg-rose-100",
+    indigo: "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100",
+    cyan: "bg-cyan-50 text-cyan-600 group-hover:bg-cyan-100",
+    fuchsia: "bg-fuchsia-50 text-fuchsia-600 group-hover:bg-fuchsia-100",
+    orange: "bg-orange-50 text-orange-600 group-hover:bg-orange-100",
+    teal: "bg-teal-50 text-teal-600 group-hover:bg-teal-100",
+  };
+
+  const AppGridItem = ({ title, icon: Icon, link, color = "blue" }) => (
     <Link href={link} className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center gap-3 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all border border-slate-100 group">
-      <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-50 transition-all">
-        <Icon size={24} className="text-slate-600 group-hover:text-blue-600" />
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all ${colorMap[color] || colorMap.blue}`}>
+        <Icon size={24} className="transition-colors" />
       </div>
       <span className="text-xs font-bold text-slate-700 text-center">{title}</span>
     </Link>
@@ -382,18 +395,18 @@ export default function Dashboard() {
 
         {/* 3-Column Grid */}
         <div className="grid grid-cols-3 gap-3 sm:gap-4 mt-2">
-          <AppGridItem title="Task Box" icon={ClipboardList} link="#" />
-          <AppGridItem title="Attendance" icon={CalendarDays} link="/attendance" />
-          <AppGridItem title="Leave" icon={Calendar} link="/leaves" />
-          <AppGridItem title="Payroll" icon={Receipt} link="/salary" />
-          <AppGridItem title="Performance" icon={TrendingUp} link="/performance" />
-          <AppGridItem title="Holidays" icon={CalendarDays} link="/holidays" />
-          <AppGridItem title="HR Documents" icon={FileText} link="/documents" />
-          <AppGridItem title="HR Policies" icon={FileSpreadsheet} link="/hr-policies" />
-          <AppGridItem title="Recruitment" icon={Briefcase} link="#" />
-          <AppGridItem title="Separation" icon={UserX} link="/resignations" />
-          <AppGridItem title="Member" icon={Users} link="#" />
-          <AppGridItem title="Vibe" icon={Smile} link="#" />
+          <AppGridItem title="Task Box" icon={ClipboardList} link="#" color="blue" />
+          <AppGridItem title="Attendance" icon={CalendarDays} link="/attendance" color="emerald" />
+          <AppGridItem title="Leave" icon={Calendar} link="/leaves" color="rose" />
+          <AppGridItem title="Payroll" icon={Receipt} link="/salary" color="amber" />
+          <AppGridItem title="Performance" icon={TrendingUp} link="/performance" color="indigo" />
+          <AppGridItem title="Holidays" icon={CalendarDays} link="/holidays" color="fuchsia" />
+          <AppGridItem title="HR Documents" icon={FileText} link="/documents" color="cyan" />
+          <AppGridItem title="HR Policies" icon={FileSpreadsheet} link="/hr-policies" color="purple" />
+          <AppGridItem title="Recruitment" icon={Briefcase} link="#" color="orange" />
+          <AppGridItem title="Separation" icon={UserX} link="/resignations" color="rose" />
+          <AppGridItem title="Member" icon={Users} link="#" color="teal" />
+          <AppGridItem title="Vibe" icon={Smile} link="#" color="amber" />
         </div>
 
       </div>
@@ -417,20 +430,19 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Admin 12-item App Grid */}
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 sm:gap-4 mt-2">
-        <AppGridItem title="Task Box" icon={ClipboardList} link="/taskbox" />
-        <AppGridItem title="Attendance" icon={CalendarDays} link="/attendance" />
-        <AppGridItem title="Leave" icon={Calendar} link="/leaves" />
-        <AppGridItem title="Payroll" icon={Receipt} link="/salary" />
-        <AppGridItem title="Performance" icon={TrendingUp} link="/performance" />
-        <AppGridItem title="Holidays" icon={CalendarDays} link="/holidays" />
-        <AppGridItem title="HR Documents" icon={FileText} link="/documents" />
-        <AppGridItem title="HR Policies" icon={FileSpreadsheet} link="/hr-policies" />
-        <AppGridItem title="Recruitment" icon={Briefcase} link="/recruitment" />
-        <AppGridItem title="Separation" icon={UserX} link="/resignations" />
-        <AppGridItem title="Member" icon={Users} link="/employees" />
-        <AppGridItem title="Vibe" icon={Smile} link="#" />
+        <AppGridItem title="Task Box" icon={ClipboardList} link="/taskbox" color="blue" />
+        <AppGridItem title="Attendance" icon={CalendarDays} link="/attendance" color="emerald" />
+        <AppGridItem title="Leave" icon={Calendar} link="/leaves" color="rose" />
+        <AppGridItem title="Payroll" icon={Receipt} link="/salary" color="amber" />
+        <AppGridItem title="Performance" icon={TrendingUp} link="/performance" color="indigo" />
+        <AppGridItem title="Holidays" icon={CalendarDays} link="/holidays" color="fuchsia" />
+        <AppGridItem title="HR Documents" icon={FileText} link="/documents" color="cyan" />
+        <AppGridItem title="HR Policies" icon={FileSpreadsheet} link="/hr-policies" color="purple" />
+        <AppGridItem title="Recruitment" icon={Briefcase} link="/recruitment" color="orange" />
+        <AppGridItem title="Separation" icon={UserX} link="/resignations" color="rose" />
+        <AppGridItem title="Member" icon={Users} link="/employees" color="teal" />
+        <AppGridItem title="Vibe" icon={Smile} link="#" color="amber" />
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6 mt-4">
