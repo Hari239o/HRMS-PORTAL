@@ -348,6 +348,9 @@ model Job {
   department   String
   description  String
   requirements String
+  salary       String?
+  location     String?
+  jdUrl        String?
   status       String         @default("Open")
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt

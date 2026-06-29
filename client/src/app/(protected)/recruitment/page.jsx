@@ -17,6 +17,11 @@ export default function RecruitmentPage() {
   const [showAddJob, setShowAddJob] = useState(false);
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
+  const [jobDepartment, setJobDepartment] = useState('');
+  const [jobRequirements, setJobRequirements] = useState('');
+  const [jobSalary, setJobSalary] = useState('');
+  const [jobLocation, setJobLocation] = useState('');
+  const [jobJdUrl, setJobJdUrl] = useState('');
   
   // Employee state
   const [showReferral, setShowReferral] = useState(false);
@@ -46,11 +51,21 @@ export default function RecruitmentPage() {
     try {
       await api.post('/api/recruitment/jobs', {
         title: jobTitle,
-        description: jobDescription
+        department: jobDepartment,
+        description: jobDescription,
+        requirements: jobRequirements,
+        salary: jobSalary,
+        location: jobLocation,
+        jdUrl: jobJdUrl
       });
       toast.success('Job posted successfully');
       setJobTitle('');
+      setJobDepartment('');
       setJobDescription('');
+      setJobRequirements('');
+      setJobSalary('');
+      setJobLocation('');
+      setJobJdUrl('');
       setShowAddJob(false);
       fetchJobs();
     } catch (err) {
@@ -120,27 +135,37 @@ export default function RecruitmentPage() {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 animate-in fade-in slide-in-from-top-4 duration-300">
           <h2 className="text-lg font-bold text-slate-800 mb-4">Post a New Position</h2>
           <form onSubmit={handleCreateJob} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Title</label>
+                <input type="text" required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="e.g., Senior React Developer" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Department</label>
+                <input type="text" required className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium" value={jobDepartment} onChange={(e) => setJobDepartment(e.target.value)} placeholder="e.g., Engineering" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Salary (Optional)</label>
+                <input type="text" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium" value={jobSalary} onChange={(e) => setJobSalary(e.target.value)} placeholder="e.g., ₹10,00,000 - ₹12,00,000" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Location (Optional)</label>
+                <input type="text" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium" value={jobLocation} onChange={(e) => setJobLocation(e.target.value)} placeholder="e.g., Remote / Hyderabad" />
+              </div>
+            </div>
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Title</label>
-              <input 
-                type="text" 
-                required
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium"
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
-                placeholder="e.g., Senior React Developer"
-              />
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Description PDF Link (Optional)</label>
+              <input type="url" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium" value={jobJdUrl} onChange={(e) => setJobJdUrl(e.target.value)} placeholder="https://link-to-jd.pdf" />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Description</label>
-              <textarea 
-                required
-                rows="4"
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium resize-none"
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                placeholder="Describe the role, requirements, and responsibilities..."
-              />
+              <textarea required rows="3" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium resize-none" value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} placeholder="Describe the role..." />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Requirements</label>
+              <textarea required rows="3" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium resize-none" value={jobRequirements} onChange={(e) => setJobRequirements(e.target.value)} placeholder="List required skills and qualifications..." />
             </div>
             <div className="flex justify-end pt-2">
               <button type="submit" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-all">
@@ -215,10 +240,13 @@ export default function RecruitmentPage() {
           </div>
         ) : (
           jobs.map(job => (
-            <div key={job.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow relative group overflow-hidden">
+            <div key={job.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow relative group overflow-hidden flex flex-col">
               <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-2xl"></div>
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-black text-slate-800">{job.title}</h3>
+                <div>
+                  <h3 className="text-lg font-black text-slate-800">{job.title}</h3>
+                  <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">{job.department}</p>
+                </div>
                 {user.role === 'admin' ? (
                   <button onClick={() => handleDeleteJob(job.id)} className="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                     <Trash2 size={16} />
@@ -227,20 +255,33 @@ export default function RecruitmentPage() {
                   <span className="px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-lg">Open</span>
                 )}
               </div>
-              <p className="text-sm text-slate-600 mb-6 line-clamp-3">
+              
+              <div className="flex flex-wrap gap-2 mb-4">
+                {job.location && <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">📍 {job.location}</span>}
+                {job.salary && <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">💰 {job.salary}</span>}
+              </div>
+              
+              <p className="text-sm text-slate-600 mb-6 line-clamp-3 flex-grow">
                 {job.description}
               </p>
               
-              <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-                <span className="text-xs font-bold text-slate-400">Posted on {new Date(job.createdAt).toLocaleDateString()}</span>
-                {user.role !== 'admin' && job.status === 'Open' && (
-                  <button 
-                    onClick={() => { setSelectedJob(job.id); setShowReferral(true); }}
-                    className="text-blue-600 text-sm font-bold flex items-center gap-1 hover:text-blue-700 transition-colors"
-                  >
-                    <LinkIcon size={14} /> Refer a Friend
-                  </button>
-                )}
+              <div className="flex justify-between items-center pt-4 border-t border-slate-100 mt-auto">
+                <span className="text-xs font-bold text-slate-400">Posted {new Date(job.createdAt).toLocaleDateString()}</span>
+                <div className="flex items-center gap-4">
+                  {job.jdUrl && (
+                    <a href={job.jdUrl} target="_blank" rel="noreferrer" className="text-slate-500 hover:text-blue-600 text-sm font-bold flex items-center gap-1 transition-colors">
+                      <LinkIcon size={14} /> JD PDF
+                    </a>
+                  )}
+                  {user.role !== 'admin' && job.status === 'Open' && (
+                    <button 
+                      onClick={() => { setSelectedJob(job.id); setShowReferral(true); }}
+                      className="text-blue-600 text-sm font-bold flex items-center gap-1 hover:text-blue-700 transition-colors"
+                    >
+                      <Plus size={14} /> Refer Friend
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Admin Referral Count Preview (optional) */}

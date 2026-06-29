@@ -17,10 +17,10 @@ router.get('/jobs', authenticate, async (req, res) => {
 
 // Admin creates a job
 router.post('/jobs', authenticate, authorize(['admin']), async (req, res) => {
-  const { title, department, description, requirements, status } = req.body;
+  const { title, department, description, requirements, salary, location, jdUrl, status } = req.body;
   try {
     const newJob = await prisma.job.create({
-      data: { title, department, description, requirements, status: status || 'Open' }
+      data: { title, department, description, requirements, salary, location, jdUrl, status: status || 'Open' }
     });
     res.json(newJob);
   } catch (error) {
@@ -30,11 +30,11 @@ router.post('/jobs', authenticate, authorize(['admin']), async (req, res) => {
 
 // Admin updates a job
 router.patch('/jobs/:id', authenticate, authorize(['admin']), async (req, res) => {
-  const { title, department, description, requirements, status } = req.body;
+  const { title, department, description, requirements, salary, location, jdUrl, status } = req.body;
   try {
     const job = await prisma.job.update({
       where: { id: req.params.id },
-      data: { title, department, description, requirements, status }
+      data: { title, department, description, requirements, salary, location, jdUrl, status }
     });
     res.json(job);
   } catch (error) {
