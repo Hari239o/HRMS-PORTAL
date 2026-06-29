@@ -33,6 +33,7 @@ model Employee {
   attendance    Attendance[]
   leaves        Leave[]
   salaries      Salary[]
+  jobReferrals  JobReferral[]
 }
 
 model Attendance {
@@ -338,5 +339,32 @@ model FileMetadata {
   entityType   String?  // 'Employee', 'Salary', 'Leave', 'Problem'
   entityId     String?
   createdAt    DateTime @default(now())
+}
+
+
+model Job {
+  id           String         @id @default(uuid())
+  title        String
+  department   String
+  description  String
+  requirements String
+  status       String         @default("Open")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  referrals    JobReferral[]
+}
+
+model JobReferral {
+  id             String   @id @default(uuid())
+  jobId          String
+  job            Job      @relation(fields: [jobId], references: [id])
+  employeeId     String
+  employee       Employee @relation(fields: [employeeId], references: [id])
+  candidateName  String
+  candidateEmail String
+  candidatePhone String
+  resumeUrl      String?
+  status         String   @default("Pending")
+  createdAt      DateTime @default(now())
 }
 

@@ -377,7 +377,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-3 py-1 bg-gradient-to-r from-sky-500 to-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow-sm">
+            <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow-sm">
               <Server size={12} /> Operations
             </span>
             <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-lg">
@@ -385,22 +385,38 @@ export default function Dashboard() {
             </span>
           </div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">
-            Admin <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-blue-600">Command Center</span>
+            Admin <span className="text-blue-600">Command Center</span>
           </h1>
         </div>
         <div className="flex gap-2">
-          <Link href="/reports" className="px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+          <Link href="/reports" className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 hover:shadow-lg transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
             <Download size={18} /> Generate Report
           </Link>
         </div>
       </div>
 
+      {/* Admin 12-item App Grid */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 sm:gap-4 mt-2">
+        <AppGridItem title="Task Box" emoji="📝" link="/taskbox" />
+        <AppGridItem title="Attendance" emoji="📅" link="/attendance" />
+        <AppGridItem title="Leave" emoji="🏖️" link="/leaves" />
+        <AppGridItem title="Payroll" emoji="💸" link="/salary" />
+        <AppGridItem title="Performance" emoji="📈" link="/performance" />
+        <AppGridItem title="Holidays" emoji="📅" link="/holidays" />
+        <AppGridItem title="HR Documents" emoji="📑" link="/documents" />
+        <AppGridItem title="HR Policies" emoji="📜" link="/hr-policies" />
+        <AppGridItem title="Recruitment" emoji="🤝" link="/recruitment" />
+        <AppGridItem title="Separation" emoji="👋" link="/resignations" />
+        <AppGridItem title="Member" emoji="👥" link="/employees" />
+        <AppGridItem title="Vibe" emoji="🎉" link="#" />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <StatCard title="Total Workforce" value={adminStats.totalEmployees} icon={Users} color="bg-blue-600" />
-        <StatCard title="Present Today" value={adminStats.presentToday} icon={UserCheck} color="bg-emerald-600" />
-        <StatCard title="Absent Pool" value={adminStats.absentToday} icon={UserX} color="bg-rose-600" />
-        <StatCard title="Leave Requests" value={adminStats.leavesToday} icon={Calendar} color="bg-amber-600" />
-        <StatCard title="Half Days Today" value={adminStats.halfDaysToday || 0} icon={Clock} color="bg-orange-500" />
+        <StatCard title="Present Today" value={adminStats.presentToday} icon={UserCheck} color="bg-blue-600" />
+        <StatCard title="Absent Pool" value={adminStats.absentToday} icon={UserX} color="bg-blue-600" />
+        <StatCard title="Leave Requests" value={adminStats.leavesToday} icon={Calendar} color="bg-blue-600" />
+        <StatCard title="Half Days Today" value={adminStats.halfDaysToday || 0} icon={Clock} color="bg-blue-600" />
       </div>
 
       <div className="rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white/60 backdrop-blur-xl overflow-hidden mb-6 relative">

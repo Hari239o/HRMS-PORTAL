@@ -113,7 +113,7 @@ router.get('/', authenticate, async (req, res) => {
         where: { employeeId: id },
         include: { employee: true }
       });
-      salaries = records.filter(s => s.status === 'Released' || !s.status);
+      salaries = records.filter(s => s.status === 'Released');
     } else {
       salaries = await prisma.salary.findMany({
         include: { employee: true }

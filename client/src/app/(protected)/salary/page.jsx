@@ -238,7 +238,8 @@ export default function Salary() {
                     <button 
                       onClick={() => releasePayslip(s.id)} 
                       disabled={isReleasing === s.id}
-                      className={`p-2 rounded-lg title="Release Payslip" ${isReleasing === s.id ? 'text-slate-400 cursor-not-allowed' : 'text-amber-600 hover:bg-amber-50'}`}
+                      title="Release Payslip"
+                      className={`p-2 rounded-lg ${isReleasing === s.id ? 'text-slate-400 cursor-not-allowed' : 'text-amber-600 hover:bg-amber-50'}`}
                     >
                       <span className="text-sm font-semibold">{isReleasing === s.id ? 'Releasing...' : 'Release'}</span>
                     </button>

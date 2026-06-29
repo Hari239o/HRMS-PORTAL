@@ -353,14 +353,14 @@ export default function Attendance() {
       )}
 
       {/* Calendar View */}
-      {user.role !== 'admin' && (
-        <div className="card overflow-hidden p-0 border border-slate-100 shadow-xl bg-white mb-8">
+      {true && (
+        <div className="card overflow-hidden p-0 border border-slate-100 shadow-xl bg-white mb-8 mt-8">
           <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
                 <CalendarIcon size={20} />
               </div>
-              <h3 className="text-lg font-black text-slate-800">Attendance Calendar</h3>
+              <h3 className="text-lg font-black text-slate-800">Attendance Calendar {user.role === 'admin' && !filterEmployee && '(Company Aggregate)'}</h3>
             </div>
             <div className="flex items-center gap-4">
               <button onClick={() => setCurrentCalendarDate(subMonths(currentCalendarDate, 1))} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-600">
@@ -389,30 +389,50 @@ export default function Attendance() {
                 const isCurrentMonth = isSameMonth(day, calendarMonthStart);
                 const isTodayDate = isToday(day);
                 
-                // Find attendance record for this day
-                const record = filteredHistory.find(r => r.date === dateStr);
-                
                 let bgColor = 'bg-slate-50 hover:bg-slate-100';
                 let textColor = 'text-slate-600';
                 let statusIcon = null;
-                
-                if (record && isCurrentMonth) {
-                  if (record.status === 'Present') {
-                    bgColor = 'bg-emerald-100 hover:bg-emerald-200';
-                    textColor = 'text-emerald-700';
-                    statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 absolute bottom-2 right-2"></div>;
-                  } else if (record.status === 'Absent') {
-                    bgColor = 'bg-rose-100 hover:bg-rose-200';
-                    textColor = 'text-rose-700';
-                    statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-rose-500 absolute bottom-2 right-2"></div>;
-                  } else if (record.status === 'Half Day') {
-                    bgColor = 'bg-yellow-100 hover:bg-yellow-200';
-                    textColor = 'text-yellow-700';
-                    statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 absolute bottom-2 right-2"></div>;
-                  } else if (record.status === 'Weekly Off' || record.status === 'Holiday') {
-                    bgColor = 'bg-slate-100 hover:bg-slate-200';
-                    textColor = 'text-slate-600';
-                    statusIcon = <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl opacity-80">🎉</div>;
+
+                if (isCurrentMonth) {
+                  if (user.role === 'admin' && !filterEmployee) {
+                    // Aggregate View
+                    const dayRecords = filteredHistory.filter(r => r.date === dateStr);
+                    const presentCount = dayRecords.filter(r => r.status === 'Present').length;
+                    const halfDayCount = dayRecords.filter(r => r.status === 'Half Day').length;
+                    const totalPunched = presentCount + halfDayCount;
+
+                    if (totalPunched > 0) {
+                      bgColor = 'bg-blue-50 hover:bg-blue-100';
+                      textColor = 'text-blue-700';
+                      statusIcon = (
+                        <div className="absolute bottom-1 right-1 text-[9px] font-black text-blue-600 bg-white/80 px-1 rounded shadow-sm border border-blue-200">
+                          {totalPunched} In
+                        </div>
+                      );
+                    }
+                  } else {
+                    // Individual View
+                    const record = filteredHistory.find(r => r.date === dateStr);
+                    
+                    if (record) {
+                      if (record.status === 'Present') {
+                        bgColor = 'bg-emerald-100 hover:bg-emerald-200';
+                        textColor = 'text-emerald-700';
+                        statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 absolute bottom-2 right-2"></div>;
+                      } else if (record.status === 'Absent') {
+                        bgColor = 'bg-rose-100 hover:bg-rose-200';
+                        textColor = 'text-rose-700';
+                        statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-rose-500 absolute bottom-2 right-2"></div>;
+                      } else if (record.status === 'Half Day') {
+                        bgColor = 'bg-yellow-100 hover:bg-yellow-200';
+                        textColor = 'text-yellow-700';
+                        statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 absolute bottom-2 right-2"></div>;
+                      } else if (record.status === 'Weekly Off' || record.status === 'Holiday') {
+                        bgColor = 'bg-slate-100 hover:bg-slate-200';
+                        textColor = 'text-slate-600';
+                        statusIcon = <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl opacity-80">🎉</div>;
+                      }
+                    }
                   }
                 }
                 
@@ -424,7 +444,7 @@ export default function Attendance() {
                       ${isTodayDate ? 'ring-2 ring-blue-500 ring-offset-2 font-black' : 'font-semibold'}
                     `}
                   >
-                    <span className={`text-sm ${textColor} ${statusIcon ? 'relative z-10 drop-shadow-md' : ''}`}>
+                    <span className={`text-sm ${textColor} ${statusIcon && user.role !== 'admin' ? 'relative z-10 drop-shadow-md' : ''}`}>
                       {format(day, 'd')}
                     </span>
                     {statusIcon}
@@ -434,10 +454,16 @@ export default function Attendance() {
             </div>
             
             <div className="flex flex-wrap items-center justify-center gap-6 mt-6 pt-6 border-t border-slate-100">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-emerald-500"></div> Present</div>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-rose-500"></div> Absent</div>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-yellow-500"></div> Half Day</div>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><span className="text-lg leading-none">🎉</span> Week Off / Holiday</div>
+              {user.role === 'admin' && !filterEmployee ? (
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded bg-blue-100 border border-blue-300"></div> Total Daily Punches</div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-emerald-500"></div> Present</div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-rose-500"></div> Absent</div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-yellow-500"></div> Half Day</div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><span className="text-lg leading-none">🎉</span> Week Off / Holiday</div>
+                </>
+              )}
             </div>
           </div>
         </div>
