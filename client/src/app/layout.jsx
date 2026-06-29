@@ -23,6 +23,7 @@ export const viewport = {
 };
 
 import GlobalSplash from '@/components/GlobalSplash';
+import InstallPrompt from '@/components/InstallPrompt';
 
 export default function RootLayout({ children }) {
   return (
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <AxiosInterceptor>
             <GlobalSplash />
+            <InstallPrompt />
             {children}
             <Toaster position="top-right" />
           </AxiosInterceptor>
