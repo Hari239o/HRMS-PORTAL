@@ -337,6 +337,28 @@ export default function Dashboard() {
 
         {/* Banner Removed */}
 
+        {/* Wall of Fame (Employee View) */}
+        {starPerformers.length > 0 && (
+          <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-5 sm:p-6 mb-2">
+            <h3 className="font-black text-lg text-slate-800 flex items-center gap-2 mb-4">
+              <Star size={20} className="text-yellow-400 drop-shadow-sm fill-yellow-400" /> Wall of Fame
+            </h3>
+            <div className="space-y-3">
+              {starPerformers.map(star => (
+                <div key={star.id} className="bg-gradient-to-r from-yellow-50 to-amber-50/50 border border-yellow-100/50 rounded-2xl p-4 flex items-center gap-4 transition-all hover:shadow-md">
+                  <div className="w-12 h-12 rounded-full bg-white text-yellow-600 flex items-center justify-center font-black text-lg shadow-sm ring-2 ring-yellow-200/50">
+                    {star.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-black text-base leading-tight text-slate-800">{star.name}</p>
+                    <p className="text-xs font-black text-yellow-600 uppercase tracking-widest">{star.starPerformer}ly Star Performer</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Big Check Out Button */}
         <Link href="/attendance" className="w-full bg-gradient-to-r from-[#ff5a1f] via-[#ff6f3b] to-[#ff8b5e] rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-[#ff5a1f]/20 hover:shadow-2xl hover:shadow-[#ff5a1f]/30 transition-all active:scale-[0.98] group">
           <div className="flex items-center gap-3">
@@ -365,28 +387,6 @@ export default function Dashboard() {
           <AppGridItem title="Member" emoji="👥" link="#" />
           <AppGridItem title="Vibe" emoji="🎉" link="#" />
         </div>
-
-        {/* Wall of Fame (Employee View) */}
-        {starPerformers.length > 0 && (
-          <div className="mt-4 bg-white/60 backdrop-blur-xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-5 sm:p-6">
-            <h3 className="font-black text-lg text-slate-800 flex items-center gap-2 mb-4">
-              <Star size={20} className="text-yellow-400 drop-shadow-sm fill-yellow-400" /> Wall of Fame
-            </h3>
-            <div className="space-y-3">
-              {starPerformers.map(star => (
-                <div key={star.id} className="bg-gradient-to-r from-yellow-50 to-amber-50/50 border border-yellow-100/50 rounded-2xl p-4 flex items-center gap-4 transition-all hover:shadow-md">
-                  <div className="w-12 h-12 rounded-full bg-white text-yellow-600 flex items-center justify-center font-black text-lg shadow-sm ring-2 ring-yellow-200/50">
-                    {star.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-black text-base leading-tight text-slate-800">{star.name}</p>
-                    <p className="text-xs font-black text-yellow-600 uppercase tracking-widest">{star.starPerformer}ly Star Performer</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
       </div>
     );
