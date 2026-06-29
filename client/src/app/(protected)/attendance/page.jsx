@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { Clock, CheckCircle, Fingerprint, Filter, Users, MapPin, AlertCircle, X } from 'lucide-react';
+import { Clock, CheckCircle, Fingerprint, Filter, Users, MapPin, AlertCircle, X, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday, addMonths, subMonths } from 'date-fns';
 
 const OFFICE_LOCATION = { latitude: 17.4392259, longitude: 78.3948023 };
 const ATTENDANCE_WINDOW = { from: '11:00', to: '20:00' };
@@ -26,6 +27,8 @@ export default function Attendance() {
   const [selectedAttendanceId, setSelectedAttendanceId] = useState(null);
   const [requestCheckoutTime, setRequestCheckoutTime] = useState('');
   const [requestReason, setRequestReason] = useState('');
+  
+  const [currentCalendarDate, setCurrentCalendarDate] = useState(new Date());
 
   const filteredHistory = history.filter(row => {
     let match = true;
@@ -198,6 +201,16 @@ export default function Attendance() {
     </div>
   );
 
+  const calendarMonthStart = startOfMonth(currentCalendarDate);
+  const calendarMonthEnd = endOfMonth(calendarMonthStart);
+  const calendarStartDate = startOfWeek(calendarMonthStart);
+  const calendarEndDate = endOfWeek(calendarMonthEnd);
+
+  const calendarDays = eachDayOfInterval({
+    start: calendarStartDate,
+    end: calendarEndDate
+  });
+
   return (
     <div className="space-y-8 fade-in relative">
       <style>{`
@@ -334,6 +347,97 @@ export default function Attendance() {
                   : 'No attendance taken yet'}
               </p>
               <p className="text-xs text-slate-500 mt-2 font-medium">Visible only in HR portal</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Calendar View */}
+      {user.role !== 'admin' && (
+        <div className="card overflow-hidden p-0 border border-slate-100 shadow-xl bg-white mb-8">
+          <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                <CalendarIcon size={20} />
+              </div>
+              <h3 className="text-lg font-black text-slate-800">Attendance Calendar</h3>
+            </div>
+            <div className="flex items-center gap-4">
+              <button onClick={() => setCurrentCalendarDate(subMonths(currentCalendarDate, 1))} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-600">
+                <ChevronLeft size={20} />
+              </button>
+              <span className="font-bold text-slate-700 min-w-[120px] text-center">
+                {format(currentCalendarDate, 'MMMM yyyy')}
+              </span>
+              <button onClick={() => setCurrentCalendarDate(addMonths(currentCalendarDate, 1))} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-600">
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            <div className="grid grid-cols-7 gap-2 mb-2">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="text-center text-xs font-bold text-slate-400 uppercase tracking-wider py-2">
+                  {day}
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-2">
+              {calendarDays.map((day, idx) => {
+                const dateStr = format(day, 'yyyy-MM-dd');
+                const isCurrentMonth = isSameMonth(day, calendarMonthStart);
+                const isTodayDate = isToday(day);
+                
+                // Find attendance record for this day
+                const record = filteredHistory.find(r => r.date === dateStr);
+                
+                let bgColor = 'bg-slate-50 hover:bg-slate-100';
+                let textColor = 'text-slate-600';
+                let statusIcon = null;
+                
+                if (record && isCurrentMonth) {
+                  if (record.status === 'Present') {
+                    bgColor = 'bg-emerald-100 hover:bg-emerald-200';
+                    textColor = 'text-emerald-700';
+                    statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 absolute bottom-2 right-2"></div>;
+                  } else if (record.status === 'Absent') {
+                    bgColor = 'bg-rose-100 hover:bg-rose-200';
+                    textColor = 'text-rose-700';
+                    statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-rose-500 absolute bottom-2 right-2"></div>;
+                  } else if (record.status === 'Half Day') {
+                    bgColor = 'bg-yellow-100 hover:bg-yellow-200';
+                    textColor = 'text-yellow-700';
+                    statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 absolute bottom-2 right-2"></div>;
+                  } else if (record.status === 'Weekly Off' || record.status === 'Holiday') {
+                    bgColor = 'bg-slate-100 hover:bg-slate-200';
+                    textColor = 'text-slate-600';
+                    statusIcon = <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl opacity-80">🎉</div>;
+                  }
+                }
+                
+                return (
+                  <div 
+                    key={idx} 
+                    className={`relative flex flex-col items-center justify-center p-3 rounded-xl min-h-[70px] md:min-h-[90px] transition-colors border border-transparent cursor-default
+                      ${isCurrentMonth ? bgColor : 'opacity-30 bg-slate-50'}
+                      ${isTodayDate ? 'ring-2 ring-blue-500 ring-offset-2 font-black' : 'font-semibold'}
+                    `}
+                  >
+                    <span className={`text-sm ${textColor} ${statusIcon ? 'relative z-10 drop-shadow-md' : ''}`}>
+                      {format(day, 'd')}
+                    </span>
+                    {statusIcon}
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="flex flex-wrap items-center justify-center gap-6 mt-6 pt-6 border-t border-slate-100">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-emerald-500"></div> Present</div>
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-rose-500"></div> Absent</div>
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded-full bg-yellow-500"></div> Half Day</div>
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><span className="text-lg leading-none">🎉</span> Week Off / Holiday</div>
             </div>
           </div>
         </div>
