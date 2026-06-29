@@ -5,7 +5,7 @@ const { ownerOrAdmin } = require('../middleware/rbac');
 const router = express.Router();
 
 router.post('/target', authenticate, authorize(['admin']), async (req, res) => {
-  const { employeeId, month, targetCount } = req.body;
+  const { employeeId, month, targetCount, title, description } = req.body;
   try {
     const existing = await prisma.target.findFirst({
       where: { employeeId, month }
@@ -14,7 +14,11 @@ router.post('/target', authenticate, authorize(['admin']), async (req, res) => {
     if (existing) {
       await prisma.target.update({
         where: { id: existing.id },
-        data: { targetCount: targetCount || 30 }
+        data: { 
+          targetCount: targetCount || 30,
+          title: title || existing.title,
+          description: description || existing.description
+        }
       });
     } else {
       await prisma.target.create({
@@ -22,7 +26,9 @@ router.post('/target', authenticate, authorize(['admin']), async (req, res) => {
           employeeId,
           month,
           targetCount: targetCount || 30,
-          achievedCount: 0
+          achievedCount: 0,
+          title,
+          description
         }
       });
     }

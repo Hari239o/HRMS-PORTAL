@@ -395,7 +395,7 @@ export default function Dashboard() {
 
         {/* 3-Column Grid */}
         <div className="grid grid-cols-3 gap-3 sm:gap-4 mt-2">
-          <AppGridItem title="Task Box" icon={ClipboardList} link="#" color="blue" />
+          <AppGridItem title="Task Box" icon={ClipboardList} link="/taskbox" color="blue" />
           <AppGridItem title="Attendance" icon={CalendarDays} link="/attendance" color="emerald" />
           <AppGridItem title="Leave" icon={Calendar} link="/leaves" color="rose" />
           <AppGridItem title="Payroll" icon={Receipt} link="/salary" color="amber" />
