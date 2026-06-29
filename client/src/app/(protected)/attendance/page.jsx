@@ -23,6 +23,8 @@ export default function Attendance() {
   const [filterMonth, setFilterMonth] = useState('');
   const [filterEmployee, setFilterEmployee] = useState('');
 
+  const [pendingIssues, setPendingIssues] = useState([]);
+
   const [requestModalOpen, setRequestModalOpen] = useState(false);
   const [selectedAttendanceId, setSelectedAttendanceId] = useState(null);
   const [requestCheckoutTime, setRequestCheckoutTime] = useState('');
@@ -70,8 +72,13 @@ export default function Attendance() {
       const today = new Date().toLocaleDateString('en-CA');
       const todayRec = res.data.find(r => r.date === today);
       setTodayRecord(todayRec);
+
+      if (user && user.role === 'admin') {
+        const issuesRes = await api.get(`/api/approvals?status=pending&type=missed_checkout`);
+        setPendingIssues(issuesRes.data.requests || []);
+      }
     } catch (err) {
-      toast.error('Failed to fetch attendance history');
+      toast.error('Failed to fetch attendance data');
     } finally {
       setLoading(false);
     }
@@ -84,6 +91,16 @@ export default function Attendance() {
       fetchData();
     } catch (err) {
       toast.error('Failed to update status');
+    }
+  };
+
+  const resolveIssue = async (issueId, action) => {
+    try {
+      await api.post(`/api/approvals/${issueId}/${action}`, { note: 'Resolved via dashboard' });
+      toast.success(`Issue ${action} successfully`);
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.error || `Failed to ${action} issue`);
     }
   };
 
@@ -316,7 +333,29 @@ export default function Attendance() {
             </div>
           )}
           
-          <div className="mt-10 bg-[#ff5a1f]/5 border border-[#ff5a1f]/10 rounded-2xl p-4 flex items-start gap-3 max-w-sm w-full shadow-sm">
+          <div className="mt-6 flex justify-center w-full max-w-sm">
+            <button 
+              onClick={() => {
+                // Find most recent missed checkout
+                const todayStr = new Date().toLocaleDateString('en-CA');
+                const missed = history.find(r => !r.checkOut && r.date !== todayStr);
+                if (missed) {
+                  setSelectedAttendanceId(missed.id);
+                  setRequestModalOpen(true);
+                } else if (todayRecord && !todayRecord.checkOut) {
+                  toast.error("You haven't missed a checkout yet. You can punch out now.");
+                } else {
+                  toast.error("No missed checkouts found.");
+                }
+              }}
+              className="w-full py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl transition-colors border border-rose-200 flex items-center justify-center gap-2 shadow-sm"
+            >
+              <AlertCircle size={18} />
+              Raise Attendance Issue
+            </button>
+          </div>
+
+          <div className="mt-4 bg-[#ff5a1f]/5 border border-[#ff5a1f]/10 rounded-2xl p-4 flex items-start gap-3 max-w-sm w-full shadow-sm">
             <AlertCircle size={20} className="text-[#ff5a1f] flex-shrink-0 mt-0.5" />
             <div className="text-xs text-slate-600 font-medium leading-relaxed">
               Office hours are <span className="font-bold text-slate-800">11:00 AM to 8:00 PM</span>. Punching in after 11:05 AM is marked as a Half Day. Missing a punch out marks you Absent. Max 4 missed checkout requests allowed per month.
@@ -370,6 +409,37 @@ export default function Attendance() {
                 {filteredHistory.filter(r => r.status === 'Present').length + (filteredHistory.filter(r => r.status === 'Half Day').length * 0.5)}
               </p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Pending Issues */}
+      {user?.role === 'admin' && pendingIssues.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
+            <AlertCircle className="text-rose-500" /> Pending Attendance Issues
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {pendingIssues.map(issue => (
+              <div key={issue.id} className="bg-white rounded-2xl p-5 border border-rose-100 shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-rose-400"></div>
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-bold text-slate-800">{issue.requestedByName}</h4>
+                  <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded-md">Missed Checkout</span>
+                </div>
+                <p className="text-sm text-slate-500 mb-4 line-clamp-2">{issue.description || 'No reason provided'}</p>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100 flex-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Requested Time</p>
+                    <p className="text-sm font-bold text-slate-700">{issue.details?.checkoutTime || 'N/A'}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => resolveIssue(issue.id, 'approve')} className="flex-1 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 font-bold rounded-xl transition-colors text-sm">Approve</button>
+                  <button onClick={() => resolveIssue(issue.id, 'reject')} className="flex-1 py-2 bg-slate-50 text-slate-600 hover:bg-slate-100 font-bold rounded-xl transition-colors text-sm">Reject</button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -609,7 +679,12 @@ export default function Attendance() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="text-lg font-black text-slate-800">Missed Checkout</h3>
+              <div>
+                <h3 className="text-lg font-black text-slate-800">Missed Checkout</h3>
+                <p className="text-xs font-bold text-slate-500 mt-1">
+                  For: {history.find(r => r.id === selectedAttendanceId)?.date || 'Selected Date'}
+                </p>
+              </div>
               <button onClick={() => setRequestModalOpen(false)} className="p-2 bg-white rounded-full text-slate-400 hover:text-rose-500 shadow-sm transition-colors">
                 <X size={16} strokeWidth={3} />
               </button>

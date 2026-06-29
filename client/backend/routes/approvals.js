@@ -253,6 +253,27 @@ async function updateRequestStatus(requestId, status, performedBy, performedByNa
     data: updateData
   });
 
+  // If this is an approved missed_checkout, update the corresponding Attendance record
+  if (status === 'approved' && request.type === 'missed_checkout' && request.relatedId) {
+    const attendanceRecord = await prisma.attendance.findUnique({
+      where: { id: request.relatedId }
+    });
+    if (attendanceRecord && request.details?.checkoutTime) {
+      // request.details.checkoutTime is in "HH:mm" format
+      // Combine it with the attendanceRecord.date "YYYY-MM-DD"
+      const [hours, minutes] = request.details.checkoutTime.split(':');
+      const checkoutDate = new Date(`${attendanceRecord.date}T${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:00+05:30`);
+      
+      await prisma.attendance.update({
+        where: { id: request.relatedId },
+        data: { 
+          checkOut: checkoutDate,
+          adminEdited: true
+        }
+      });
+    }
+  }
+
   await createAuditLog({ requestId, event: status, performedBy, performedByName, performedByRole, details });
   return updatedRequest;
 }
