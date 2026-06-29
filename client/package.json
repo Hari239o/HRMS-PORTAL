@@ -6,7 +6,7 @@
     "dev:frontend": "next dev",
     "dev:backend": "nodemon backend/index.js",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "build": "next build",
+    "build": "prisma db push --accept-data-loss && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
