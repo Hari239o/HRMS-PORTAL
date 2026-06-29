@@ -366,6 +366,28 @@ export default function Dashboard() {
           <AppGridItem title="Vibe" emoji="🎉" link="#" />
         </div>
 
+        {/* Wall of Fame (Employee View) */}
+        {starPerformers.length > 0 && (
+          <div className="mt-4 bg-white/60 backdrop-blur-xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-5 sm:p-6">
+            <h3 className="font-black text-lg text-slate-800 flex items-center gap-2 mb-4">
+              <Star size={20} className="text-yellow-400 drop-shadow-sm fill-yellow-400" /> Wall of Fame
+            </h3>
+            <div className="space-y-3">
+              {starPerformers.map(star => (
+                <div key={star.id} className="bg-gradient-to-r from-yellow-50 to-amber-50/50 border border-yellow-100/50 rounded-2xl p-4 flex items-center gap-4 transition-all hover:shadow-md">
+                  <div className="w-12 h-12 rounded-full bg-white text-yellow-600 flex items-center justify-center font-black text-lg shadow-sm ring-2 ring-yellow-200/50">
+                    {star.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-black text-base leading-tight text-slate-800">{star.name}</p>
+                    <p className="text-xs font-black text-yellow-600 uppercase tracking-widest">{star.starPerformer}ly Star Performer</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     );
   }
@@ -377,9 +399,6 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow-sm">
-              <Server size={12} /> Operations
-            </span>
             <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-lg">
               {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </span>
@@ -387,11 +406,6 @@ export default function Dashboard() {
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">
             Admin <span className="text-blue-600">Command Center</span>
           </h1>
-        </div>
-        <div className="flex gap-2">
-          <Link href="/reports" className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 hover:shadow-lg transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
-            <Download size={18} /> Generate Report
-          </Link>
         </div>
       </div>
 
@@ -411,7 +425,7 @@ export default function Dashboard() {
         <AppGridItem title="Vibe" emoji="🎉" link="#" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6 mt-4">
         <StatCard title="Total Workforce" value={adminStats.totalEmployees} icon={Users} color="bg-blue-600" />
         <StatCard title="Present Today" value={adminStats.presentToday} icon={UserCheck} color="bg-blue-600" />
         <StatCard title="Absent Pool" value={adminStats.absentToday} icon={UserX} color="bg-blue-600" />
