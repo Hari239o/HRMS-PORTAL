@@ -549,7 +549,14 @@ export default function Attendance() {
                 </div>
                 <div className="flex-grow flex flex-col justify-center">
                   <div className="flex items-center justify-between">
-                    <span className={`text-[16px] font-bold font-serif ${statusColor}`}>{row.status}</span>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[16px] font-bold font-serif ${statusColor}`}>{row.status}</span>
+                      {user.role === 'admin' && row.employee?.name && (
+                        <span className="text-[13px] font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-100 shadow-sm">
+                          {row.employee.name}
+                        </span>
+                      )}
+                    </div>
                     {user.role === 'admin' ? (
                       <select 
                         value={row.status}
@@ -575,11 +582,6 @@ export default function Attendance() {
                   {row.status !== 'Weekly Off' && (
                     <div className="text-[13px] text-slate-500 mt-1 font-medium flex items-center gap-2 tracking-wide">
                       {timeString}
-                      {user.role === 'admin' && (
-                        <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-400 border border-slate-200">
-                          {row.employee?.name}
-                        </span>
-                      )}
                     </div>
                   )}
                   <div className="text-[13px] text-slate-400 mt-0.5 tracking-wide">
