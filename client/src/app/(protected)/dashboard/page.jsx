@@ -359,7 +359,7 @@ export default function Dashboard() {
           <AppGridItem title="Performance" emoji="📈" link="/performance" />
           <AppGridItem title="Holidays" emoji="📅" link="/holidays" />
           <AppGridItem title="HR Documents" emoji="📑" link="/documents" />
-          <AppGridItem title="HR Policies" emoji="📜" link="#" />
+          <AppGridItem title="HR Policies" emoji="📜" link="/hr-policies" />
           <AppGridItem title="Recruitment" emoji="🤝" link="#" />
           <AppGridItem title="Separation" emoji="👋" link="/resignations" />
           <AppGridItem title="Member" emoji="👥" link="#" />
