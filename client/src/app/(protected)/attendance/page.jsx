@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { Clock, CheckCircle, Fingerprint, Filter, Users, MapPin, AlertCircle } from 'lucide-react';
+import { Clock, CheckCircle, Fingerprint, Filter, Users, MapPin, AlertCircle, X } from 'lucide-react';
 
 const OFFICE_LOCATION = { latitude: 17.4392259, longitude: 78.3948023 };
-const ATTENDANCE_WINDOW = { from: '11:00', to: '20:30' };
+const ATTENDANCE_WINDOW = { from: '11:00', to: '20:00' };
 
 export default function Attendance() {
   const { user } = useAuth();
@@ -21,6 +21,11 @@ export default function Attendance() {
   const [filterDay, setFilterDay] = useState('');
   const [filterMonth, setFilterMonth] = useState('');
   const [filterEmployee, setFilterEmployee] = useState('');
+
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const [selectedAttendanceId, setSelectedAttendanceId] = useState(null);
+  const [requestCheckoutTime, setRequestCheckoutTime] = useState('');
+  const [requestReason, setRequestReason] = useState('');
 
   const filteredHistory = history.filter(row => {
     let match = true;
@@ -140,6 +145,30 @@ export default function Attendance() {
     );
   };
 
+  const submitMissedCheckoutRequest = async () => {
+    if (!requestCheckoutTime || !requestReason) {
+      toast.error("Please provide both checkout time and a reason");
+      return;
+    }
+    try {
+      await api.post('/api/approvals', {
+        type: 'missed_checkout',
+        title: 'Missed Checkout Correction',
+        description: requestReason,
+        relatedEntity: 'Attendance',
+        relatedId: selectedAttendanceId,
+        details: { checkoutTime: requestCheckoutTime }
+      });
+      toast.success("Missed checkout request submitted successfully!");
+      setRequestModalOpen(false);
+      setRequestCheckoutTime('');
+      setRequestReason('');
+      setSelectedAttendanceId(null);
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to submit request");
+    }
+  };
+
   const getFillPercentage = () => {
     if (!todayRecord || !todayRecord.checkIn) return 0;
     const checkInTime = new Date(todayRecord.checkIn).getTime();
@@ -206,12 +235,12 @@ export default function Attendance() {
             /* PUNCH IN STATE */
             <div 
               onClick={handleCheckIn}
-              className={`relative w-72 h-72 rounded-full overflow-hidden border-8 border-white bg-white shadow-[0_20px_60px_-15px_rgba(255,90,31,0.15)] flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:shadow-[0_20px_60px_-10px_rgba(255,90,31,0.25)] hover:scale-105 active:scale-95 ${scanning ? 'opacity-70 pointer-events-none scale-95' : ''}`}
+              className={`relative w-72 h-72 rounded-full overflow-hidden border-8 border-white bg-white shadow-[0_20px_60px_-15px_rgba(59,130,246,0.15)] flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:shadow-[0_20px_60px_-10px_rgba(59,130,246,0.25)] hover:scale-105 active:scale-95 ${scanning ? 'opacity-70 pointer-events-none scale-95' : ''}`}
             >
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#ff5a1f]/5 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/5 to-transparent"></div>
               <div className="relative z-10 flex flex-col items-center">
-                <div className="bg-[#ff5a1f]/10 p-5 rounded-full mb-4">
-                  <Fingerprint size={64} className="text-[#ff5a1f] animate-pulse" strokeWidth={1.5} />
+                <div className="bg-blue-50 p-5 rounded-full mb-4">
+                  <Clock size={64} className="text-blue-500 animate-pulse" strokeWidth={1.5} />
                 </div>
                 <span className="text-3xl font-black text-slate-800 tracking-tight">PUNCH IN</span>
                 <span className="text-[11px] font-bold text-slate-400 mt-2 flex items-center gap-1 uppercase tracking-widest">
@@ -237,7 +266,7 @@ export default function Attendance() {
 
                 <div className="relative z-10 flex flex-col items-center mt-2">
                   <div className={`p-4 rounded-full mb-2 transition-colors duration-500 ${fillPercentage > 40 ? 'bg-white/20 text-white shadow-sm' : 'bg-blue-50 text-blue-500'}`}>
-                    <Fingerprint size={42} strokeWidth={1.5} />
+                    <Clock size={42} strokeWidth={1.5} />
                   </div>
                   
                   <span className={`text-4xl font-black tabular-nums tracking-tighter drop-shadow-sm transition-colors duration-500 ${fillPercentage > 50 ? 'text-white' : 'text-slate-800'}`}>
@@ -260,7 +289,7 @@ export default function Attendance() {
                 <button 
                   onClick={handleCheckOut}
                   disabled={scanning}
-                  className={`w-64 py-4 rounded-2xl font-black tracking-widest uppercase transition-all duration-300 shadow-xl shadow-[#ff5a1f]/20 bg-gradient-to-r from-[#ff5a1f] to-[#ff7543] text-white hover:shadow-2xl hover:shadow-[#ff5a1f]/30 active:scale-95 flex items-center justify-center gap-3 ${scanning ? 'opacity-70 pointer-events-none scale-95' : ''}`}
+                  className={`w-64 py-4 rounded-2xl font-black tracking-widest uppercase transition-all duration-300 shadow-xl shadow-blue-500/20 bg-gradient-to-r from-blue-500 to-blue-400 text-white hover:shadow-2xl hover:shadow-blue-500/30 active:scale-95 flex items-center justify-center gap-3 ${scanning ? 'opacity-70 pointer-events-none scale-95' : ''}`}
                 >
                   <Fingerprint size={22} />
                   Secure Punch Out
@@ -277,28 +306,28 @@ export default function Attendance() {
           <div className="mt-10 bg-[#ff5a1f]/5 border border-[#ff5a1f]/10 rounded-2xl p-4 flex items-start gap-3 max-w-sm w-full shadow-sm">
             <AlertCircle size={20} className="text-[#ff5a1f] flex-shrink-0 mt-0.5" />
             <div className="text-xs text-slate-600 font-medium leading-relaxed">
-              Office hours are <span className="font-bold text-slate-800">11:00 AM to 8:30 PM</span>. Punching in after 11:05 AM is marked as a Half Day. Missing a punch out marks you Absent.
+              Office hours are <span className="font-bold text-slate-800">11:00 AM to 8:00 PM</span>. Punching in after 11:05 AM is marked as a Half Day. Missing a punch out marks you Absent. Max 4 missed checkout requests allowed per month.
             </div>
           </div>
         </div>
       ) : (
-        /* ADMIN DASHBOARD - Retained original logic with updated theme */
+        /* ADMIN DASHBOARD */
         <div className="card p-8 border border-slate-100 bg-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff5a1f]/5 -mr-16 -mt-16 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 -mr-16 -mt-16 rounded-full blur-3xl"></div>
           <h3 className="text-2xl font-black text-slate-900 mb-6 relative z-10">HR Attendance Summary</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
             <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-[#ff5a1f] font-bold mb-2">Company Office Location</p>
+              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-500 font-bold mb-2">Company Office Location</p>
               <p className="font-black text-slate-800 text-lg">{OFFICE_LOCATION.latitude.toFixed(6)}, {OFFICE_LOCATION.longitude.toFixed(6)}</p>
               <p className="text-xs text-slate-500 mt-2 font-medium">Strict GPS-only geofence</p>
             </div>
             <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-[#ff5a1f] font-bold mb-2">Office Window</p>
+              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-500 font-bold mb-2">Office Window</p>
               <p className="font-black text-slate-800 text-lg">{ATTENDANCE_WINDOW.from} - {ATTENDANCE_WINDOW.to}</p>
               <p className="text-xs text-slate-500 mt-2 font-medium">Attendance valid only during this window</p>
             </div>
             <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-[#ff5a1f] font-bold mb-2">Today's Attendance Place</p>
+              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-500 font-bold mb-2">Today's Attendance Place</p>
               <p className="font-black text-slate-800 text-lg">
                 {todayRecord && todayRecord.checkInLocation
                   ? `${todayRecord.checkInLocation.latitude.toFixed(6)}, ${todayRecord.checkInLocation.longitude.toFixed(6)}`
@@ -311,25 +340,25 @@ export default function Attendance() {
       )}
 
       {/* History Table */}
-      <div className="card overflow-hidden p-0 border border-slate-100 shadow-xl bg-white">
+      <div className="card overflow-hidden p-0 border border-slate-100 shadow-xl bg-white relative">
         {user.role === 'admin' && (
           <div className="px-4 md:px-8 py-6 border-b border-slate-100 bg-slate-50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <div className="w-full">
               <label className="flex text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 items-center gap-1"><Filter size={12}/> Filter by Day</label>
-              <input type="date" value={filterDay} onChange={(e) => { setFilterDay(e.target.value); setFilterMonth(''); }} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 transition-all shadow-sm" />
+              <input type="date" value={filterDay} onChange={(e) => { setFilterDay(e.target.value); setFilterMonth(''); }} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm" />
             </div>
             <div className="w-full">
               <label className="flex text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 items-center gap-1"><Filter size={12}/> Filter by Month</label>
-              <input type="month" value={filterMonth} onChange={(e) => { setFilterMonth(e.target.value); setFilterDay(''); }} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 transition-all shadow-sm" />
+              <input type="month" value={filterMonth} onChange={(e) => { setFilterMonth(e.target.value); setFilterDay(''); }} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm" />
             </div>
             <div className="w-full">
               <label className="flex text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 items-center gap-1"><Users size={12}/> Filter by Employee</label>
-              <select value={filterEmployee} onChange={(e) => setFilterEmployee(e.target.value)} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 transition-all shadow-sm">
+              <select value={filterEmployee} onChange={(e) => setFilterEmployee(e.target.value)} className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm">
                 <option value="">All Employees</option>
                 {uniqueEmployees.map(emp => <option key={emp} value={emp}>{emp}</option>)}
               </select>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-[#ff5a1f]/10 rounded-xl text-[#ff5a1f] font-bold text-sm border border-[#ff5a1f]/20 w-full justify-center h-[38px] shadow-sm">
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 rounded-xl text-blue-500 font-bold text-sm border border-blue-500/20 w-full justify-center h-[38px] shadow-sm">
               <CheckCircle size={16} /> {membersPresent} Members Present
             </div>
           </div>
@@ -340,7 +369,7 @@ export default function Attendance() {
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Audit Trail • Last 30 Days</p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl text-xs font-bold text-slate-600 border border-slate-100 shadow-sm">
-            <Clock size={16} className="text-[#ff5a1f] animate-pulse" /> Real-time Sync
+            <Clock size={16} className="text-blue-500 animate-pulse" /> Real-time Sync
           </div>
         </div>
         <div className="divide-y divide-slate-100 bg-white">
@@ -355,7 +384,9 @@ export default function Attendance() {
             const timeString = row.checkIn ? `${checkInStr} ➔ ${checkOutStr || '...'}` : 'No punch data';
 
             const isWeeklyOff = row.status === 'Weekly Off';
-            const statusColor = isWeeklyOff ? 'text-[#6b4c9a]' : 'text-black';
+            const statusColor = isWeeklyOff ? 'text-[#6b4c9a]' : (row.status === 'Absent' ? 'text-rose-500' : 'text-black');
+            
+            const isMissingCheckout = row.status === 'Absent' && row.checkIn && !row.checkOut;
 
             return (
               <div key={row.id} className="flex px-5 py-4 md:px-8 hover:bg-slate-50 transition-colors group">
@@ -367,7 +398,7 @@ export default function Attendance() {
                 <div className="flex-grow flex flex-col justify-center">
                   <div className="flex items-center justify-between">
                     <span className={`text-[16px] font-bold font-serif ${statusColor}`}>{row.status}</span>
-                    {user.role === 'admin' && (
+                    {user.role === 'admin' ? (
                       <select 
                         value={row.status}
                         onChange={(e) => handleStatusChange(row.id, e.target.value)}
@@ -378,6 +409,15 @@ export default function Attendance() {
                         <option value="Half Day">Half Day</option>
                         <option value="Weekly Off">Weekly Off</option>
                       </select>
+                    ) : (
+                      isMissingCheckout && (
+                        <button 
+                          onClick={() => { setSelectedAttendanceId(row.id); setRequestModalOpen(true); }}
+                          className="px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs font-bold transition-colors border border-rose-200"
+                        >
+                          Request Checkout
+                        </button>
+                      )
                     )}
                   </div>
                   {row.status !== 'Weekly Off' && (
@@ -391,7 +431,7 @@ export default function Attendance() {
                     </div>
                   )}
                   <div className="text-[13px] text-slate-400 mt-0.5 tracking-wide">
-                     Geonixa General (11:00:00 to 20:30:00) (Office)
+                     Geonixa General (11:00:00 to 20:00:00) (Office)
                   </div>
                 </div>
               </div>
@@ -409,6 +449,44 @@ export default function Attendance() {
           )}
         </div>
       </div>
+
+      {/* Missed Checkout Request Modal */}
+      {requestModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-lg font-black text-slate-800">Missed Checkout</h3>
+              <button onClick={() => setRequestModalOpen(false)} className="p-2 bg-white rounded-full text-slate-400 hover:text-rose-500 shadow-sm transition-colors">
+                <X size={16} strokeWidth={3} />
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Actual Checkout Time</label>
+                <input 
+                  type="time" 
+                  value={requestCheckoutTime}
+                  onChange={e => setRequestCheckoutTime(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 font-medium text-slate-700" 
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Reason</label>
+                <textarea 
+                  value={requestReason}
+                  onChange={e => setRequestReason(e.target.value)}
+                  placeholder="I forgot to punch out because..."
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 min-h-[100px] resize-none font-medium text-slate-700" 
+                />
+              </div>
+            </div>
+            <div className="p-6 pt-0 flex gap-3">
+              <button onClick={() => setRequestModalOpen(false)} className="flex-1 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">Cancel</button>
+              <button onClick={submitMissedCheckoutRequest} className="flex-1 py-3 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30">Submit Request</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

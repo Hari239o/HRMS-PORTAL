@@ -57,6 +57,23 @@ router.post('/', authenticate, async (req, res) => {
       return res.status(400).json({ error: 'Request type and title are required' });
     }
 
+    if (type === 'missed_checkout') {
+      const now = new Date();
+      const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const requestsThisMonth = await prisma.approval.count({
+        where: {
+          type: 'missed_checkout',
+          requestedBy: req.user.id,
+          createdAt: {
+            gte: firstDayOfMonth
+          }
+        }
+      });
+      if (requestsThisMonth >= 4) {
+        return res.status(403).json({ error: 'You have exceeded the maximum of 4 missed checkout requests per month.' });
+      }
+    }
+
     const emp = await prisma.employee.findUnique({ where: { id: req.user.id } }) || { name: req.user.name, email: req.user.email };
 
     const initialTimelineEvent = createTimelineEvent('created', { id: req.user.id, name: emp.name || req.user.name, role: req.user.role }, null, {
