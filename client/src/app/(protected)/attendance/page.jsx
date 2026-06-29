@@ -7,8 +7,22 @@ import toast from 'react-hot-toast';
 import { Clock, CheckCircle, Fingerprint, Filter, Users, MapPin, AlertCircle, X, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Briefcase } from 'lucide-react';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday, addMonths, subMonths } from 'date-fns';
 
-const OFFICE_LOCATION = { latitude: 17.4392259, longitude: 78.3948023 };
+const OFFICE_LOCATION = { latitude: 17.4392424, longitude: 78.3948356 };
 const ATTENDANCE_WINDOW = { from: '11:00', to: '20:00' };
+
+function getDistance(lat1, lon1, lat2, lon2) {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+  const R = 6371e3; 
+  const p1 = lat1 * Math.PI / 180;
+  const p2 = lat2 * Math.PI / 180;
+  const dp = (lat2 - lat1) * Math.PI / 180;
+  const dl = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dp / 2) * Math.sin(dp / 2) +
+            Math.cos(p1) * Math.cos(p2) *
+            Math.sin(dl / 2) * Math.sin(dl / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
+}
 
 export default function Attendance() {
   const { user } = useAuth();
@@ -652,6 +666,16 @@ export default function Attendance() {
                   {row.status !== 'Weekly Off' && (
                     <div className="text-[13px] text-slate-500 mt-1 font-medium flex items-center gap-2 tracking-wide">
                       {timeString}
+                    </div>
+                  )}
+                  {user.role === 'admin' && (row.checkInLatitude || row.checkOutLatitude) && (
+                    <div className="text-[11px] text-slate-500 mt-1 flex gap-3">
+                      {row.checkInLatitude && (
+                        <span>In Radius: <span className="font-bold text-blue-600">{getDistance(row.checkInLatitude, row.checkInLongitude, OFFICE_LOCATION.latitude, OFFICE_LOCATION.longitude)}m</span></span>
+                      )}
+                      {row.checkOutLatitude && (
+                        <span>Out Radius: <span className="font-bold text-blue-600">{getDistance(row.checkOutLatitude, row.checkOutLongitude, OFFICE_LOCATION.latitude, OFFICE_LOCATION.longitude)}m</span></span>
+                      )}
                     </div>
                   )}
                   <div className="text-[13px] text-slate-400 mt-0.5 tracking-wide">

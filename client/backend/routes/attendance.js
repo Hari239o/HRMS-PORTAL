@@ -7,8 +7,8 @@ const { DateTime } = require('luxon');
 
 const router = express.Router();
 
-const OFFICE_LAT = process.env.OFFICE_LAT ? parseFloat(process.env.OFFICE_LAT) : 17.4392259;
-const OFFICE_LONG = process.env.OFFICE_LONG ? parseFloat(process.env.OFFICE_LONG) : 78.3948023;
+const OFFICE_LAT = process.env.OFFICE_LAT ? parseFloat(process.env.OFFICE_LAT) : 17.4392424;
+const OFFICE_LONG = process.env.OFFICE_LONG ? parseFloat(process.env.OFFICE_LONG) : 78.3948356;
 const OFFICE_RADIUS = process.env.OFFICE_RADIUS ? parseInt(process.env.OFFICE_RADIUS, 10) : 15;
 
 const hasMultiDeviceAccess = (role) => {
