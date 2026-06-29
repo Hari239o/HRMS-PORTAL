@@ -325,35 +325,30 @@ export default function Attendance() {
         </div>
       ) : (
         /* ADMIN DASHBOARD */
-        <div className="card p-8 border border-slate-100 bg-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 -mr-16 -mt-16 rounded-full blur-3xl"></div>
-          <h3 className="text-2xl font-black text-slate-900 mb-6 relative z-10">HR Attendance Summary</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-500 font-bold mb-2">Company Office Location</p>
-              <p className="font-black text-slate-800 text-lg">{OFFICE_LOCATION.latitude.toFixed(6)}, {OFFICE_LOCATION.longitude.toFixed(6)}</p>
-              <p className="text-xs text-slate-500 mt-2 font-medium">Strict GPS-only geofence</p>
-            </div>
-            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-500 font-bold mb-2">Office Window</p>
-              <p className="font-black text-slate-800 text-lg">{ATTENDANCE_WINDOW.from} - {ATTENDANCE_WINDOW.to}</p>
-              <p className="text-xs text-slate-500 mt-2 font-medium">Attendance valid only during this window</p>
-            </div>
-            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300">
-              <p className="text-[11px] uppercase tracking-[0.25em] text-blue-500 font-bold mb-2">Today's Attendance Place</p>
-              <p className="font-black text-slate-800 text-lg">
-                {todayRecord && todayRecord.checkInLocation
-                  ? `${todayRecord.checkInLocation.latitude.toFixed(6)}, ${todayRecord.checkInLocation.longitude.toFixed(6)}`
-                  : 'No attendance taken yet'}
-              </p>
-              <p className="text-xs text-slate-500 mt-2 font-medium">Visible only in HR portal</p>
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="bg-emerald-50 rounded-2xl p-5 border border-emerald-100 shadow-sm">
+            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Total Present</p>
+            <p className="text-3xl font-black text-emerald-700">{filteredHistory.filter(r => r.status === 'Present').length}</p>
+          </div>
+          <div className="bg-rose-50 rounded-2xl p-5 border border-rose-100 shadow-sm">
+            <p className="text-[10px] font-black text-rose-600 uppercase tracking-widest mb-1">Total Absent</p>
+            <p className="text-3xl font-black text-rose-700">{filteredHistory.filter(r => r.status === 'Absent').length}</p>
+          </div>
+          <div className="bg-yellow-50 rounded-2xl p-5 border border-yellow-100 shadow-sm">
+            <p className="text-[10px] font-black text-yellow-600 uppercase tracking-widest mb-1">Total Half Days</p>
+            <p className="text-3xl font-black text-yellow-700">{filteredHistory.filter(r => r.status === 'Half Day').length}</p>
+          </div>
+          <div className="bg-blue-50 rounded-2xl p-5 border border-blue-100 shadow-sm">
+            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Total Working Days</p>
+            <p className="text-3xl font-black text-blue-700">
+              {filteredHistory.filter(r => r.status === 'Present').length + (filteredHistory.filter(r => r.status === 'Half Day').length * 0.5)}
+            </p>
           </div>
         </div>
       )}
 
       {/* Calendar View */}
-      {true && (
+      {(user.role !== 'admin' || filterEmployee) && (
         <div className="card overflow-hidden p-0 border border-slate-100 shadow-xl bg-white mb-8 mt-8">
           <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
             <div className="flex items-center gap-3">
