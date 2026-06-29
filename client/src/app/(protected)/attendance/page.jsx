@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { Clock, CheckCircle, Fingerprint, Filter, Users, MapPin, AlertCircle, X, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { Clock, CheckCircle, Fingerprint, Filter, Users, MapPin, AlertCircle, X, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Briefcase } from 'lucide-react';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday, addMonths, subMonths } from 'date-fns';
 
 const OFFICE_LOCATION = { latitude: 17.4392259, longitude: 78.3948023 };
@@ -324,25 +324,52 @@ export default function Attendance() {
           </div>
         </div>
       ) : (
-        /* ADMIN DASHBOARD */
+        /* ADMIN DASHBOARD - STATS */
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-          <div className="bg-emerald-50 rounded-2xl p-5 border border-emerald-100 shadow-sm">
-            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Total Present</p>
-            <p className="text-3xl font-black text-emerald-700">{filteredHistory.filter(r => r.status === 'Present').length}</p>
+          <div className="group relative bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 -mr-8 -mt-8 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <CheckCircle size={24} />
+              </div>
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Present</p>
+              <p className="text-4xl font-black text-slate-800 tracking-tight">{filteredHistory.filter(r => r.status === 'Present').length}</p>
+            </div>
           </div>
-          <div className="bg-rose-50 rounded-2xl p-5 border border-rose-100 shadow-sm">
-            <p className="text-[10px] font-black text-rose-600 uppercase tracking-widest mb-1">Total Absent</p>
-            <p className="text-3xl font-black text-rose-700">{filteredHistory.filter(r => r.status === 'Absent').length}</p>
+          
+          <div className="group relative bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 -mr-8 -mt-8 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <X size={24} strokeWidth={3} />
+              </div>
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Absent</p>
+              <p className="text-4xl font-black text-slate-800 tracking-tight">{filteredHistory.filter(r => r.status === 'Absent').length}</p>
+            </div>
           </div>
-          <div className="bg-yellow-50 rounded-2xl p-5 border border-yellow-100 shadow-sm">
-            <p className="text-[10px] font-black text-yellow-600 uppercase tracking-widest mb-1">Total Half Days</p>
-            <p className="text-3xl font-black text-yellow-700">{filteredHistory.filter(r => r.status === 'Half Day').length}</p>
+
+          <div className="group relative bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 -mr-8 -mt-8 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <Clock size={24} />
+              </div>
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Half Days</p>
+              <p className="text-4xl font-black text-slate-800 tracking-tight">{filteredHistory.filter(r => r.status === 'Half Day').length}</p>
+            </div>
           </div>
-          <div className="bg-blue-50 rounded-2xl p-5 border border-blue-100 shadow-sm">
-            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Total Working Days</p>
-            <p className="text-3xl font-black text-blue-700">
-              {filteredHistory.filter(r => r.status === 'Present').length + (filteredHistory.filter(r => r.status === 'Half Day').length * 0.5)}
-            </p>
+
+          <div className="group relative bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 -mr-8 -mt-8 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <Briefcase size={24} />
+              </div>
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Working Days</p>
+              <p className="text-4xl font-black text-slate-800 tracking-tight">
+                {filteredHistory.filter(r => r.status === 'Present').length + (filteredHistory.filter(r => r.status === 'Half Day').length * 0.5)}
+              </p>
+            </div>
           </div>
         </div>
       )}
