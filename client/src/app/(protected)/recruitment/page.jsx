@@ -21,7 +21,7 @@ export default function RecruitmentPage() {
   const [jobRequirements, setJobRequirements] = useState('');
   const [jobSalary, setJobSalary] = useState('');
   const [jobLocation, setJobLocation] = useState('');
-  const [jobJdUrl, setJobJdUrl] = useState('');
+  const [jobJdFile, setJobJdFile] = useState(null);
   
   // Employee state
   const [showReferral, setShowReferral] = useState(false);
@@ -49,15 +49,17 @@ export default function RecruitmentPage() {
   const handleCreateJob = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/recruitment/jobs', {
-        title: jobTitle,
-        department: jobDepartment,
-        description: jobDescription,
-        requirements: jobRequirements,
-        salary: jobSalary,
-        location: jobLocation,
-        jdUrl: jobJdUrl
-      });
+      const formData = new FormData();
+      formData.append('title', jobTitle);
+      formData.append('department', jobDepartment);
+      formData.append('description', jobDescription);
+      formData.append('requirements', jobRequirements);
+      if (jobSalary) formData.append('salary', jobSalary);
+      if (jobLocation) formData.append('location', jobLocation);
+      if (jobJdFile) formData.append('jdFile', jobJdFile);
+
+      await api.post('/api/recruitment/jobs', formData);
+      
       toast.success('Job posted successfully');
       setJobTitle('');
       setJobDepartment('');
@@ -65,7 +67,7 @@ export default function RecruitmentPage() {
       setJobRequirements('');
       setJobSalary('');
       setJobLocation('');
-      setJobJdUrl('');
+      setJobJdFile(null);
       setShowAddJob(false);
       fetchJobs();
     } catch (err) {
@@ -156,8 +158,8 @@ export default function RecruitmentPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Description PDF Link (Optional)</label>
-              <input type="url" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium" value={jobJdUrl} onChange={(e) => setJobJdUrl(e.target.value)} placeholder="https://link-to-jd.pdf" />
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Description PDF (Optional)</label>
+              <input type="file" accept=".pdf" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium text-slate-600" onChange={(e) => setJobJdFile(e.target.files[0])} />
             </div>
             <div>
               <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Job Description</label>

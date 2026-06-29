@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
+const upload = require('../utils/uploadMiddleware');
+const { uploadStreamToGCS, generateSignedUrl } = require('../utils/gcs');
 
 // Get all jobs
 router.get('/jobs', authenticate, async (req, res) => {
@@ -9,19 +11,47 @@ router.get('/jobs', authenticate, async (req, res) => {
     const jobs = await prisma.job.findMany({
       orderBy: { createdAt: 'desc' }
     });
-    res.json(jobs);
+    const formattedJobs = await Promise.all(jobs.map(async job => {
+      return {
+        ...job,
+        jdUrl: job.jdUrl ? await generateSignedUrl(job.jdUrl, 60 * 24) : null
+      };
+    }));
+    res.json(formattedJobs);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 // Admin creates a job
-router.post('/jobs', authenticate, authorize(['admin']), async (req, res) => {
-  const { title, department, description, requirements, salary, location, jdUrl, status } = req.body;
+router.post('/jobs', authenticate, authorize(['admin']), upload.single('jdFile'), async (req, res) => {
+  const { title, department, description, requirements, salary, location, status } = req.body;
   try {
+    let jdUrl = null;
+    let gcsPath = null;
+    if (req.file) {
+      gcsPath = await uploadStreamToGCS(req.file, 'job_descriptions');
+      jdUrl = gcsPath;
+    }
+
     const newJob = await prisma.job.create({
       data: { title, department, description, requirements, salary, location, jdUrl, status: status || 'Open' }
     });
+    
+    if (gcsPath) {
+      await prisma.fileMetadata.create({
+        data: {
+          originalName: req.file.originalname,
+          mimeType: req.file.mimetype,
+          size: req.file.size,
+          gcsPath: gcsPath,
+          uploadedBy: req.user.id,
+          entityType: 'Job',
+          entityId: newJob.id
+        }
+      });
+    }
+    
     res.json(newJob);
   } catch (error) {
     res.status(500).json({ error: error.message });
