@@ -360,14 +360,14 @@ export default function Dashboard() {
         )}
 
         {/* Big Check Out Button */}
-        <Link href="/attendance" className="w-full bg-gradient-to-r from-[#ff5a1f] via-[#ff6f3b] to-[#ff8b5e] rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-[#ff5a1f]/20 hover:shadow-2xl hover:shadow-[#ff5a1f]/30 transition-all active:scale-[0.98] group">
+        <Link href="/attendance" className="w-full bg-gradient-to-r from-[#F08080] via-[#f4978e] to-[#f5f5f5] rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-[#F08080]/20 hover:shadow-2xl hover:shadow-[#F08080]/30 transition-all active:scale-[0.98] group">
           <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-full border border-white/30 group-hover:rotate-12 transition-transform">
-              <Clock size={24} className="text-white" />
+            <div className="bg-slate-900/10 p-2 rounded-full border border-slate-900/10 group-hover:rotate-12 transition-transform">
+              <Clock size={24} className="text-slate-800" />
             </div>
-            <span className="text-white font-medium text-lg tracking-wide">Check In / Out</span>
+            <span className="text-slate-800 font-black text-lg tracking-wide">Punch In / Out</span>
           </div>
-          <span className="text-white text-[11px] font-medium bg-black/10 px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-1 group-hover:bg-black/20 transition-colors">
+          <span className="text-slate-700 text-[11px] font-bold bg-white/50 px-3 py-1.5 rounded-full border border-slate-200/50 flex items-center gap-1 group-hover:bg-white/70 transition-colors shadow-sm">
             Click here <ArrowUpRight size={12} />
           </span>
         </Link>
