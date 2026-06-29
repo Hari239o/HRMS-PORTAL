@@ -60,8 +60,13 @@ export default function Dashboard() {
     presentToday: 0,
     halfDaysToday: 0,
     absentToday: 0,
-    leavesToday: 0
+    leavesToday: 0,
+    presentTodayList: [],
+    halfDaysTodayList: [],
+    absentTodayList: [],
+    leavesTodayList: []
   });
+  const [statModal, setStatModal] = useState(null);
   const [chartData, setChartData] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]);
@@ -232,12 +237,15 @@ export default function Dashboard() {
     }
   };
 
-    const StatCard = ({ title, value, icon: Icon, color, trend }) => {
+    const StatCard = ({ title, value, icon: Icon, color, trend, onClick }) => {
       const textColor = color ? color.replace('bg-', 'text-') : 'text-blue-600';
       const bgColor = color ? color.replace('bg-', 'bg-').replace('600', '50').replace('500', '50') : 'bg-blue-50';
       
       return (
-        <div className="group relative rounded-3xl bg-white/60 backdrop-blur-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+        <div 
+          onClick={onClick}
+          className={`group relative rounded-3xl bg-white/60 backdrop-blur-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden ${onClick ? 'cursor-pointer hover:ring-2 hover:ring-blue-400' : ''}`}
+        >
           <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div className="p-6 flex flex-col justify-between h-full relative z-10">
             <div className="flex justify-between items-start mb-4">
@@ -447,10 +455,10 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6 mt-4">
         <StatCard title="Total Workforce" value={adminStats.totalEmployees} icon={Users} color="bg-blue-600" />
-        <StatCard title="Present Today" value={adminStats.presentToday} icon={UserCheck} color="bg-blue-600" />
-        <StatCard title="Absent Pool" value={adminStats.absentToday} icon={UserX} color="bg-blue-600" />
-        <StatCard title="Leave Requests" value={adminStats.leavesToday} icon={Calendar} color="bg-blue-600" />
-        <StatCard title="Half Days Today" value={adminStats.halfDaysToday || 0} icon={Clock} color="bg-blue-600" />
+        <StatCard title="Present Today" value={adminStats.presentToday} icon={UserCheck} color="bg-emerald-600" onClick={() => setStatModal({ title: 'Present Today', list: adminStats.presentTodayList, icon: UserCheck, color: 'text-emerald-600', bgColor: 'bg-emerald-100' })} />
+        <StatCard title="Half Days" value={adminStats.halfDaysToday} icon={Clock} color="bg-amber-600" onClick={() => setStatModal({ title: 'Half Days', list: adminStats.halfDaysTodayList, icon: Clock, color: 'text-amber-600', bgColor: 'bg-amber-100' })} />
+        <StatCard title="Absent Today" value={adminStats.absentToday} icon={UserX} color="bg-rose-600" onClick={() => setStatModal({ title: 'Absent Today', list: adminStats.absentTodayList, icon: UserX, color: 'text-rose-600', bgColor: 'bg-rose-100' })} />
+        <StatCard title="Leave Requests" value={adminStats.leavesToday} icon={Calendar} color="bg-purple-600" onClick={() => setStatModal({ title: 'Leave Requests (Approved)', list: adminStats.leavesTodayList, icon: Calendar, color: 'text-purple-600', bgColor: 'bg-purple-100' })} />
       </div>
 
       <div className="rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white/60 backdrop-blur-xl overflow-hidden mb-6 relative">
@@ -587,6 +595,59 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      {statModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${statModal.bgColor} ${statModal.color}`}>
+                  <statModal.icon size={20} />
+                </div>
+                <div>
+                  <h3 className="font-black text-slate-800 text-lg">{statModal.title}</h3>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{statModal.list?.length || 0} Employees</p>
+                </div>
+              </div>
+              <button onClick={() => setStatModal(null)} className="p-2 text-slate-400 hover:text-rose-500 bg-slate-100 hover:bg-rose-50 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-2 max-h-[60vh] overflow-y-auto">
+              {statModal.list && statModal.list.length > 0 ? (
+                <div className="flex flex-col gap-1 p-2">
+                  {statModal.list.map((emp, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${statModal.bgColor} ${statModal.color}`}>
+                          {emp.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm text-slate-700">{emp.name}</p>
+                          {emp.type && <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{emp.type}</p>}
+                        </div>
+                      </div>
+                      <Link href={`/employees`} className="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded-md hover:bg-blue-100 transition-colors">
+                        View Profile
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-300">
+                    <Search size={24} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-600 text-sm">No employees found</p>
+                    <p className="text-xs text-slate-400 mt-1">There is no one in this category today.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

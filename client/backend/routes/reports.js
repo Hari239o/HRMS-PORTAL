@@ -18,41 +18,49 @@ router.get('/dashboard-stats', authenticate, authorize(['admin']), async (req, r
       where: { date: today }
     });
     
-    let presentToday = 0;
-    let halfDaysToday = 0;
+    let presentTodayList = [];
+    let halfDaysTodayList = [];
     const attendedEmpIds = new Set();
     
     attendanceRecords.forEach(data => {
+      const empName = workforce.find(e => e.id === data.employeeId)?.name || 'Unknown';
       if (data.status === 'Present') {
-        presentToday++;
+        presentTodayList.push({ id: data.employeeId, name: empName });
         attendedEmpIds.add(data.employeeId);
       } else if (data.status === 'Half Day' || data.status === 'Late') {
-        halfDaysToday++;
+        halfDaysTodayList.push({ id: data.employeeId, name: empName, status: data.status });
         attendedEmpIds.add(data.employeeId);
       }
     });
 
-    let absentToday = 0;
+    let absentTodayList = [];
     workforce.forEach(emp => {
       if (!attendedEmpIds.has(emp.id)) {
-        absentToday++;
+        absentTodayList.push({ id: emp.id, name: emp.name });
       }
     });
 
-    const leavesTodayCount = await prisma.leave.count({
+    const leavesTodayRecords = await prisma.leave.findMany({
       where: {
         status: 'Approved',
         fromDate: { lte: new Date(`${today}T23:59:59Z`) },
         toDate: { gte: new Date(`${today}T00:00:00Z`) }
-      }
+      },
+      include: { employee: true }
     });
+    
+    const leavesTodayList = leavesTodayRecords.map(l => ({ id: l.employeeId, name: l.employee?.name || 'Unknown', type: l.type }));
 
     res.json({
       totalEmployees,
-      presentToday,
-      halfDaysToday,
-      absentToday,
-      leavesToday: leavesTodayCount
+      presentToday: presentTodayList.length,
+      halfDaysToday: halfDaysTodayList.length,
+      absentToday: absentTodayList.length,
+      leavesToday: leavesTodayList.length,
+      presentTodayList,
+      halfDaysTodayList,
+      absentTodayList,
+      leavesTodayList
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
