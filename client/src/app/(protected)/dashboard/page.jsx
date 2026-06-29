@@ -309,12 +309,12 @@ export default function Dashboard() {
     );
   }
 
-  const AppGridItem = ({ title, emoji, link }) => (
-    <Link href={link} className="flex flex-col items-center justify-start p-3 sm:p-4 bg-white rounded-[20px] shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-slate-100/80 hover:shadow-xl transition-all duration-300 active:scale-95 group">
-      <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center text-[38px] sm:text-[44px] drop-shadow-md group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300">
-        {emoji}
+  const AppGridItem = ({ title, icon: Icon, link }) => (
+    <Link href={link} className="bg-white rounded-2xl p-4 flex flex-col items-center justify-center gap-3 shadow-[0_2px_10px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all border border-slate-100 group">
+      <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-50 transition-all">
+        <Icon size={24} className="text-slate-600 group-hover:text-blue-600" />
       </div>
-      <span className="mt-3 text-[11px] sm:text-xs font-medium text-slate-600 text-center leading-tight px-1">{title}</span>
+      <span className="text-xs font-bold text-slate-700 text-center">{title}</span>
     </Link>
   );
 
@@ -360,32 +360,32 @@ export default function Dashboard() {
         )}
 
         {/* Big Check Out Button */}
-        <Link href="/attendance" className="w-full bg-gradient-to-r from-[#F08080] via-[#f4978e] to-[#f5f5f5] rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-[#F08080]/20 hover:shadow-2xl hover:shadow-[#F08080]/30 transition-all active:scale-[0.98] group">
+        <Link href="/attendance" className="w-full bg-gradient-to-r from-orange-400 to-orange-500 rounded-2xl p-5 flex items-center justify-between shadow-xl shadow-orange-500/20 hover:shadow-2xl hover:shadow-orange-500/30 transition-all active:scale-[0.98] group">
           <div className="flex items-center gap-3">
-            <div className="bg-slate-900/10 p-2 rounded-full border border-slate-900/10 group-hover:rotate-12 transition-transform">
-              <Clock size={24} className="text-slate-800" />
+            <div className="bg-white/20 p-2 rounded-full border border-white/30 group-hover:rotate-12 transition-transform">
+              <Clock size={24} className="text-white" />
             </div>
-            <span className="text-slate-800 font-black text-lg tracking-wide">Punch In / Out</span>
+            <span className="text-white font-black text-lg tracking-wide">Punch In / Out</span>
           </div>
-          <span className="text-slate-700 text-[11px] font-bold bg-white/50 px-3 py-1.5 rounded-full border border-slate-200/50 flex items-center gap-1 group-hover:bg-white/70 transition-colors shadow-sm">
+          <span className="text-white text-[11px] font-bold bg-black/10 px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1 group-hover:bg-black/20 transition-colors shadow-sm">
             Click here <ArrowUpRight size={12} />
           </span>
         </Link>
 
         {/* 3-Column Grid */}
         <div className="grid grid-cols-3 gap-3 sm:gap-4 mt-2">
-          <AppGridItem title="Task Box" emoji="📝" link="#" />
-          <AppGridItem title="Attendance" emoji="📅" link="/attendance" />
-          <AppGridItem title="Leave" emoji="🏖️" link="/leaves" />
-          <AppGridItem title="Payroll" emoji="💸" link="/salary" />
-          <AppGridItem title="Performance" emoji="📈" link="/performance" />
-          <AppGridItem title="Holidays" emoji="📅" link="/holidays" />
-          <AppGridItem title="HR Documents" emoji="📑" link="/documents" />
-          <AppGridItem title="HR Policies" emoji="📜" link="/hr-policies" />
-          <AppGridItem title="Recruitment" emoji="🤝" link="#" />
-          <AppGridItem title="Separation" emoji="👋" link="/resignations" />
-          <AppGridItem title="Member" emoji="👥" link="#" />
-          <AppGridItem title="Vibe" emoji="🎉" link="#" />
+          <AppGridItem title="Task Box" icon={ClipboardList} link="#" />
+          <AppGridItem title="Attendance" icon={CalendarDays} link="/attendance" />
+          <AppGridItem title="Leave" icon={Calendar} link="/leaves" />
+          <AppGridItem title="Payroll" icon={Receipt} link="/salary" />
+          <AppGridItem title="Performance" icon={TrendingUp} link="/performance" />
+          <AppGridItem title="Holidays" icon={CalendarDays} link="/holidays" />
+          <AppGridItem title="HR Documents" icon={FileText} link="/documents" />
+          <AppGridItem title="HR Policies" icon={FileSpreadsheet} link="/hr-policies" />
+          <AppGridItem title="Recruitment" icon={Briefcase} link="#" />
+          <AppGridItem title="Separation" icon={UserX} link="/resignations" />
+          <AppGridItem title="Member" icon={Users} link="#" />
+          <AppGridItem title="Vibe" icon={Smile} link="#" />
         </div>
 
       </div>
@@ -411,18 +411,18 @@ export default function Dashboard() {
 
       {/* Admin 12-item App Grid */}
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 sm:gap-4 mt-2">
-        <AppGridItem title="Task Box" emoji="📝" link="/taskbox" />
-        <AppGridItem title="Attendance" emoji="📅" link="/attendance" />
-        <AppGridItem title="Leave" emoji="🏖️" link="/leaves" />
-        <AppGridItem title="Payroll" emoji="💸" link="/salary" />
-        <AppGridItem title="Performance" emoji="📈" link="/performance" />
-        <AppGridItem title="Holidays" emoji="📅" link="/holidays" />
-        <AppGridItem title="HR Documents" emoji="📑" link="/documents" />
-        <AppGridItem title="HR Policies" emoji="📜" link="/hr-policies" />
-        <AppGridItem title="Recruitment" emoji="🤝" link="/recruitment" />
-        <AppGridItem title="Separation" emoji="👋" link="/resignations" />
-        <AppGridItem title="Member" emoji="👥" link="/employees" />
-        <AppGridItem title="Vibe" emoji="🎉" link="#" />
+        <AppGridItem title="Task Box" icon={ClipboardList} link="/taskbox" />
+        <AppGridItem title="Attendance" icon={CalendarDays} link="/attendance" />
+        <AppGridItem title="Leave" icon={Calendar} link="/leaves" />
+        <AppGridItem title="Payroll" icon={Receipt} link="/salary" />
+        <AppGridItem title="Performance" icon={TrendingUp} link="/performance" />
+        <AppGridItem title="Holidays" icon={CalendarDays} link="/holidays" />
+        <AppGridItem title="HR Documents" icon={FileText} link="/documents" />
+        <AppGridItem title="HR Policies" icon={FileSpreadsheet} link="/hr-policies" />
+        <AppGridItem title="Recruitment" icon={Briefcase} link="/recruitment" />
+        <AppGridItem title="Separation" icon={UserX} link="/resignations" />
+        <AppGridItem title="Member" icon={Users} link="/employees" />
+        <AppGridItem title="Vibe" icon={Smile} link="#" />
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6 mt-4">

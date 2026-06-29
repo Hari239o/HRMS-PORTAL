@@ -27,11 +27,11 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
   if (!isOpen || !user) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-50 animate-in fade-in duration-200">
+      <div className="bg-white w-full h-full overflow-y-auto relative animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="sticky top-0 bg-white/90 backdrop-blur-md p-6 border-b border-slate-100 flex items-center justify-between z-20 rounded-t-3xl">
+        <div className="sticky top-0 bg-white/90 backdrop-blur-md p-4 sm:p-6 border-b border-slate-200 flex items-center justify-between z-20">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
               <Users size={20} />
@@ -40,30 +40,32 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
           </div>
           <button 
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-500 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
 
         {/* Content - Org Chart Hierarchy */}
-        <div className="p-8 flex flex-col items-center">
+        <div className="p-4 sm:p-12 flex flex-col items-center min-h-[calc(100vh-80px)] justify-center">
           
           {/* Manager */}
-          {user.managerProfile && (
-            <div className="flex flex-col items-center mb-8 relative">
-              <OrgNode profile={user.managerProfile} title="Manager" />
-              <div className="w-px h-8 bg-slate-300 mt-2 absolute -bottom-10 left-1/2 transform -translate-x-1/2"></div>
-            </div>
-          )}
+          <div className="flex flex-col items-center mb-8 relative">
+            <OrgNode 
+              profile={user.managerProfile || { name: 'Not Assigned', role: 'manager', avatar: `https://ui-avatars.com/api/?name=Manager&background=cbd5e1&color=fff` }} 
+              title="Manager" 
+            />
+            <div className="w-px h-8 bg-slate-300 mt-2 absolute -bottom-10 left-1/2 transform -translate-x-1/2"></div>
+          </div>
 
           {/* Team Leader */}
-          {user.teamLeaderProfile && (
-            <div className="flex flex-col items-center mb-8 relative">
-              <OrgNode profile={user.teamLeaderProfile} title="Team Leader" />
-              <div className="w-px h-8 bg-slate-300 mt-2 absolute -bottom-10 left-1/2 transform -translate-x-1/2"></div>
-            </div>
-          )}
+          <div className="flex flex-col items-center mb-8 relative">
+            <OrgNode 
+              profile={user.teamLeaderProfile || { name: 'Not Assigned', role: 'team_leader', avatar: `https://ui-avatars.com/api/?name=Team+Leader&background=cbd5e1&color=fff` }} 
+              title="Team Leader" 
+            />
+            <div className="w-px h-8 bg-slate-300 mt-2 absolute -bottom-10 left-1/2 transform -translate-x-1/2"></div>
+          </div>
 
           {/* Current User */}
           <div className="bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] p-6 rounded-2xl shadow-xl shadow-blue-500/20 w-full max-w-sm flex flex-col items-center relative z-10 mb-8 border border-white/20">
