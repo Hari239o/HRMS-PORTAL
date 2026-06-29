@@ -27,7 +27,15 @@ import {
   Send,
   MessageSquare,
   X,
-  Search
+  Search,
+  ClipboardList, 
+  CalendarDays, 
+  Receipt, 
+  GraduationCap, 
+  Building2, 
+  UserPlus, 
+  FileSpreadsheet, 
+  Smile
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { 
