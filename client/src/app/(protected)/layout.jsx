@@ -9,62 +9,62 @@ import BottomNav from '@/components/BottomNav';
 import OrgStructureModal from '@/components/OrgStructureModal';
 
 export default function ProtectedLayout({ children }) {
- const { user, loading } = useAuth();
- const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
- const [isOrgModalOpen, setIsOrgModalOpen] = useState(false);
- const router = useRouter();
- const pathname = usePathname();
+  const { user, loading } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOrgModalOpen, setIsOrgModalOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
- useEffect(() => {
- if (!loading && !user) {
- router.replace('/login');
- }
- }, [user, loading, router]);
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
+  }, [user, loading, router]);
 
- if (loading || !user) {
- return (
- <div className="h-screen w-full flex items-center justify-center bg-slate-50">
- <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
- </div>
- );
- }
+  if (loading || !user) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-slate-50">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
- const adminOnlyRoutes = ['/reports'];
- if (adminOnlyRoutes.some(route => pathname?.startsWith(route)) && user.role !== 'admin') {
- router.replace('/dashboard');
- return null;
- }
+  const adminOnlyRoutes = ['/reports'];
+  if (adminOnlyRoutes.some(route => pathname?.startsWith(route)) && user.role !== 'admin') {
+    router.replace('/dashboard');
+    return null;
+  }
 
 
- return (
- <div className="flex h-[100dvh] w-full overflow-hidden bg-[#f8fafc]">
- <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
- <div className="flex-1 flex flex-col overflow-hidden relative">
- {/* Mobile Header */}
- <header className="md:hidden bg-white border-b border-slate-200 flex items-center justify-between p-4 z-50 sticky top-0 w-full shadow-sm">
- <div className="flex items-center gap-3">
- <div className="flex items-center pl-2">
- <img src="/logo-only.png" alt="Geonixa" className="h-12 w-auto object-contain" />
- </div>
- </div>
- 
- <div className="flex items-center gap-4">
- <button 
- onClick={() => setIsOrgModalOpen(true)}
- className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-slate-100 hover:ring-2 hover:ring-blue-400 cursor-pointer"
- >
- <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=ff5a1f&color=fff`} alt="Profile" className="w-full h-full object-cover" />
- </button>
- </div>
- </header>
- <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 md:pb-8 pb-24">
- <div className="w-full max-w-[1600px] mx-auto">
- {children}
- </div>
- </main>
- </div>
- <BottomNav />
- <OrgStructureModal isOpen={isOrgModalOpen} onClose={() => setIsOrgModalOpen(false)} user={user} />
- </div>
- );
+  return (
+    <div className="flex h-[100dvh] w-full overflow-hidden bg-[#f8fafc]">
+      <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        {/* Mobile Header */}
+        <header className="md:hidden bg-white border-b border-slate-200 flex items-center justify-between p-4 z-50 sticky top-0 w-full shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center pl-2">
+              <img src="/logo-only.png" alt="Geonixa" className="h-12 w-auto object-contain" />
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsOrgModalOpen(true)}
+              className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-slate-100 hover:ring-2 hover:ring-blue-400 transition-all cursor-pointer"
+            >
+              <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=ff5a1f&color=fff`} alt="Profile" className="w-full h-full object-cover" />
+            </button>
+          </div>
+        </header>
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 md:pb-8 pb-24">
+          <div className="w-full max-w-[1600px] mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
+      <BottomNav />
+      <OrgStructureModal isOpen={isOrgModalOpen} onClose={() => setIsOrgModalOpen(false)} user={user} />
+    </div>
+  );
 }
