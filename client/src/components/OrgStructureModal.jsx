@@ -69,23 +69,22 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
   useEffect(() => {
     if (!isOpen) return;
 
-    if (!selectedEmpId || selectedEmpId === user?.id) {
-      setCurrentView(user);
-    } else {
-      const fetchOrgStructure = async () => {
-        setLoading(true);
-        try {
-          const res = await api.get(`/api/employees/${selectedEmpId}/org-structure`);
-          setCurrentView(res.data);
-        } catch (err) {
-          console.error('Failed to load org structure for selected employee', err);
-          setCurrentView(user);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchOrgStructure();
-    }
+    const fetchOrgStructure = async () => {
+      setLoading(true);
+      try {
+        const empIdToFetch = selectedEmpId || user?.id;
+        if (!empIdToFetch) return;
+        
+        const res = await api.get(`/api/employees/${empIdToFetch}/org-structure`);
+        setCurrentView(res.data);
+      } catch (err) {
+        console.error('Failed to load org structure', err);
+        setCurrentView(user);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrgStructure();
   }, [selectedEmpId, isOpen, user]);
 
   if (!isOpen || !user) return null;
