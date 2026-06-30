@@ -403,6 +403,11 @@ router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
     await prisma.leave.deleteMany({ where: { employeeId: req.params.id } });
     await prisma.salary.deleteMany({ where: { employeeId: req.params.id } });
     await prisma.jobReferral.deleteMany({ where: { employeeId: req.params.id } });
+    await prisma.resignation.deleteMany({ where: { employeeId: req.params.id } });
+    await prisma.problem.deleteMany({ where: { employeeId: req.params.id } });
+    await prisma.callLog.deleteMany({ where: { employeeId: req.params.id } });
+    await prisma.followup.deleteMany({ where: { assignedEmployeeId: req.params.id } });
+    await prisma.target.deleteMany({ where: { employeeId: req.params.id } });
     
     // Finally delete the employee
     await prisma.employee.delete({ where: { id: req.params.id } });
