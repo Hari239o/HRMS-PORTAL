@@ -71,14 +71,35 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
         {/* Content - Org Chart Hierarchy */}
         <div className="p-4 sm:p-12 flex flex-col items-center min-h-[calc(100vh-80px)] justify-center">
           
-          {/* Manager */}
-          <div className="flex flex-col items-center mb-8 relative">
-            <OrgNode 
-              profile={user.managerProfile || { name: 'Not Assigned', role: 'manager' }} 
-              title="Manager" 
-              themeColor="fuchsia"
-            />
-            <div className="w-px h-8 bg-slate-300 mt-2 absolute -bottom-10 left-1/2 transform -translate-x-1/2"></div>
+          {/* Top Level: Manager and HR */}
+          <div className="flex flex-col items-center mb-12 relative w-full">
+            <div className="flex justify-center gap-8 sm:gap-24 relative w-full max-w-md">
+              {/* Manager */}
+              <div className="flex flex-col items-center relative flex-1">
+                <OrgNode 
+                  profile={user.managerProfile || { name: 'Not Assigned', role: 'manager' }} 
+                  title="Manager" 
+                  themeColor="fuchsia"
+                />
+                <div className="w-px h-8 bg-slate-300 absolute -bottom-8 left-1/2 transform -translate-x-1/2"></div>
+              </div>
+              
+              {/* HR Partner */}
+              <div className="flex flex-col items-center relative flex-1">
+                <OrgNode 
+                  profile={user.hrProfile || { name: 'Not Assigned', role: 'hr' }} 
+                  title="HR Partner" 
+                  themeColor="blue"
+                />
+                <div className="w-px h-8 bg-slate-300 absolute -bottom-8 left-1/2 transform -translate-x-1/2"></div>
+              </div>
+
+              {/* Horizontal Line */}
+              <div className="absolute -bottom-8 left-1/4 right-1/4 h-px bg-slate-300"></div>
+            </div>
+            
+            {/* Vertical line going down to Team Leader */}
+            <div className="w-px h-8 bg-slate-300 absolute -bottom-16 left-1/2 transform -translate-x-1/2"></div>
           </div>
 
           {/* Team Leader */}
