@@ -247,7 +247,7 @@ export default function Dashboard() {
       return (
         <div 
           onClick={onClick}
-          className={`group relative rounded-3xl bg-white/60 backdrop-blur-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden ${onClick ? 'cursor-pointer hover:ring-2 hover:ring-blue-400' : ''}`}
+          className={`group relative rounded-3xl bg-white border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 overflow-hidden ${onClick ? 'cursor-pointer hover:ring-2 hover:ring-blue-400' : ''}`}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div className="p-6 flex flex-col justify-between h-full relative z-10">

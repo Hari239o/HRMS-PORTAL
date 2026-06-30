@@ -55,7 +55,7 @@ export default function BottomNav() {
         </>
       )}
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 z-50 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.05)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.05)]">
         <div className="flex justify-around items-center p-2">
           {navItems.map((item) => {
             const isActive = pathname === item.path || (item.name === 'Profile' && showProfile);

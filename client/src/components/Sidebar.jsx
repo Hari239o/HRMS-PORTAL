@@ -84,7 +84,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         />
       )}
 
-      <aside className={`fixed md:relative inset-y-0 left-0 z-[60] w-72 h-full bg-white/60 backdrop-blur-2xl border-r border-white/50 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.05)] transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <aside className={`fixed md:relative inset-y-0 left-0 z-[60] w-72 h-full bg-white border-r border-slate-200 flex flex-col shadow-sm transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="p-4 pb-2 relative">
           <button 
             className="md:hidden absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 z-10"
