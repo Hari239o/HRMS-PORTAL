@@ -115,6 +115,74 @@ router.get('/:id/documents', authenticate, async (req, res) => {
   }
 });
 
+router.get('/:id/org-structure', authenticate, authorize(['admin']), async (req, res) => {
+  try {
+    const emp = await prisma.employee.findUnique({
+      where: { id: req.params.id }
+    });
+    if (!emp) return res.status(404).json({ error: 'Employee not found' });
+
+    const resolveProfile = async (id) => {
+      if (!id) return null;
+      try {
+        const profile = await prisma.employee.findUnique({ where: { id } });
+        if (profile) {
+          return { name: profile.name, avatar: profile.avatar ? await generateSignedUrl(profile.avatar, 60) : '', email: profile.email, role: profile.role, department: profile.department };
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    };
+
+    const [managerProfile, hrProfile, teamLeaderProfile] = await Promise.all([
+      resolveProfile(emp.manager),
+      resolveProfile(emp.hrManager),
+      resolveProfile(emp.teamLeader)
+    ]);
+
+    let teamMembers = [];
+    try {
+      let teamQuery = {};
+      if (emp.teamLeader) {
+        teamQuery = { teamLeader: emp.teamLeader };
+      } else if (emp.manager) {
+        teamQuery = { manager: emp.manager };
+      } else {
+        teamQuery = { OR: [{ manager: req.params.id }, { teamLeader: req.params.id }] };
+      }
+      
+      const tPrisma = await prisma.employee.findMany({ where: teamQuery });
+      teamMembers = await Promise.all(tPrisma.map(async t => ({
+        id: t.id,
+        name: t.name,
+        avatar: t.avatar ? await generateSignedUrl(t.avatar, 60) : '',
+        role: t.role,
+        email: t.email,
+        designation: t.designation || ''
+      })));
+    } catch (err) {
+      console.log('Error fetching team members', err);
+    }
+
+    res.json({
+      id: emp.id,
+      name: emp.name,
+      avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60) : '',
+      role: emp.role,
+      designation: emp.designation || '',
+      department: emp.department || '',
+      managerProfile,
+      hrProfile,
+      teamLeaderProfile,
+      teamMembers
+    });
+  } catch (error) {
+    console.error('Error fetching org structure:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/me', authenticate, async (req, res) => {
   try {
     const emp = await prisma.employee.findUnique({

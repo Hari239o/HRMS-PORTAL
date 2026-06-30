@@ -1,5 +1,6 @@
-import React from 'react';
-import { X, Users } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Users, Search } from 'lucide-react';
+import api from '@/utils/api';
 
 const OrgNode = ({ profile, title, isMain = false, themeColor = "slate" }) => {
   if (!profile) return null;
@@ -46,7 +47,50 @@ const OrgNode = ({ profile, title, isMain = false, themeColor = "slate" }) => {
 };
 
 export default function OrgStructureModal({ isOpen, onClose, user }) {
+  const [allEmployees, setAllEmployees] = useState([]);
+  const [selectedEmpId, setSelectedEmpId] = useState('');
+  const [currentView, setCurrentView] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && user?.role === 'admin') {
+      const fetchEmployees = async () => {
+        try {
+          const res = await api.get('/api/employees');
+          setAllEmployees(res.data);
+        } catch (err) {
+          console.error('Failed to load employees for org structure', err);
+        }
+      };
+      fetchEmployees();
+    }
+  }, [isOpen, user]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (!selectedEmpId || selectedEmpId === user?.id) {
+      setCurrentView(user);
+    } else {
+      const fetchOrgStructure = async () => {
+        setLoading(true);
+        try {
+          const res = await api.get(`/api/employees/${selectedEmpId}/org-structure`);
+          setCurrentView(res.data);
+        } catch (err) {
+          console.error('Failed to load org structure for selected employee', err);
+          setCurrentView(user);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchOrgStructure();
+    }
+  }, [selectedEmpId, isOpen, user]);
+
   if (!isOpen || !user) return null;
+
+  const viewData = currentView || user;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-50 animate-in fade-in duration-200">
@@ -68,8 +112,32 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
           </button>
         </div>
 
+        </div>
+
+        {/* Admin Dropdown */}
+        {user?.role === 'admin' && (
+          <div className="px-4 sm:px-12 pt-6 pb-2 max-w-md mx-auto w-full z-10 relative">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block text-center">View Structure For</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search size={16} className="text-slate-400" />
+              </div>
+              <select
+                value={selectedEmpId}
+                onChange={(e) => setSelectedEmpId(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none font-medium text-slate-700 shadow-sm"
+              >
+                <option value="">-- My Structure --</option>
+                {allEmployees.map(emp => (
+                  <option key={emp.id} value={emp.id}>{emp.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
         {/* Content - Org Chart Hierarchy */}
-        <div className="p-4 sm:p-12 flex flex-col items-center min-h-[calc(100vh-80px)] justify-center">
+        <div className={`p-4 sm:p-12 flex flex-col items-center min-h-[calc(100vh-80px)] justify-center transition-opacity duration-200 ${loading ? 'opacity-50' : 'opacity-100'}`}>
           
           {/* Top Level: Manager and HR */}
           <div className="flex flex-col items-center mb-12 relative w-full">
@@ -77,7 +145,7 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
               {/* Manager */}
               <div className="flex flex-col items-center relative flex-1">
                 <OrgNode 
-                  profile={user.managerProfile || { name: 'Not Assigned', role: 'manager' }} 
+                  profile={viewData.managerProfile || { name: 'Not Assigned', role: 'manager' }} 
                   title="Manager" 
                   themeColor="fuchsia"
                 />
@@ -87,7 +155,7 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
               {/* HR Partner */}
               <div className="flex flex-col items-center relative flex-1">
                 <OrgNode 
-                  profile={user.hrProfile || { name: 'Not Assigned', role: 'hr' }} 
+                  profile={viewData.hrProfile || { name: 'Not Assigned', role: 'hr' }} 
                   title="HR Partner" 
                   themeColor="blue"
                 />
@@ -105,7 +173,7 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
           {/* Team Leader */}
           <div className="flex flex-col items-center mb-8 relative">
             <OrgNode 
-              profile={user.teamLeaderProfile || { name: 'Not Assigned', role: 'team_leader' }} 
+              profile={viewData.teamLeaderProfile || { name: 'Not Assigned', role: 'team_leader' }} 
               title="Team Leader" 
               themeColor="emerald"
             />
@@ -116,32 +184,32 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
           <div className="bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] p-6 rounded-2xl shadow-xl shadow-blue-500/20 w-full max-w-sm flex flex-col items-center relative z-10 mb-8 border border-white/20">
             <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/50 shadow-md mb-3 bg-white">
               <img 
-                src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=ff5a1f&color=fff`} 
-                alt={user.name} 
+                src={viewData.avatar || `https://ui-avatars.com/api/?name=${viewData.name}&background=ff5a1f&color=fff`} 
+                alt={viewData.name} 
                 className="w-full h-full object-cover" 
               />
             </div>
             <div className="text-center">
-              <p className="font-black text-white text-lg tracking-wide">{user.name}</p>
-              <p className="text-[11px] font-bold text-blue-100 uppercase tracking-widest">{user.designation || user.role?.replace('_', ' ')}</p>
-              <p className="text-[10px] text-blue-50/80 uppercase mt-1">{user.department}</p>
+              <p className="font-black text-white text-lg tracking-wide">{viewData.name}</p>
+              <p className="text-[11px] font-bold text-blue-100 uppercase tracking-widest">{viewData.designation || viewData.role?.replace('_', ' ')}</p>
+              <p className="text-[10px] text-blue-50/80 uppercase mt-1">{viewData.department}</p>
             </div>
             
-            {user.teamMembers?.length > 0 && (
+            {viewData.teamMembers?.length > 0 && (
               <div className="w-px h-8 bg-slate-300 absolute -bottom-8 left-1/2 transform -translate-x-1/2 z-0"></div>
             )}
           </div>
 
           {/* Direct Reports */}
-          {user.teamMembers?.length > 0 && (
+          {viewData.teamMembers?.length > 0 && (
             <div className="w-full relative mt-4 pb-4">
               {/* Horizontal Line connector if multiple reports */}
-              {user.teamMembers.length > 1 && (
+              {viewData.teamMembers.length > 1 && (
                 <div className="absolute top-0 left-[15%] right-[15%] h-px bg-slate-300"></div>
               )}
               
               <div className="flex justify-center gap-6 sm:gap-12 flex-wrap pt-6 relative">
-                {user.teamMembers.map((member, idx) => (
+                {viewData.teamMembers.map((member, idx) => (
                   <div key={member.id} className="relative flex flex-col items-center">
                     {/* Vertical line from horizontal line to node */}
                     <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-px h-6 bg-slate-300"></div>
