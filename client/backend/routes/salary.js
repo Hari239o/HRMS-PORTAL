@@ -288,13 +288,10 @@ function generateProfessionalPDF(doc, salary) {
 
   const paddedMonth = monthLabel(salary.month);
 
-  const logoPath = path.join(__dirname, '../../../public/logo-only.png');
+  const logoPath = path.join(__dirname, '../../../public/company-logo.jpeg');
   if (fs.existsSync(logoPath)) {
-    doc.image(logoPath, margin, margin - 5, { width: 36 });
-    doc.fillColor('#ff5a1f').font(titleFont).fontSize(24).text('GEONIXA', margin + 45, margin);
-    doc.fillColor('#64748b').font(titleFont).fontSize(8).text('TECHNOLOGIES PVT. LTD.', margin + 46, margin + 22);
-  } else {
-    doc.fillColor('#ff5a1f').font(titleFont).fontSize(28).text('GEONIXA', margin, margin);
+    // Determine image dimensions to scale it properly without distortion
+    doc.image(logoPath, margin, margin - 10, { width: 150 });
   }
   
   doc.font(bodyFont).fontSize(9).fillColor('#333333').text('247, Trendz Aspire, Madhapur, Hyderabad, 500033', margin, margin + 5, { align: 'right' });
