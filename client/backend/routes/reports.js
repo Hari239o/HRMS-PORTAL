@@ -652,7 +652,7 @@ router.get('/dashboard-full', authenticate, authorize(['admin']), async (req, re
       prisma.attendance.findMany({ where: { date: today } }),
       prisma.attendance.findMany({ where: { date: { gte: startDate, lte: endDate } } }),
       prisma.leave.findMany({ orderBy: { createdAt: 'desc' }, take: 10, include: { employee: { select: { name: true } } } }),
-      prisma.problem.findMany({ orderBy: { createdAt: 'desc' }, take: 10, include: { employee: { select: { name: true } } } })
+      prisma.problem.findMany({ orderBy: { createdAt: 'desc' }, take: 10 })
     ]);
 
     // 1. Dashboard Stats
@@ -684,7 +684,10 @@ router.get('/dashboard-full', authenticate, authorize(['admin']), async (req, re
     // 3. Recent Activity
     const activities = [
       ...recentLeaves.map(l => ({ type: 'leave', action: 'Applied for leave', name: l.employee?.name || 'Unknown', time: l.createdAt })),
-      ...recentProblems.map(p => ({ type: 'problem', action: 'Reported a problem', name: p.employee?.name || 'Unknown', time: p.createdAt }))
+      ...recentProblems.map(p => {
+        const empName = allEmployees.find(e => e.id === p.employeeId)?.name || 'Unknown';
+        return { type: 'problem', action: 'Reported a problem', name: empName, time: p.createdAt };
+      })
     ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 10);
 
     // 4. Formatted Employees (for allEmployees drop down)
