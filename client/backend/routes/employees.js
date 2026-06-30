@@ -115,7 +115,7 @@ router.get('/:id/documents', authenticate, async (req, res) => {
   }
 });
 
-router.get('/:id/org-structure', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/:id/org-structure', authenticate, async (req, res) => {
   try {
     const emp = await prisma.employee.findUnique({
       where: { id: req.params.id }
