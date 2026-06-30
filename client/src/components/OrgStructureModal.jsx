@@ -112,8 +112,6 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
           </button>
         </div>
 
-        </div>
-
         {/* Admin Dropdown */}
         {user?.role === 'admin' && (
           <div className="px-4 sm:px-12 pt-6 pb-2 max-w-md mx-auto w-full z-10 relative">
