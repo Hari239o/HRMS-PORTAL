@@ -9,36 +9,39 @@ const router = express.Router();
 router.get('/dashboard-stats', authenticate, authorize(['admin']), async (req, res) => {
   const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
   try {
-    const workforce = await prisma.employee.findMany({
+    const totalEmployees = await prisma.employee.count({
       where: { role: { not: 'admin' } }
     });
-    const totalEmployees = workforce.length;
 
     const attendanceRecords = await prisma.attendance.findMany({
-      where: { date: today }
+      where: { date: today },
+      include: { employee: { select: { id: true, name: true } } }
     });
     
     let presentTodayList = [];
     let halfDaysTodayList = [];
-    const attendedEmpIds = new Set();
+    const attendedEmpIds = [];
     
     attendanceRecords.forEach(data => {
-      const empName = workforce.find(e => e.id === data.employeeId)?.name || 'Unknown';
+      const empName = data.employee?.name || 'Unknown';
       if (data.status === 'Present') {
         presentTodayList.push({ id: data.employeeId, name: empName });
-        attendedEmpIds.add(data.employeeId);
+        attendedEmpIds.push(data.employeeId);
       } else if (data.status === 'Half Day' || data.status === 'Late') {
         halfDaysTodayList.push({ id: data.employeeId, name: empName, status: data.status });
-        attendedEmpIds.add(data.employeeId);
+        attendedEmpIds.push(data.employeeId);
       }
     });
 
-    let absentTodayList = [];
-    workforce.forEach(emp => {
-      if (!attendedEmpIds.has(emp.id)) {
-        absentTodayList.push({ id: emp.id, name: emp.name });
-      }
+    const absentEmployees = await prisma.employee.findMany({
+      where: {
+        role: { not: 'admin' },
+        id: { notIn: attendedEmpIds }
+      },
+      select: { id: true, name: true }
     });
+
+    const absentTodayList = absentEmployees.map(emp => ({ id: emp.id, name: emp.name }));
 
     const leavesTodayRecords = await prisma.leave.findMany({
       where: {
@@ -46,7 +49,7 @@ router.get('/dashboard-stats', authenticate, authorize(['admin']), async (req, r
         fromDate: { lte: new Date(`${today}T23:59:59Z`) },
         toDate: { gte: new Date(`${today}T00:00:00Z`) }
       },
-      include: { employee: true }
+      include: { employee: { select: { id: true, name: true } } }
     });
     
     const leavesTodayList = leavesTodayRecords.map(l => ({ id: l.employeeId, name: l.employee?.name || 'Unknown', type: l.type }));
