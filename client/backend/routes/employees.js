@@ -399,15 +399,20 @@ router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
     }
 
     // Delete related records manually to avoid transaction/connection-pool issues
-    await prisma.attendance.deleteMany({ where: { employeeId: req.params.id } });
-    await prisma.leave.deleteMany({ where: { employeeId: req.params.id } });
-    await prisma.salary.deleteMany({ where: { employeeId: req.params.id } });
-    await prisma.jobReferral.deleteMany({ where: { employeeId: req.params.id } });
-    await prisma.resignation.deleteMany({ where: { employeeId: req.params.id } });
-    await prisma.problem.deleteMany({ where: { employeeId: req.params.id } });
-    await prisma.callLog.deleteMany({ where: { employeeId: req.params.id } });
-    await prisma.followup.deleteMany({ where: { assignedEmployeeId: req.params.id } });
-    await prisma.target.deleteMany({ where: { employeeId: req.params.id } });
+    // Wrap in try-catch because some tables might not exist in the production database yet
+    const safeDelete = async (promise) => {
+      try { await promise; } catch (e) { /* ignore missing tables */ }
+    };
+
+    await safeDelete(prisma.attendance.deleteMany({ where: { employeeId: req.params.id } }));
+    await safeDelete(prisma.leave.deleteMany({ where: { employeeId: req.params.id } }));
+    await safeDelete(prisma.salary.deleteMany({ where: { employeeId: req.params.id } }));
+    await safeDelete(prisma.jobReferral.deleteMany({ where: { employeeId: req.params.id } }));
+    await safeDelete(prisma.resignation.deleteMany({ where: { employeeId: req.params.id } }));
+    await safeDelete(prisma.problem.deleteMany({ where: { employeeId: req.params.id } }));
+    await safeDelete(prisma.callLog.deleteMany({ where: { employeeId: req.params.id } }));
+    await safeDelete(prisma.followup.deleteMany({ where: { assignedEmployeeId: req.params.id } }));
+    await safeDelete(prisma.target.deleteMany({ where: { employeeId: req.params.id } }));
     
     // Finally delete the employee
     await prisma.employee.delete({ where: { id: req.params.id } });
