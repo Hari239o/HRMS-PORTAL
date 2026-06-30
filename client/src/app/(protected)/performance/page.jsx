@@ -536,18 +536,25 @@ export default function Performance() {
                         </td>
                         <td className="px-6 py-5">
                           <div className="space-y-1">
-                            <div className="flex justify-between items-center bg-slate-50 px-2 py-1 rounded">
-                              <span className="text-[10px] font-bold text-slate-500">Total:</span>
-                              <span className="font-black text-slate-800">₹{sub.totalAmount || 0}</span>
-                            </div>
-                            <div className="flex justify-between items-center bg-emerald-50 px-2 py-1 rounded border border-emerald-100/50">
-                              <span className="text-[10px] font-bold text-emerald-600">Paid:</span>
-                              <span className="font-black text-emerald-700">₹{sub.amountPaid || 0}</span>
-                            </div>
-                            {sub.remainingAmount > 0 && (
-                              <div className="flex justify-between items-center bg-rose-50 px-2 py-1 rounded border border-rose-100/50">
-                                <span className="text-[10px] font-bold text-rose-500">Due {sub.remainingAmountDate ? `(${new Date(sub.remainingAmountDate).toLocaleDateString()})` : ''}:</span>
-                                <span className="font-black text-rose-600">₹{sub.remainingAmount}</span>
+                            {sub.remainingAmount > 0 ? (
+                              <>
+                                <div className="flex justify-between items-center bg-slate-50 px-2 py-1 rounded">
+                                  <span className="text-[10px] font-bold text-slate-500">Total:</span>
+                                  <span className="font-black text-slate-800">₹{sub.totalAmount || 0}</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-emerald-50 px-2 py-1 rounded border border-emerald-100/50">
+                                  <span className="text-[10px] font-bold text-emerald-600">Paid:</span>
+                                  <span className="font-black text-emerald-700">₹{sub.amountPaid || 0}</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-rose-50 px-2 py-1 rounded border border-rose-100/50">
+                                  <span className="text-[10px] font-bold text-rose-500">Due {sub.remainingAmountDate ? `(${new Date(sub.remainingAmountDate).toLocaleDateString()})` : ''}:</span>
+                                  <span className="font-black text-rose-600">₹{sub.remainingAmount}</span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="flex justify-between items-center bg-emerald-50 px-2 py-2 rounded border border-emerald-200 shadow-sm">
+                                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">Total Amount Paid:</span>
+                                <span className="font-black text-emerald-700">₹{sub.amountPaid || sub.totalAmount}</span>
                               </div>
                             )}
                           </div>
@@ -820,18 +827,25 @@ export default function Performance() {
                         </td>
                         <td className="px-6 py-5">
                           <div className="space-y-1 max-w-[200px]">
-                            <div className="flex justify-between items-center bg-slate-50 px-2 py-1.5 rounded">
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Total</span>
-                              <span className="font-black text-slate-800">₹{sub.totalAmount || 0}</span>
-                            </div>
-                            <div className="flex justify-between items-center bg-emerald-50 px-2 py-1.5 rounded border border-emerald-100">
-                              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Cleared</span>
-                              <span className="font-black text-emerald-700">₹{sub.amountPaid || 0}</span>
-                            </div>
-                            {sub.remainingAmount > 0 && (
-                              <div className="flex justify-between items-center bg-rose-50 px-2 py-1.5 rounded border border-rose-100">
-                                <span className="text-[9px] font-bold text-rose-500 uppercase tracking-widest truncate">Due {sub.remainingAmountDate ? `(${new Date(sub.remainingAmountDate).toLocaleDateString()})` : ''}</span>
-                                <span className="font-black text-rose-600">₹{sub.remainingAmount}</span>
+                            {sub.remainingAmount > 0 ? (
+                              <>
+                                <div className="flex justify-between items-center bg-slate-50 px-2 py-1.5 rounded">
+                                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Total</span>
+                                  <span className="font-black text-slate-800">₹{sub.totalAmount || 0}</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-emerald-50 px-2 py-1.5 rounded border border-emerald-100">
+                                  <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Cleared</span>
+                                  <span className="font-black text-emerald-700">₹{sub.amountPaid || 0}</span>
+                                </div>
+                                <div className="flex justify-between items-center bg-rose-50 px-2 py-1.5 rounded border border-rose-100">
+                                  <span className="text-[9px] font-bold text-rose-500 uppercase tracking-widest truncate">Due {sub.remainingAmountDate ? `(${new Date(sub.remainingAmountDate).toLocaleDateString()})` : ''}</span>
+                                  <span className="font-black text-rose-600">₹{sub.remainingAmount}</span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="flex justify-between items-center bg-emerald-50 px-2 py-2 rounded border border-emerald-200 shadow-sm">
+                                <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest truncate">Total Amount Paid</span>
+                                <span className="font-black text-emerald-700">₹{sub.amountPaid || sub.totalAmount}</span>
                               </div>
                             )}
                           </div>

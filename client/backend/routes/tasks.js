@@ -164,7 +164,14 @@ router.patch('/submit/:id/status', authenticate, ownerOrAdmin(async (req) => {
 
     const updates = {};
     if (callStatus !== undefined) updates.callStatus = callStatus;
-    if (paymentStatus !== undefined) updates.paymentStatus = paymentStatus;
+    if (paymentStatus !== undefined) {
+      updates.paymentStatus = paymentStatus;
+      if (paymentStatus === 'Paid') {
+        updates.amountPaid = submission.totalAmount;
+        updates.remainingAmount = 0;
+        updates.remainingAmountDate = null;
+      }
+    }
 
     await prisma.studentSubmission.update({
       where: { id: req.params.id },
