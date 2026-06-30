@@ -368,19 +368,35 @@ export default function Dashboard() {
 
         {/* Wall of Fame (Employee View) */}
         {starPerformers.length > 0 && (
-          <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-5 sm:p-6 mb-2">
-            <h3 className="font-black text-lg text-slate-800 flex items-center gap-2 mb-4">
-              <Star size={20} className="text-yellow-400 drop-shadow-sm fill-yellow-400" /> Wall of Fame
+          <div className="bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-3xl p-6 sm:p-8 mb-4 border border-white/10 relative overflow-hidden group">
+            {/* Background Glow */}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-yellow-500/10 blur-3xl group-hover:bg-yellow-400/20 transition-all duration-700"></div>
+            
+            <h3 className="font-black text-xl text-white flex items-center gap-3 mb-6 relative z-10 tracking-tight">
+              <Star size={24} className="text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)] fill-yellow-400" /> 
+              Wall of Fame
             </h3>
-            <div className="space-y-3">
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
               {starPerformers.map(star => (
-                <div key={star.id} className="bg-gradient-to-r from-yellow-50 to-amber-50/50 border border-yellow-100/50 rounded-2xl p-4 flex items-center gap-4 transition-all hover:shadow-md">
-                  <div className="w-12 h-12 rounded-full bg-white text-yellow-600 flex items-center justify-center font-black text-lg shadow-sm ring-2 ring-yellow-200/50">
-                    {star.name.charAt(0)}
+                <div key={star.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 hover:bg-white/10 hover:-translate-y-1 hover:shadow-xl hover:shadow-yellow-500/10 group/card">
+                  <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center shadow-lg ring-2 ring-yellow-400/50 group-hover/card:ring-yellow-400 transition-all overflow-hidden shrink-0">
+                    <img 
+                      src={star.avatar || `https://ui-avatars.com/api/?name=${star.name}&background=eab308&color=fff`} 
+                      alt={star.name} 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <div>
-                    <p className="font-black text-base leading-tight text-slate-800">{star.name}</p>
-                    <p className="text-xs font-black text-yellow-600 uppercase tracking-widest">{star.starPerformer}ly Star Performer</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-black text-lg text-white truncate">{star.name}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300 text-[9px] font-black uppercase tracking-widest border border-yellow-500/30 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                        {star.starPerformer}ly Star
+                      </span>
+                      {star.department && (
+                        <span className="text-[10px] text-slate-400 font-semibold truncate uppercase">{star.department}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -500,14 +516,18 @@ export default function Dashboard() {
             {starPerformers.length > 0 ? (
               <div className="space-y-3">
                 {starPerformers.map(star => (
-                  <div key={star.id} className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between group transition-all hover:border-slate-300">
+                  <div key={star.id} className="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700/50 rounded-xl p-3 flex items-center justify-between group transition-all hover:border-yellow-500/50 hover:shadow-lg hover:shadow-yellow-500/10">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-100 to-blue-50 text-blue-600 flex items-center justify-center font-black text-sm shadow-sm ring-1 ring-slate-200">
-                        {star.name.charAt(0)}
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm ring-2 ring-yellow-500/80">
+                        <img 
+                          src={star.avatar || `https://ui-avatars.com/api/?name=${star.name}&background=eab308&color=fff`} 
+                          alt={star.name} 
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <div>
-                        <p className="font-bold text-sm leading-tight text-slate-800">{star.name}</p>
-                        <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">{star.starPerformer}ly Star</p>
+                        <p className="font-bold text-sm leading-tight text-white">{star.name}</p>
+                        <p className="text-[10px] font-black text-yellow-400 uppercase tracking-widest">{star.starPerformer}ly Star</p>
                       </div>
                     </div>
                     <button 
