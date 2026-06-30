@@ -634,4 +634,75 @@ router.get('/recent-activity', authenticate, authorize(['admin']), async (req, r
   }
 });
 
+router.get('/dashboard-full', authenticate, authorize(['admin']), async (req, res) => {
+  const { month, year } = req.query;
+  const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
+  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+  const endDate = DateTime.fromISO(startDate).plus({ months: 1 }).minus({ days: 1 }).toISODate();
+
+  try {
+    const workforce = await prisma.employee.findMany({ where: { role: { not: 'admin' } } });
+    const allEmployees = await prisma.employee.findMany({ orderBy: { name: 'asc' } });
+    const starPerformers = await prisma.employee.findMany({
+      where: { starPerformer: { not: 'none' } },
+      select: { id: true, name: true, avatar: true, starPerformer: true }
+    });
+
+    const [attendanceRecords, monthlyAttendance, recentLeaves, recentProblems] = await Promise.all([
+      prisma.attendance.findMany({ where: { date: today } }),
+      prisma.attendance.findMany({ where: { date: { gte: startDate, lte: endDate } } }),
+      prisma.leave.findMany({ orderBy: { createdAt: 'desc' }, take: 10, include: { employee: { select: { name: true } } } }),
+      prisma.problem.findMany({ orderBy: { createdAt: 'desc' }, take: 10, include: { employee: { select: { name: true } } } })
+    ]);
+
+    // 1. Dashboard Stats
+    let presentTodayList = [];
+    let halfDaysTodayList = [];
+    const attendedEmpIds = new Set();
+    attendanceRecords.forEach(data => {
+      const empName = workforce.find(e => e.id === data.employeeId)?.name || 'Unknown';
+      if (data.status === 'Present') { presentTodayList.push({ id: data.employeeId, name: empName }); attendedEmpIds.add(data.employeeId); }
+      else if (data.status === 'Half Day' || data.status === 'Late') { halfDaysTodayList.push({ id: data.employeeId, name: empName, status: data.status }); attendedEmpIds.add(data.employeeId); }
+    });
+    let absentTodayList = workforce.filter(emp => !attendedEmpIds.has(emp.id)).map(emp => ({ id: emp.id, name: emp.name }));
+    const leavesTodayRecords = await prisma.leave.findMany({
+      where: { status: 'Approved', fromDate: { lte: new Date(`${today}T23:59:59Z`) }, toDate: { gte: new Date(`${today}T00:00:00Z`) } },
+      include: { employee: true }
+    });
+    const leavesTodayList = leavesTodayRecords.map(l => ({ id: l.employeeId, name: l.employee?.name || 'Unknown', type: l.type }));
+    
+    const dashboardStats = {
+      totalEmployees: workforce.length, presentToday: presentTodayList.length, halfDaysToday: halfDaysTodayList.length,
+      absentToday: absentTodayList.length, leavesToday: leavesTodayList.length,
+      presentTodayList, halfDaysTodayList, absentTodayList, leavesTodayList
+    };
+
+    // 2. Analytics Monthly
+    const analytics = { Present: 0, 'Half Day': 0, Absent: 0 };
+    monthlyAttendance.forEach(doc => { if (analytics[doc.status] !== undefined) analytics[doc.status]++; });
+
+    // 3. Recent Activity
+    const activities = [
+      ...recentLeaves.map(l => ({ type: 'leave', action: 'Applied for leave', name: l.employee?.name || 'Unknown', time: l.createdAt })),
+      ...recentProblems.map(p => ({ type: 'problem', action: 'Reported a problem', name: p.employee?.name || 'Unknown', time: p.createdAt }))
+    ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 10);
+
+    // 4. Formatted Employees (for allEmployees drop down)
+    const formattedEmployees = allEmployees.map(emp => ({
+      id: emp.id, name: emp.name, email: emp.email, role: emp.role, department: emp.department,
+      avatar: emp.avatar || '', empId: emp.empId || '', designation: emp.designation || ''
+    }));
+
+    res.json({
+      dashboardStats,
+      analytics,
+      recentActivity: activities,
+      allEmployees: formattedEmployees,
+      starPerformers
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

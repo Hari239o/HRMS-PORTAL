@@ -20,6 +20,7 @@ const salaryRoutes = require('./routes/salary');
 const taskRoutes = require('./routes/tasks');
 const settingsRoutes = require('./routes/settings');
 const approvalsRoutes = require('./routes/approvals');
+const messagesRoutes = require('./routes/messages');
 
 const app = express();
 
@@ -87,6 +88,7 @@ app.use('/api/approvals', approvalsRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/resignations', require('./routes/resignations'));
 app.use('/api/recruitment', require('./routes/recruitment'));
+app.use('/api/messages', messagesRoutes);
 
 // Fallback for Vercel Serverless where /api prefix is stripped from req.url
 app.use('/auth', authRoutes);
@@ -103,6 +105,7 @@ app.use('/approvals', approvalsRoutes);
 app.use('/onboarding', onboardingRoutes);
 app.use('/resignations', require('./routes/resignations'));
 app.use('/recruitment', require('./routes/recruitment'));
+app.use('/messages', messagesRoutes);
 
 
 app.use((err, req, res, next) => {

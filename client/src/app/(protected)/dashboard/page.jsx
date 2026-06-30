@@ -78,11 +78,19 @@ export default function Dashboard() {
   const [messageFormOpenId, setMessageFormOpenId] = useState(null);
   const [customMessage, setCustomMessage] = useState('');
 
-  const sendCongratulations = (id, name, isCustom = false) => {
-    toast.success(`Message sent to ${name}!`);
-    if (isCustom) {
-      setMessageFormOpenId(null);
-      setCustomMessage('');
+  const sendCongratulations = async (id, name, isCustom = false) => {
+    try {
+      await api.post('/api/messages', {
+        receiverId: id,
+        content: isCustom ? customMessage : 'Congratulations on your excellent performance this week! Keep up the great work.',
+      });
+      toast.success(`Message sent to ${name}!`);
+      if (isCustom) {
+        setMessageFormOpenId(null);
+        setCustomMessage('');
+      }
+    } catch (error) {
+      toast.error('Failed to send message');
     }
   };
 
@@ -108,20 +116,15 @@ export default function Dashboard() {
     try {
       setLoading(true);
       if (user.role === 'admin') {
-        const [statsRes, analyticsRes, activityRes, employeesRes, starsRes] = await Promise.all([
-          api.get(`/api/reports/dashboard-stats`),
-          api.get(`/api/reports/analytics/monthly?month=${new Date().getMonth() + 1}&year=${new Date().getFullYear()}`),
-          api.get(`/api/reports/recent-activity`),
-          api.get(`/api/employees`),
-          api.get(`/api/employees/star-performers`)
-        ]);
+        const fullRes = await api.get(`/api/reports/dashboard-full?month=${new Date().getMonth() + 1}&year=${new Date().getFullYear()}`);
+        const data = fullRes.data;
         
-        setAdminStats(statsRes.data);
-        setRecentActivity(activityRes.data);
-        setAllEmployees(employeesRes.data);
-        setStarPerformers(starsRes.data);
+        setAdminStats(data.dashboardStats);
+        setRecentActivity(data.recentActivity);
+        setAllEmployees(data.allEmployees);
+        setStarPerformers(data.starPerformers);
                 
-        const analyticsData = Object.entries(analyticsRes.data).map(([name, value]) => ({ 
+        const analyticsData = Object.entries(data.analytics).map(([name, value]) => ({ 
           name, 
           value,
           color: name === 'Present' ? '#6366f1' : name === 'Late' ? '#f59e0b' : '#f43f5e'
