@@ -70,6 +70,7 @@ export default function Dashboard() {
   const [chartData, setChartData] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [starDeclarationForm, setStarDeclarationForm] = useState({ employeeId: '', badge: 'week' });
 
   // Shared State
@@ -128,14 +129,16 @@ export default function Dashboard() {
         setChartData(analyticsData);
       } else {
         // Employee Dashboard Data
-        const [attendanceRes, leavesRes, payslipsRes, starsRes, meRes] = await Promise.all([
+        const [attendanceRes, leavesRes, payslipsRes, starsRes, meRes, directoryRes] = await Promise.all([
           api.get(`${process.env.NEXT_PUBLIC_API_URL || ``}/api/attendance`),
           api.get(`${process.env.NEXT_PUBLIC_API_URL || ``}/api/leaves`),
           api.get(`${process.env.NEXT_PUBLIC_API_URL || ``}/api/salary`),
           api.get(`${process.env.NEXT_PUBLIC_API_URL || ``}/api/employees/star-performers`),
-          api.get(`/api/employees/me`)
+          api.get(`/api/employees/me`),
+          api.get(`/api/employees/directory`)
         ]);
 
+        setAllEmployees(directoryRes.data);
         const personalAttendance = attendanceRes.data || [];
         const personalLeaves = leavesRes.data || [];
         setStarPerformers(starsRes.data);
@@ -353,15 +356,41 @@ export default function Dashboard() {
       <div className="flex flex-col gap-5 md:gap-6 pb-12 w-full max-w-lg mx-auto md:max-w-none fade-in">
         
         {/* Search Bar */}
-        <div className="relative w-full">
+        <div className="relative w-full z-20">
           <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
             <Search size={18} className="text-slate-400" />
           </div>
           <input 
             type="text" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by Member name or Member ID" 
             className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200/80 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-400 transition-all hover:border-slate-300"
           />
+          
+          {searchQuery.trim().length > 0 && (
+            <div className="absolute top-full mt-2 w-full bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-h-80 overflow-y-auto">
+              {allEmployees.filter(emp => emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || emp.empId?.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
+                allEmployees.filter(emp => emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || emp.empId?.toLowerCase().includes(searchQuery.toLowerCase())).map(emp => (
+                  <div key={emp.id} className="flex items-center gap-4 p-4 border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-blue-100 to-blue-50 text-blue-600 flex items-center justify-center shrink-0 shadow-sm ring-1 ring-slate-200">
+                      {emp.avatar ? (
+                        <img src={emp.avatar} alt={emp.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="font-black text-sm">{emp.name.charAt(0)}</span>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-800 text-sm">{emp.name} {emp.empId && <span className="text-slate-400 font-normal ml-1">({emp.empId})</span>}</p>
+                      <p className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">{emp.designation || emp.role?.replace('_', ' ')}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-4 text-center text-slate-500 text-sm font-medium">No members found matching "{searchQuery}"</div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Banner Removed */}
@@ -380,12 +409,16 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
               {starPerformers.map(star => (
                 <div key={star.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300 hover:bg-white/10 hover:-translate-y-1 hover:shadow-xl hover:shadow-yellow-500/10 group/card">
-                  <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center shadow-lg ring-2 ring-yellow-400/50 group-hover/card:ring-yellow-400 transition-all overflow-hidden shrink-0">
-                    <img 
-                      src={star.avatar || `https://ui-avatars.com/api/?name=${star.name}&background=eab308&color=fff`} 
-                      alt={star.name} 
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center shadow-lg ring-2 ring-yellow-400/50 group-hover/card:ring-yellow-400 transition-all overflow-hidden shrink-0 text-yellow-500 font-black text-xl">
+                    {star.avatar ? (
+                      <img 
+                        src={star.avatar} 
+                        alt={star.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      star.name.charAt(0)
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-black text-lg text-white truncate">{star.name}</p>
@@ -518,12 +551,16 @@ export default function Dashboard() {
                 {starPerformers.map(star => (
                   <div key={star.id} className="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700/50 rounded-xl p-3 flex items-center justify-between group transition-all hover:border-yellow-500/50 hover:shadow-lg hover:shadow-yellow-500/10">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm ring-2 ring-yellow-500/80">
-                        <img 
-                          src={star.avatar || `https://ui-avatars.com/api/?name=${star.name}&background=eab308&color=fff`} 
-                          alt={star.name} 
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm ring-2 ring-yellow-500/80 bg-slate-800 text-yellow-500 font-black text-lg">
+                        {star.avatar ? (
+                          <img 
+                            src={star.avatar} 
+                            alt={star.name} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          star.name.charAt(0)
+                        )}
                       </div>
                       <div>
                         <p className="font-bold text-sm leading-tight text-white">{star.name}</p>
