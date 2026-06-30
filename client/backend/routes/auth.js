@@ -111,7 +111,7 @@ router.post('/register', async (req, res) => {
                     </table>
 
                     <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0 0 30px 0;">
-                      You are requested to access the Geonixa HRMS portal to complete your biometrics registration, review pending compliance documents, and initiate standard daily attendance logs.
+                      You are requested to access the Geonixa EMS portal to complete your biometrics registration, review pending compliance documents, and initiate standard daily attendance logs.
                     </p>
                     
                     <div style="border-top: 1px solid #e5e7eb; padding-top: 25px;">

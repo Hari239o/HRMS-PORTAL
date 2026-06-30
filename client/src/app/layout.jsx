@@ -4,13 +4,13 @@ import { AuthProvider } from '@/context/AuthContext';
 import AxiosInterceptor from '@/components/AxiosInterceptor';
 
 export const metadata = {
-  title: 'Geonixa HR Portal',
-  description: 'HR Management System by Geonixa',
+  title: 'Geonixa EMS Portal',
+  description: 'EMS by Geonixa',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Geonixa HR',
+    title: 'Geonixa EMS',
   },
 };
 

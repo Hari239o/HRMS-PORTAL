@@ -98,7 +98,7 @@ const Login = () => {
             <h2 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">
               {isAdminView ? "Administrator Access" : "Employee Portal"}
             </h2>
-            <p className="text-slate-500 text-sm font-medium">Secure access to Geonixa HR Systems</p>
+            <p className="text-slate-500 text-sm font-medium">Secure access to Geonixa EMS</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

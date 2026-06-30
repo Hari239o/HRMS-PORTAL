@@ -1,7 +1,7 @@
 {
-  "name": "Geonixa HR Portal",
-  "short_name": "Geonixa HR",
-  "description": "HR Management System by Geonixa",
+  "name": "Geonixa EMS Portal",
+  "short_name": "Geonixa EMS",
+  "description": "EMS by Geonixa",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

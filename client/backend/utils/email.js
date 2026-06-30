@@ -11,7 +11,7 @@ const sendEmail = async (to, subject, html, attachments = [], options = {}) => {
     });
 
     const mailOptions = {
-      from: options.from || `"Geonixa HR" <${process.env.EMAIL_USER || 'your_email@gmail.com'}>`,
+      from: options.from || `"Geonixa EMS" <${process.env.EMAIL_USER || 'your_email@gmail.com'}>`,
       replyTo: options.replyTo,
       to,
       subject,

@@ -51,7 +51,7 @@ export default function InstallPrompt() {
       <div className="flex items-center gap-4 w-full">
         <img src="/geonixa-logo.png" alt="Geonixa" className="w-12 h-12 rounded-2xl shadow-sm border border-slate-100" />
         <div className="flex-grow">
-          <p className="text-base font-black text-slate-900">Install Geonixa HR</p>
+          <p className="text-base font-black text-slate-900">Install Geonixa EMS</p>
           <p className="text-xs font-bold text-slate-500 mt-0.5">
             {isIOS ? 'Tap Share and "Add to Home Screen"' : 'Add to home screen for quick access and better experience'}
           </p>
