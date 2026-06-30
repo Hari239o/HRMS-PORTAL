@@ -288,15 +288,17 @@ function generateProfessionalPDF(doc, salary) {
 
   const paddedMonth = monthLabel(salary.month);
 
-  const logoPath = path.join(__dirname, '../../../public/company-logo.jpeg');
+  const logoPath = path.join(__dirname, '../../../public/logo-only.png');
   if (fs.existsSync(logoPath)) {
-    doc.image(logoPath, margin, margin - 5, { width: 160 });
+    doc.image(logoPath, margin, margin - 5, { width: 36 });
+    doc.fillColor('#ff5a1f').font(titleFont).fontSize(24).text('GEONIXA', margin + 45, margin);
+    doc.fillColor('#64748b').font(titleFont).fontSize(8).text('TECHNOLOGIES PVT. LTD.', margin + 46, margin + 22);
   } else {
-    doc.fillColor('#e84b25').font(titleFont).fontSize(28).text('GEONIXA', margin, margin);
+    doc.fillColor('#ff5a1f').font(titleFont).fontSize(28).text('GEONIXA', margin, margin);
   }
   
-  doc.font(bodyFont).fontSize(9).fillColor('#333333').text('247, Trendz aspire, Madhapur, Hyderabad,500033', margin, margin + 10, { align: 'right' });
-  doc.text('www.geonixa.com', margin, margin + 22, { align: 'right' });
+  doc.font(bodyFont).fontSize(9).fillColor('#333333').text('247, Trendz Aspire, Madhapur, Hyderabad, 500033', margin, margin + 5, { align: 'right' });
+  doc.text('www.geonixa.com', margin, margin + 18, { align: 'right' });
   
   doc.moveTo(margin, margin + 40).lineTo(doc.page.width - margin, margin + 40).lineWidth(1).stroke('#000000');
   

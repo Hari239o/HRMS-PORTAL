@@ -105,11 +105,24 @@ export default function Salary() {
     }
   };
 
-  const downloadPayslip = (salary) => {
+  const downloadPayslip = async (salary) => {
     if (user.role !== 'admin' && salary.status !== 'Released') {
       return toast.error('Payslip is not yet released.');
     }
-    window.open(`/api/salary/generate/${salary.id}`, '_blank');
+    try {
+      const response = await api.get(`/api/salary/generate/${salary.id}`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `payslip-${salary.month}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      toast.error('Failed to download payslip');
+    }
   };
 
   const releasePayslip = async (salaryId) => {
