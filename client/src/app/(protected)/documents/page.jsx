@@ -31,15 +31,46 @@ export default function Documents() {
   useEffect(() => {
     if (!user) return;
     fetchMyDocuments();
+    if (user.role === 'admin') {
+      fetchAllEmployees();
+    }
   }, [user]);
+
+  const fetchAllEmployees = async () => {
+    try {
+      const res = await api.get('/api/employees');
+      setAllEmployees(res.data);
+    } catch (err) {
+      console.error('Failed to load employees', err);
+    }
+  };
 
   const fetchMyDocuments = async () => {
     try {
       setLoading(true);
       const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL || ``}/api/employees/me`);
       setDocuments(res.data.documents || {});
+      setSelectedEmpId('');
     } catch (err) {
       toast.error('Failed to load documents');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchEmployeeDocuments = async (empId) => {
+    if (!empId) {
+      fetchMyDocuments();
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL || ``}/api/employees/${empId}/documents`);
+      setDocuments(res.data || {});
+      setSelectedEmpId(empId);
+    } catch (err) {
+      toast.error('Failed to load employee documents');
+      setDocuments({});
     } finally {
       setLoading(false);
     }
@@ -57,6 +88,9 @@ export default function Documents() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('docType', selectedDocType);
+    if (user.role === 'admin' && selectedEmpId) {
+      formData.append('employeeId', selectedEmpId);
+    }
 
     try {
       setUploading(selectedDocType);
@@ -66,10 +100,15 @@ export default function Documents() {
         }
       });
       toast.success('Document uploaded successfully!');
-      if (selectedDocType === 'photo' && uploadRes.data.fileUrl) {
+      if (selectedDocType === 'photo' && uploadRes.data.fileUrl && !selectedEmpId) {
         updateUser({ avatar: uploadRes.data.fileUrl });
       }
-      fetchMyDocuments();
+      
+      if (selectedEmpId) {
+        fetchEmployeeDocuments(selectedEmpId);
+      } else {
+        fetchMyDocuments();
+      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to upload document');
@@ -125,9 +164,32 @@ export default function Documents() {
   return (
     <div className="space-y-6 fade-in pb-12">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Onboarding <span className="text-blue-600">Documents</span></h1>
-        <p className="text-slate-500 mt-1">Upload and manage your mandatory company documents securely.</p>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">{selectedEmpId ? 'Employee' : 'Onboarding'} <span className="text-blue-600">Documents</span></h1>
+        <p className="text-slate-500 mt-1">{selectedEmpId ? 'Manage documents for the selected employee.' : 'Upload and manage your mandatory company documents securely.'}</p>
       </div>
+
+      {user?.role === 'admin' && (
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+          <div className="flex-1 w-full">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Select Employee</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search size={16} className="text-slate-400" />
+              </div>
+              <select
+                value={selectedEmpId}
+                onChange={(e) => fetchEmployeeDocuments(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none font-medium text-slate-700"
+              >
+                <option value="">-- My Documents --</option>
+                {allEmployees.map(emp => (
+                  <option key={emp.id} value={emp.id}>{emp.name} ({emp.email})</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="relative rounded-3xl shadow-xl border border-white/40 overflow-hidden bg-gradient-to-br from-white/80 to-blue-50/40 backdrop-blur-xl p-6">
         <div className="flex justify-between items-center mb-2">

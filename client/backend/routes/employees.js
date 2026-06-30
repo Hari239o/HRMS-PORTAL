@@ -278,7 +278,12 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
 router.post('/upload-document', authenticate, upload.single('file'), async (req, res) => {
   try {
     const { docType } = req.body; 
-    const employeeId = req.user.id;
+    let employeeId = req.user.id;
+
+    // Allow admins to upload for other employees
+    if (req.user.role === 'admin' && req.body.employeeId) {
+      employeeId = req.body.employeeId;
+    }
 
     if (!docType || !req.file) {
       return res.status(400).json({ error: 'Missing document type or file' });
