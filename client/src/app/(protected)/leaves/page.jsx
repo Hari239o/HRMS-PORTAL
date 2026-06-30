@@ -34,7 +34,7 @@ const Leaves = () => {
   const [problems, setProblems] = useState([]);
   const [showProblemForm, setShowProblemForm] = useState(false);
   const [problemFormData, setProblemFormData] = useState({
-    category: 'IT Support',
+    category: 'HR Support',
     title: '',
     description: '',
     priority: 'Medium',
@@ -105,7 +105,7 @@ const Leaves = () => {
       });
       toast.success('Issue raised successfully. Our team will review it.');
       setShowProblemForm(false);
-      setProblemFormData({ category: 'IT Support', title: '', description: '', priority: 'Medium', document: null });
+      setProblemFormData({ category: 'HR Support', title: '', description: '', priority: 'Medium', document: null });
       fetchProblems();
     } catch (err) {
       toast.error('Failed to raise problem');
@@ -619,12 +619,10 @@ const Leaves = () => {
                     onChange={(e) => setProblemFormData({...problemFormData, category: e.target.value})}
                     className="w-full border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm font-semibold text-slate-800 bg-white shadow-sm"
                   >
-                    <option>IT Support</option>
                     <option>HR Support</option>
-                    <option>Hardware Issue</option>
-                    <option>Software Bug</option>
                     <option>POSH / Grievance (Confidential)</option>
-                    <option>General Inquiry</option>
+                    <option>Operations Support</option>
+                    <option>Others</option>
                   </select>
                 </div>
                 <div>
