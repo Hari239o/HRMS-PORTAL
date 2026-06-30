@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const assets = require('../assets');
 let HummusRecipe = null;
 
 const router = express.Router();
@@ -286,15 +287,15 @@ function generateProfessionalPDF(doc, salary) {
   const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
   const margin = 50;
   
-  doc.registerFont('Roboto', path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'));
-  doc.registerFont('Roboto-Bold', path.join(__dirname, 'fonts', 'Roboto-Bold.ttf'));
+  doc.registerFont('Roboto', Buffer.from(assets.robotoRegular, 'base64'));
+  doc.registerFont('Roboto-Bold', Buffer.from(assets.robotoBold, 'base64'));
 
   const paddedMonth = monthLabel(salary.month);
 
-  const logoPath = path.join(__dirname, 'company-logo.jpeg');
-  if (fs.existsSync(logoPath)) {
-    // Determine image dimensions to scale it properly without distortion
-    doc.image(logoPath, margin, margin - 10, { width: 150 });
+  try {
+    doc.image(Buffer.from(assets.companyLogo, 'base64'), margin, margin - 10, { width: 150 });
+  } catch(e) {
+    console.error('Logo render error:', e);
   }
   
   doc.font(bodyFont).fontSize(9).fillColor('#333333').text('247, Trendz Aspire, Madhapur, Hyderabad, 500033', margin, margin + 5, { align: 'right' });
