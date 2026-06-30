@@ -8,7 +8,7 @@ export const metadata = {
   description: 'EMS by Geonixa',
   manifest: '/manifest.json',
   icons: {
-    apple: '/maskable-logo.png',
+    apple: '/maskable-logo-v2.png',
   },
   appleWebApp: {
     capable: true,
