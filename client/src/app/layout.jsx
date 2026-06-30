@@ -22,6 +22,7 @@ export const viewport = {
   userScalable: false,
 };
 
+import GlobalSplash from '@/components/GlobalSplash';
 import InstallPrompt from '@/components/InstallPrompt';
 
 export default function RootLayout({ children }) {
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
       <body className="bg-[#f8fafc] text-slate-900 font-sans antialiased">
         <AuthProvider>
           <AxiosInterceptor>
+            <GlobalSplash />
             <InstallPrompt />
             {children}
             <Toaster position="top-right" />
