@@ -398,13 +398,15 @@ router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
       }
     }
 
-    await prisma.$transaction([
-      prisma.attendance.deleteMany({ where: { employeeId: req.params.id } }),
-      prisma.leave.deleteMany({ where: { employeeId: req.params.id } }),
-      prisma.salary.deleteMany({ where: { employeeId: req.params.id } }),
-      prisma.jobReferral.deleteMany({ where: { employeeId: req.params.id } }),
-      prisma.employee.delete({ where: { id: req.params.id } })
-    ]);
+    // Delete related records manually to avoid transaction/connection-pool issues
+    await prisma.attendance.deleteMany({ where: { employeeId: req.params.id } });
+    await prisma.leave.deleteMany({ where: { employeeId: req.params.id } });
+    await prisma.salary.deleteMany({ where: { employeeId: req.params.id } });
+    await prisma.jobReferral.deleteMany({ where: { employeeId: req.params.id } });
+    
+    // Finally delete the employee
+    await prisma.employee.delete({ where: { id: req.params.id } });
+    
     res.json({ message: 'Employee deleted' });
   } catch (error) {
     console.error('Error deleting employee:', error);
