@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../../prisma/client');
 const { authenticate } = require('../middleware/auth');
+const { generateSignedUrl } = require('../utils/gcs');
 const router = express.Router();
 
 const hasMultiDeviceAccess = (role) => {
@@ -142,8 +143,8 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ 
       message: 'User registered', 
-      user: { id: newEmployee.id, name, role, email, department: newEmployee.department, avatar },
-      token: jwt.sign({ id: newEmployee.id, role, name }, process.env.JWT_SECRET, { expiresIn: '24h' })
+      user: { id: newEmployee.id, name: newEmployee.name, role: newEmployee.role, department: newEmployee.department, email: newEmployee.email, avatar: avatar || '' },
+      token: jwt.sign({ id: newEmployee.id, role, name }, process.env.JWT_SECRET, { expiresIn: '365d' })
     });
   } catch (error) {
     console.error('Registration error:', error.message);
@@ -200,12 +201,14 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign(
       { id: employee.id, role: employee.role, name: employee.name, deviceId: employee.deviceId },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '365d' }
     );
+
+    const avatar = employee.avatar ? await generateSignedUrl(employee.avatar, 60 * 24 * 7) : '';
 
     res.json({ 
       token, 
-      user: { id: employee.id, name: employee.name, role: employee.role, department: employee.department, email: employee.email } 
+      user: { id: employee.id, name: employee.name, role: employee.role, department: employee.department, email: employee.email, avatar } 
     });
   } catch (error) {
     console.error('Login error:', error);

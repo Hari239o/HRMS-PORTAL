@@ -20,7 +20,7 @@ router.get('/', authenticate, authorize(['admin']), async (req, res) => {
       return {
         ...emp,
         joinedAt: emp.createdAt,
-        avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60) : '',
+        avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60 * 24 * 7) : '',
         assets: emp.assets || '',
         weekOff: emp.weekOff || 'Sunday',
         starPerformer: emp.starPerformer || 'none',
@@ -56,7 +56,7 @@ router.get('/star-performers', authenticate, async (req, res) => {
       name: emp.name,
       department: emp.department,
       starPerformer: emp.starPerformer,
-      avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60) : ''
+      avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60 * 24 * 7) : ''
     })));
 
     res.json(formattedPerformers);
@@ -80,7 +80,7 @@ router.get('/directory', authenticate, async (req, res) => {
         name: emp.name,
         role: emp.role,
         department: emp.department,
-        avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60) : '',
+        avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60 * 24 * 7) : '',
         email: emp.email,
         weekOff: emp.weekOff || 'Sunday',
         assets: emp.assets || '',
@@ -127,7 +127,7 @@ router.get('/:id/org-structure', authenticate, authorize(['admin']), async (req,
       try {
         const profile = await prisma.employee.findUnique({ where: { id } });
         if (profile) {
-          return { name: profile.name, avatar: profile.avatar ? await generateSignedUrl(profile.avatar, 60) : '', email: profile.email, role: profile.role, department: profile.department };
+          return { name: profile.name, avatar: profile.avatar ? await generateSignedUrl(profile.avatar, 60 * 24 * 7) : '', email: profile.email, role: profile.role, department: profile.department };
         }
         return null;
       } catch (e) {
@@ -168,7 +168,7 @@ router.get('/:id/org-structure', authenticate, authorize(['admin']), async (req,
     res.json({
       id: emp.id,
       name: emp.name,
-      avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60) : '',
+      avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60 * 24 * 7) : '',
       role: emp.role,
       designation: emp.designation || '',
       department: emp.department || '',
@@ -196,7 +196,7 @@ router.get('/me', authenticate, async (req, res) => {
       try {
         const profile = await prisma.employee.findUnique({ where: { id } });
         if (profile) {
-          return { name: profile.name, avatar: profile.avatar ? await generateSignedUrl(profile.avatar, 60) : '', email: profile.email, role: profile.role };
+          return { name: profile.name, avatar: profile.avatar ? await generateSignedUrl(profile.avatar, 60 * 24 * 7) : '', email: profile.email, role: profile.role };
         }
         return null;
       } catch (e) {
@@ -244,7 +244,7 @@ router.get('/me', authenticate, async (req, res) => {
 
     res.json({ 
       ...emp,
-      avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60) : '',
+      avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60 * 24 * 7) : '',
       assets: emp.assets || '',
       weekOff: emp.weekOff || 'Sunday',
       manager: emp.manager || '',
