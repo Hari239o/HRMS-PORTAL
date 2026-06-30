@@ -136,9 +136,11 @@ router.get('/me', authenticate, async (req, res) => {
       }
     };
 
-    const managerProfile = await resolveProfile(emp.manager);
-    const hrProfile = await resolveProfile(emp.hrManager);
-    const teamLeaderProfile = await resolveProfile(emp.teamLeader);
+    const [managerProfile, hrProfile, teamLeaderProfile] = await Promise.all([
+      resolveProfile(emp.manager),
+      resolveProfile(emp.hrManager),
+      resolveProfile(emp.teamLeader)
+    ]);
 
     // Fetch Team Members
     let teamMembers = [];
@@ -166,9 +168,11 @@ router.get('/me', authenticate, async (req, res) => {
     }
 
     let docs = typeof emp.documents === 'string' ? JSON.parse(emp.documents) : (emp.documents || {});
-    for (const [key, value] of Object.entries(docs)) {
-      docs[key] = await generateSignedUrl(value, 60);
-    }
+    await Promise.all(
+      Object.entries(docs).map(async ([key, value]) => {
+        docs[key] = await generateSignedUrl(value, 60);
+      })
+    );
 
     res.json({ 
       ...emp,
