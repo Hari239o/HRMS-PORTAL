@@ -27,6 +27,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
 export default function Attendance() {
   const { user } = useAuth();
   const [history, setHistory] = useState([]);
+  const [holidays, setHolidays] = useState([]);
   const [todayRecord, setTodayRecord] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -91,6 +92,9 @@ export default function Attendance() {
         const issuesRes = await api.get(`/api/approvals?status=pending&type=missed_checkout`);
         setPendingIssues(issuesRes.data.requests || []);
       }
+
+      const holsRes = await api.get(`/api/holidays`);
+      setHolidays(holsRes.data || []);
     } catch (err) {
       toast.error('Failed to fetch attendance data');
     } finally {
@@ -519,7 +523,6 @@ export default function Attendance() {
                   } else {
                     // Individual View
                     const record = filteredHistory.find(r => r.date === dateStr);
-                    
                     if (record) {
                       if (record.status === 'Present') {
                         bgColor = 'bg-emerald-100 hover:bg-emerald-200';
@@ -539,6 +542,22 @@ export default function Attendance() {
                         statusIcon = <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl opacity-80">🎉</div>;
                       }
                     }
+                  }
+                  
+                  // Override with holiday marker if there is a declared holiday for this date
+                  const holiday = holidays.find(h => {
+                    const hDate = new Date(h.date);
+                    return hDate.getFullYear() === day.getFullYear() && hDate.getMonth() === day.getMonth() && hDate.getDate() === day.getDate();
+                  });
+
+                  if (holiday) {
+                    bgColor = 'bg-fuchsia-50 hover:bg-fuchsia-100 border border-fuchsia-200';
+                    textColor = 'text-fuchsia-700 font-bold';
+                    statusIcon = (
+                      <div className="absolute bottom-1 right-1 text-[9px] font-black text-fuchsia-600 bg-white/90 px-1 rounded shadow-sm border border-fuchsia-200" title={holiday.name}>
+                        🎉
+                      </div>
+                    );
                   }
                 }
                 

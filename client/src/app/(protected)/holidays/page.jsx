@@ -101,8 +101,9 @@ export default function Holidays() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const targetDate = new Date(dateString);
-    const diffTime = Math.abs(targetDate - today);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    targetDate.setHours(0, 0, 0, 0);
+    const diffTime = targetDate - today;
+    return Math.round(diffTime / (1000 * 60 * 60 * 24));
   };
 
   return (
