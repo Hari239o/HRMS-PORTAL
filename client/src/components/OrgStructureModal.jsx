@@ -1,20 +1,42 @@
 import React from 'react';
 import { X, Users } from 'lucide-react';
 
-const OrgNode = ({ profile, title, isMain = false }) => {
+const OrgNode = ({ profile, title, isMain = false, themeColor = "slate" }) => {
   if (!profile) return null;
+  
+  const borderColors = {
+    slate: 'border-slate-200 bg-slate-100',
+    fuchsia: 'border-fuchsia-300 bg-fuchsia-50 ring-2 ring-fuchsia-100',
+    emerald: 'border-emerald-300 bg-emerald-50 ring-2 ring-emerald-100',
+    blue: 'border-blue-500 shadow-md ring-4 ring-blue-50'
+  };
+
+  const textColors = {
+    slate: 'text-slate-700',
+    fuchsia: 'text-fuchsia-800',
+    emerald: 'text-emerald-800',
+    blue: 'text-slate-800'
+  };
+
+  const titleColors = {
+    slate: 'text-slate-400',
+    fuchsia: 'text-fuchsia-500',
+    emerald: 'text-emerald-500',
+    blue: 'text-slate-400'
+  };
+
   return (
     <div className="flex flex-col items-center">
-      <div className={`w-14 h-14 rounded-full overflow-hidden border-2 shadow-sm ${isMain ? 'border-blue-500 w-20 h-20 shadow-md ring-4 ring-blue-50' : 'border-slate-200 bg-slate-100'}`}>
+      <div className={`w-14 h-14 rounded-full overflow-hidden border-2 shadow-sm ${isMain ? borderColors.blue + ' w-20 h-20' : borderColors[themeColor]}`}>
         <img 
-          src={profile.avatar || `https://ui-avatars.com/api/?name=${profile.name}&background=ff5a1f&color=fff`} 
+          src={profile.avatar || `https://ui-avatars.com/api/?name=${profile.name}&background=${themeColor === 'fuchsia' ? 'd946ef' : themeColor === 'emerald' ? '10b981' : 'ff5a1f'}&color=fff`} 
           alt={profile.name} 
           className="w-full h-full object-cover" 
         />
       </div>
       <div className="mt-2 text-center max-w-[120px]">
-        <p className={`font-bold truncate ${isMain ? 'text-slate-800 text-base' : 'text-slate-700 text-sm'}`}>{profile.name}</p>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide truncate">{title || profile.role?.replace('_', ' ')}</p>
+        <p className={`font-bold truncate ${isMain ? 'text-base text-slate-800' : 'text-sm ' + textColors[themeColor]}`}>{profile.name}</p>
+        <p className={`text-[10px] font-bold uppercase tracking-wide truncate ${isMain ? 'text-slate-400' : titleColors[themeColor]}`}>{title || profile.role?.replace('_', ' ')}</p>
         {profile.department && (
           <p className="text-[9px] text-slate-400 uppercase truncate">{profile.department}</p>
         )}
@@ -52,8 +74,9 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
           {/* Manager */}
           <div className="flex flex-col items-center mb-8 relative">
             <OrgNode 
-              profile={user.managerProfile || { name: 'Not Assigned', role: 'manager', avatar: `https://ui-avatars.com/api/?name=Manager&background=cbd5e1&color=fff` }} 
+              profile={user.managerProfile || { name: 'Not Assigned', role: 'manager' }} 
               title="Manager" 
+              themeColor="fuchsia"
             />
             <div className="w-px h-8 bg-slate-300 mt-2 absolute -bottom-10 left-1/2 transform -translate-x-1/2"></div>
           </div>
@@ -61,8 +84,9 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
           {/* Team Leader */}
           <div className="flex flex-col items-center mb-8 relative">
             <OrgNode 
-              profile={user.teamLeaderProfile || { name: 'Not Assigned', role: 'team_leader', avatar: `https://ui-avatars.com/api/?name=Team+Leader&background=cbd5e1&color=fff` }} 
+              profile={user.teamLeaderProfile || { name: 'Not Assigned', role: 'team_leader' }} 
               title="Team Leader" 
+              themeColor="emerald"
             />
             <div className="w-px h-8 bg-slate-300 mt-2 absolute -bottom-10 left-1/2 transform -translate-x-1/2"></div>
           </div>
