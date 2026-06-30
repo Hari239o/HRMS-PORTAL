@@ -57,11 +57,29 @@ api.interceptors.request.use(
   }
 );
 
+// Simple GET request memory cache to fix frontend lag during navigation
+const getCache = new Map();
+const CACHE_TTL = 3 * 60 * 1000; // 3 minutes
+
+const originalGet = api.get;
+api.get = async (url, config) => {
+  const cacheKey = url + JSON.stringify(config?.params || {});
+  const cached = getCache.get(cacheKey);
+  if (cached && Date.now() - cached.time < CACHE_TTL) {
+    return Promise.resolve(cached.res);
+  }
+  const res = await originalGet(url, config);
+  getCache.set(cacheKey, { res, time: Date.now() });
+  return res;
+};
+
 // Response Interceptor
 api.interceptors.response.use(
   (response) => {
     if (response.config?.method?.toLowerCase() !== 'get') {
       toggleLoading(false);
+      // Clear cache on any write operation (POST/PUT/DELETE) to ensure fresh data
+      getCache.clear();
     }
     return response;
   },

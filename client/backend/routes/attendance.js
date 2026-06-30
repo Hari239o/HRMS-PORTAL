@@ -305,14 +305,15 @@ router.get('/', authenticate, async (req, res) => {
     if (role !== 'admin') {
       attendance = await prisma.attendance.findMany({
         where: { employeeId: id },
-        include: { employee: true },
-        orderBy: { checkIn: 'desc' }
+        include: { employee: { select: { id: true, name: true, email: true, department: true } } },
+        orderBy: { checkIn: 'desc' },
+        take: 60 // Limit to last 60 records to prevent massive payload lag
       });
     } else {
       attendance = await prisma.attendance.findMany({
         orderBy: { checkIn: 'desc' },
-        take: 300,
-        include: { employee: true }
+        take: 100, // Reduced from 300 to improve initial load speed
+        include: { employee: { select: { id: true, name: true, email: true, department: true } } }
       });
     }
     
