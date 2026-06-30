@@ -246,9 +246,12 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
                     
                     <div style="background-color: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin-bottom: 30px;">
                       <h3>System Access Credentials</h3>
-                      <p>Authorized Email: ${email}</p>
-                      <p>Temporary Password: ${password}</p>
-                      <p style="color: #dc2626; font-size: 12px;">* Change this temporary password immediately upon your first login.</p>
+                      <p><strong>Employee ID:</strong> ${empId || 'Will be assigned'}</p>
+                      <p><strong>Authorized Email:</strong> ${email}</p>
+                      <p><strong>Temporary Password:</strong> ${password}</p>
+                      <br/>
+                      <p>Please log in to the HR Portal to access your dashboard.</p>
+                      <p style="color: #dc2626; font-size: 12px; margin-top: 15px;">* IMPORTANT: Change this temporary password immediately upon your first login using the Settings menu.</p>
                     </div>
                   </td>
                 </tr>
