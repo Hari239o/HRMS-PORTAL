@@ -312,6 +312,10 @@ export default function Salary() {
  onChange={(e) => {
  const id = e.target.value;
  const emp = employees.find(x => x.id === id);
+ 
+ // Find previous salary record to auto-fill
+ const previousSalary = salaries.find(s => s.employeeId === id);
+ 
  setFormData({
  ...formData, 
  employeeId: id,
@@ -320,7 +324,19 @@ export default function Salary() {
  pan: emp?.pan || '',
  uan: emp?.uan || '',
  bankName: emp?.bankName || '',
- accountNumber: emp?.accountNumber || ''
+ accountNumber: emp?.accountNumber || '',
+ 
+ // Auto-fill financial details if a previous record exists
+ basicSalary: previousSalary ? previousSalary.basicSalary : formData.basicSalary,
+ hra: previousSalary ? previousSalary.hra : formData.hra,
+ specialAllowance: previousSalary ? previousSalary.specialAllowance : formData.specialAllowance,
+ incentives: previousSalary ? previousSalary.incentives : formData.incentives,
+ otherAllowances: previousSalary ? previousSalary.otherAllowances : formData.otherAllowances,
+ pf: previousSalary ? previousSalary.pf : formData.pf,
+ esi: previousSalary ? previousSalary.esi : formData.esi,
+ professionalTax: previousSalary ? previousSalary.professionalTax : formData.professionalTax,
+ tds: previousSalary ? previousSalary.tds : formData.tds,
+ otherDeductions: previousSalary ? previousSalary.otherDeductions : formData.otherDeductions
  });
  }}
  >

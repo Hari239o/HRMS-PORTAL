@@ -281,14 +281,17 @@ function numToWords(amount) {
 }
 
 function generateProfessionalPDF(doc, salary) {
-  const titleFont = 'Helvetica-Bold';
-  const bodyFont = 'Helvetica';
+  const titleFont = 'Roboto-Bold';
+  const bodyFont = 'Roboto';
   const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
   const margin = 50;
+  
+  doc.registerFont('Roboto', path.join(__dirname, 'fonts', 'Roboto-Regular.ttf'));
+  doc.registerFont('Roboto-Bold', path.join(__dirname, 'fonts', 'Roboto-Bold.ttf'));
 
   const paddedMonth = monthLabel(salary.month);
 
-  const logoPath = path.join(__dirname, '../../../public/company-logo.jpeg');
+  const logoPath = path.join(__dirname, 'company-logo.jpeg');
   if (fs.existsSync(logoPath)) {
     // Determine image dimensions to scale it properly without distortion
     doc.image(logoPath, margin, margin - 10, { width: 150 });
@@ -367,23 +370,23 @@ function generateProfessionalPDF(doc, salary) {
     doc.text(col4, xOffsets[3] + 8, y + 7, { width: colWidths[3] - 16, align: 'right' });
   };
 
-  drawSalaryRow(currentY, 'Earnings', 'Amount (Rs.)', 'Deductions', 'Amount (Rs.)', true); currentY += rowHeight;
-  drawSalaryRow(currentY, 'Basic Salary', `Rs. ${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Provident Fund (PF)', `Rs. ${Number(salary.pf || 0).toFixed(2)}`); currentY += rowHeight;
-  drawSalaryRow(currentY, 'HRA', `Rs. ${Number(salary.hra || 0).toFixed(2)}`, 'ESI', `Rs. ${Number(salary.esi || 0).toFixed(2)}`); currentY += rowHeight;
-  drawSalaryRow(currentY, 'Special Allowance', `Rs. ${Number(salary.specialAllowance || 0).toFixed(2)}`, 'Professional Tax', `Rs. ${Number(salary.professionalTax || 0).toFixed(2)}`); currentY += rowHeight;
-  drawSalaryRow(currentY, 'Incentives', `Rs. ${Number(salary.incentives || 0).toFixed(2)}`, 'TDS', `Rs. ${Number(salary.tds || 0).toFixed(2)}`); currentY += rowHeight;
-  drawSalaryRow(currentY, 'Other Allowances', `Rs. ${Number(salary.otherAllowances || 0).toFixed(2)}`, 'Other Deductions', `Rs. ${Number(salary.otherDeductions || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Earnings', 'Amount (₹)', 'Deductions', 'Amount (₹)', true); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Basic Salary', `₹${Number(salary.basicSalary || salary.baseSalary || 0).toFixed(2)}`, 'Provident Fund (PF)', `₹${Number(salary.pf || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'HRA', `₹${Number(salary.hra || 0).toFixed(2)}`, 'ESI', `₹${Number(salary.esi || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Special Allowance', `₹${Number(salary.specialAllowance || 0).toFixed(2)}`, 'Professional Tax', `₹${Number(salary.professionalTax || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Incentives', `₹${Number(salary.incentives || 0).toFixed(2)}`, 'TDS', `₹${Number(salary.tds || 0).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Other Allowances', `₹${Number(salary.otherAllowances || 0).toFixed(2)}`, 'Other Deductions', `₹${Number(salary.otherDeductions || 0).toFixed(2)}`); currentY += rowHeight;
   
   const totalEarnings = (salary.basicSalary || salary.baseSalary || 0) + (salary.hra || 0) + (salary.specialAllowance || 0) + (salary.incentives || 0) + (salary.otherAllowances || 0) + (salary.bonus || 0);
   const totalDeductions = (salary.pf || 0) + (salary.esi || 0) + (salary.professionalTax || 0) + (salary.tds || 0) + (salary.otherDeductions || 0);
   const netPay = totalEarnings - totalDeductions;
 
-  drawSalaryRow(currentY, 'Total Earnings (A)', `Rs. ${Number(totalEarnings).toFixed(2)}`, 'Total Deductions (B)', `Rs. ${Number(totalDeductions).toFixed(2)}`); currentY += rowHeight;
+  drawSalaryRow(currentY, 'Total Earnings (A)', `₹${Number(totalEarnings).toFixed(2)}`, 'Total Deductions (B)', `₹${Number(totalDeductions).toFixed(2)}`); currentY += rowHeight;
 
   doc.rect(margin, currentY, 250, rowHeight).stroke();
   doc.rect(margin + 250, currentY, doc.page.width - 2 * margin - 250, rowHeight).stroke();
   doc.font(titleFont).fontSize(12).text('Net Salary Payable (A - B)', margin + 8, currentY + 10);
-  doc.font(titleFont).fontSize(12).text(`Rs. ${Number(netPay).toFixed(2)}`, margin + 258, currentY + 10, { align: 'right', width: doc.page.width - 2 * margin - 274 });
+  doc.font(titleFont).fontSize(12).text(`₹${Number(netPay).toFixed(2)}`, margin + 258, currentY + 10, { align: 'right', width: doc.page.width - 2 * margin - 274 });
   currentY += rowHeight;
 
   const wordsRowHeight = 40;
@@ -395,7 +398,7 @@ function generateProfessionalPDF(doc, salary) {
 
   doc.font(bodyFont).fontSize(10).text('Authorized Signatory For Geonixa Pvt. Ltd.', margin, currentY);
   currentY += 20;
-  doc.font('Helvetica-Oblique').fontSize(10).text('Note: This is a system-generated salary slip.', margin, currentY);
+  doc.font('Roboto').fontSize(10).text('Note: This is a system-generated salary slip.', margin, currentY);
 }
 
 async function populateSalaryDetails(salary) {
