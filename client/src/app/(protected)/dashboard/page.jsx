@@ -185,7 +185,7 @@ export default function Dashboard() {
 
  const downloadPayslip = async (salaryId, month) => {
  try {
- const response = await api.get(`/api/salary/generate/${salaryId}`, {
+ const response = await api.get(`/api/salary/generate/${salaryId}?t=${Date.now()}`, {
  responseType: 'blob', // Important for file download
  });
  const url = window.URL.createObjectURL(new Blob([response.data]));

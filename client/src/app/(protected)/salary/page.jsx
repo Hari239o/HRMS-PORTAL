@@ -110,7 +110,7 @@ export default function Salary() {
  return toast.error('Payslip is not yet released.');
  }
  try {
- const response = await api.get(`/api/salary/generate/${salary.id}`, {
+ const response = await api.get(`/api/salary/generate/${salary.id}?t=${Date.now()}`, {
  responseType: 'blob'
  });
  const url = window.URL.createObjectURL(new Blob([response.data]));
