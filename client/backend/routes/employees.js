@@ -143,14 +143,8 @@ router.get('/:id/org-structure', authenticate, authorize(['admin']), async (req,
 
     let teamMembers = [];
     try {
-      let teamQuery = {};
-      if (emp.teamLeader) {
-        teamQuery = { teamLeader: emp.teamLeader };
-      } else if (emp.manager) {
-        teamQuery = { manager: emp.manager };
-      } else {
-        teamQuery = { OR: [{ manager: req.params.id }, { teamLeader: req.params.id }] };
-      }
+      const targetId = req.params.id;
+      const teamQuery = { OR: [{ manager: targetId }, { teamLeader: targetId }] };
       
       const tPrisma = await prisma.employee.findMany({ where: teamQuery });
       teamMembers = await Promise.all(tPrisma.map(async t => ({
@@ -213,15 +207,8 @@ router.get('/me', authenticate, async (req, res) => {
     // Fetch Team Members
     let teamMembers = [];
     try {
-      let teamQuery = {};
-      if (emp.teamLeader) {
-        teamQuery = { teamLeader: emp.teamLeader };
-      } else if (emp.manager) {
-        teamQuery = { manager: emp.manager };
-      } else {
-        // If they are the manager/leader
-        teamQuery = { OR: [{ manager: req.user.id }, { teamLeader: req.user.id }] };
-      }
+      const targetId = req.user.id;
+      const teamQuery = { OR: [{ manager: targetId }, { teamLeader: targetId }] };
       
       const tPrisma = await prisma.employee.findMany({ where: teamQuery });
       teamMembers = await Promise.all(tPrisma.map(async t => ({
