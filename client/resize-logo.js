@@ -5,6 +5,7 @@ const inputPath = path.join(__dirname, 'public/logo-only.png');
 const outputPath = path.join(__dirname, 'public/maskable-logo.png');
 
 sharp(inputPath)
+  .flatten({ background: { r: 255, g: 255, b: 255 } }) // Replace transparency with white
   .resize(300, 300, {
     fit: 'contain',
     background: { r: 255, g: 255, b: 255, alpha: 1 }
@@ -18,7 +19,7 @@ sharp(inputPath)
   })
   .toFile(outputPath)
   .then(() => {
-    console.log('Successfully created maskable-logo.png with white padding.');
+    console.log('Successfully created maskable-logo.png with solid white background.');
   })
   .catch(err => {
     console.error('Error generating image:', err);
