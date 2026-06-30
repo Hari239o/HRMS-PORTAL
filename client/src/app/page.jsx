@@ -12,7 +12,7 @@ export default function SplashScreen() {
     setMounted(true);
     // Check auth status and redirect after a delay
     const timer = setTimeout(() => {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       if (token) {
         router.push('/dashboard');
       } else {

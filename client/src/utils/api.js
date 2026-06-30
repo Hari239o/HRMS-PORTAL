@@ -43,7 +43,7 @@ api.interceptors.request.use(
     if (config.method?.toLowerCase() !== 'get') {
       toggleLoading(true);
     }
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -108,8 +108,8 @@ api.interceptors.response.use(
       
       // Since no refresh token is provided by backend, log out the user
       toast.error('Session Expired: Please login again.');
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       window.dispatchEvent(new Event('auth_logout'));
       setTimeout(() => {
         window.location.href = '/';
