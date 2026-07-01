@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
+import { hasAdminAccess, isSuperAdmin, hasApproverAccess } from '@/utils/rbac';
 
 export default function Performance() {
   const { user } = useAuth();

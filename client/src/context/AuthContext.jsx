@@ -74,6 +74,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    try {
+      if (user) {
+        await api.post('/api/auth/logout');
+      }
+    } catch (err) {
+      console.error('Logout API failed', err);
+    }
     // Clear session synchronously to prevent interceptor loops
     localStorage.removeItem('token');
     localStorage.removeItem('user');

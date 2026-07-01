@@ -238,4 +238,17 @@ router.put('/change-password', authenticate, async (req, res) => {
   }
 });
 
+router.post('/logout', authenticate, async (req, res) => {
+  try {
+    await prisma.employee.update({
+      where: { id: req.user.id },
+      data: { deviceId: null }
+    });
+    res.json({ message: 'Logged out successfully, device unlocked.' });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ error: 'Failed to logout' });
+  }
+});
+
 module.exports = router;

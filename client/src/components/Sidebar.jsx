@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
+import { hasAdminAccess, isSuperAdmin, hasApproverAccess } from '@/utils/rbac';
 import { 
   LayoutDashboard, 
   CalendarCheck, 
@@ -42,6 +42,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Separation', icon: UserMinus, path: '/resignations' },
     { name: 'Holidays', icon: CalendarDays, path: '/holidays' },
     { name: 'Performance', icon: Trophy, path: '/performance' },
+    { name: 'Approvals', icon: ClipboardList, path: '/approvals' },
     { name: 'HR Documents', icon: FileText, path: '/documents' },
   ];
 
@@ -119,7 +120,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         <div>
           <p className="px-4 mb-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Core Modules</p>
           <div className="space-y-1.5">
-            {(isStudent ? studentMenuItems : menuItems).map((item) => {
+            {(isStudent ? studentMenuItems : menuItems).filter(item => {
+              if (item.path === '/approvals' && !hasApproverAccess(user)) return false;
+              return true;
+            }).map((item) => {
               const isActive = pathname === item.path;
               return (
                 <Link

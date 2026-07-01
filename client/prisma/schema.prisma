@@ -30,10 +30,26 @@ model Employee {
   accountNumber String?
   documents     Json?
   createdAt     DateTime     @default(now())
+  
+  teamId        String?
+  team          Team?        @relation("TeamMembers", fields: [teamId], references: [id])
+  leadingTeam   Team?        @relation("TeamLeader")
+
   attendance    Attendance[]
   leaves        Leave[]
   salaries      Salary[]
   jobReferrals  JobReferral[]
+}
+
+model Team {
+  id            String       @id @default(uuid())
+  name          String
+  targetRevenue Float        @default(0)
+  leaderId      String       @unique
+  leader        Employee     @relation("TeamLeader", fields: [leaderId], references: [id])
+  members       Employee[]   @relation("TeamMembers")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Attendance {
@@ -136,6 +152,7 @@ model StudentSubmission {
   remainingAmountDate String?
   callStatus          String?
   paymentStatus       String?
+  approvalStatus      String   @default("Pending") // Pending, Approved, Rejected
   date                DateTime @default(now())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt

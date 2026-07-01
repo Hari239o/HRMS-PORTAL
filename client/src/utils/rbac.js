@@ -7,3 +7,8 @@ export const hasAdminAccess = (user) => {
   if (!user) return false;
   return isSuperAdmin(user) || user.role === 'hr';
 };
+
+export const hasApproverAccess = (user) => {
+  if (!user) return false;
+  return ['admin', 'hr', 'manager', 'post_sales'].includes(user.role) || isSuperAdmin(user);
+};
