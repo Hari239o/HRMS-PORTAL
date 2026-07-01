@@ -6,13 +6,41 @@ const router = express.Router();
 // GET all teams
 router.get('/', authenticate, async (req, res) => {
   try {
-    const teams = await prisma.team.findMany({
+    let teams = await prisma.team.findMany({
       include: {
         leader: { select: { id: true, name: true, email: true } },
         members: { select: { id: true, name: true, email: true, role: true } }
       },
       orderBy: { createdAt: 'desc' }
     });
+
+    const month = new Date().toISOString().substring(0, 7);
+    const allMemberIds = teams.flatMap(t => [...t.members.map(m => m.id), t.leaderId]);
+    const allTargets = await prisma.target.findMany({
+      where: {
+        employeeId: { in: allMemberIds },
+        month: month
+      }
+    });
+
+    teams = teams.map(team => {
+      const memberIds = [...team.members.map(m => m.id), team.leaderId];
+      const teamTargets = allTargets.filter(t => memberIds.includes(t.employeeId));
+      
+      const achievedTeamRevenue = teamTargets.reduce((sum, target) => sum + (target.achievedRevenue || 0), 0);
+      const achievedTeamCount = teamTargets.reduce((sum, target) => sum + (target.achievedCount || 0), 0);
+      const targetTeamRevenue = teamTargets.reduce((sum, target) => sum + (target.targetRevenue || 0), 0);
+      const targetTeamCount = teamTargets.reduce((sum, target) => sum + (target.targetCount || 0), 0);
+
+      return {
+        ...team,
+        achievedTeamRevenue,
+        achievedTeamCount,
+        targetTeamRevenue,
+        targetTeamCount
+      };
+    });
+
     res.json(teams);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -139,6 +167,40 @@ router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
     });
     res.json({ success: true, message: 'Team deleted successfully' });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Send warning/alert to a team
+router.post('/:id/warn', authenticate, authorize(['admin', 'hr']), async (req, res) => {
+  const { message } = req.body;
+  try {
+    const team = await prisma.team.findUnique({
+      where: { id: req.params.id },
+      include: { members: true }
+    });
+
+    if (!team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    const userIdsToNotify = [team.leaderId, ...team.members.map(m => m.id)];
+
+    // Create notifications for all members
+    const notifications = userIdsToNotify.map(userId => ({
+      userId,
+      title: '⚠️ Team Performance Warning',
+      message: message || `Your team "${team.name}" has received a performance warning from Administration. Please check your targets.`,
+      type: 'warning'
+    }));
+
+    await prisma.notification.createMany({
+      data: notifications
+    });
+
+    res.json({ success: true, message: 'Warnings sent to the team' });
+  } catch (error) {
+    console.error('Error sending team warning:', error);
     res.status(500).json({ error: error.message });
   }
 });

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { CheckCircle, Clock, Calendar, Users, Target, Save } from 'lucide-react';
+import { CheckCircle, Clock, Calendar, Users, Target, Save, AlertTriangle, TrendingUp, X } from 'lucide-react';
 import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 export default function TaskBoxPage() {
@@ -19,6 +19,10 @@ export default function TaskBoxPage() {
   const [taskDescription, setTaskDescription] = useState('');
   const [targetCount, setTargetCount] = useState(30);
   const [targetRevenue, setTargetRevenue] = useState(0);
+
+  // Warning state
+  const [warningModalTeam, setWarningModalTeam] = useState(null);
+  const [warningMessage, setWarningMessage] = useState('');
 
   // Employee state
   const [myTask, setMyTask] = useState(null);
@@ -63,6 +67,20 @@ export default function TaskBoxPage() {
       setTargetRevenue(0);
     } catch (err) {
       toast.error('Failed to assign task');
+    }
+  };
+
+  const handleSendWarning = async (e) => {
+    e.preventDefault();
+    if (!warningModalTeam) return;
+
+    try {
+      await api.post(`/api/teams/${warningModalTeam.id}/warn`, { message: warningMessage });
+      toast.success('Warning sent successfully');
+      setWarningModalTeam(null);
+      setWarningMessage('');
+    } catch (err) {
+      toast.error('Failed to send warning');
     }
   };
 
@@ -160,6 +178,107 @@ export default function TaskBoxPage() {
             </button>
           </form>
         </div>
+
+        {/* Team Progress Tracking */}
+        <div className="mt-8">
+          <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
+            <TrendingUp size={24} className="text-blue-500" />
+            Team Progress Overview
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {teams.map(team => (
+              <div key={team.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div className="p-4 border-b border-slate-100 flex justify-between items-center" style={{ backgroundColor: `${team.color || '#4f46e5'}10` }}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-lg" style={{ backgroundColor: team.color || '#4f46e5' }}>
+                      {team.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-800">{team.name}</h3>
+                      <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Leader: {team.leader?.name}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => { setWarningModalTeam(team); setWarningMessage(''); }}
+                    className="p-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition-colors"
+                    title="Send Warning / Alert"
+                  >
+                    <AlertTriangle size={18} />
+                  </button>
+                </div>
+                <div className="p-4 space-y-4">
+                  <div>
+                    <div className="flex justify-between items-end mb-1">
+                      <span className="text-[10px] font-black uppercase text-slate-400">Target Count</span>
+                      <span className="text-sm font-bold text-slate-700">{team.achievedTeamCount || 0} <span className="text-slate-400">/ {team.targetTeamCount || 0}</span></span>
+                    </div>
+                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-blue-500" style={{ width: `${Math.min(100, team.targetTeamCount > 0 ? ((team.achievedTeamCount || 0) / team.targetTeamCount) * 100 : 0)}%` }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-end mb-1">
+                      <span className="text-[10px] font-black uppercase text-slate-400">Revenue Generated</span>
+                      <span className="text-sm font-bold text-slate-700">₹{(team.achievedTeamRevenue || 0).toLocaleString()} <span className="text-slate-400">/ ₹{(team.targetTeamRevenue || 0).toLocaleString()}</span></span>
+                    </div>
+                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.min(100, team.targetTeamRevenue > 0 ? ((team.achievedTeamRevenue || 0) / team.targetTeamRevenue) * 100 : 0)}%` }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Warning Modal */}
+        {warningModalTeam && (
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-slate-100 bg-rose-50 flex justify-between items-center">
+                <h2 className="text-xl font-black text-rose-800 flex items-center gap-2">
+                  <AlertTriangle size={20} />
+                  Send Warning to Team
+                </h2>
+                <button onClick={() => setWarningModalTeam(null)} className="p-2 hover:bg-rose-100 rounded-full text-rose-600 transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="p-6">
+                <p className="text-sm text-slate-600 mb-4">
+                  You are sending an alert to <span className="font-bold text-slate-800">{warningModalTeam.name}</span> and its members. They will receive a notification in their dashboard.
+                </p>
+                <form id="warning-form" onSubmit={handleSendWarning}>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Message</label>
+                  <textarea 
+                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none text-sm min-h-[120px]"
+                    placeholder={`e.g. Your team's revenue progress is falling behind the monthly target. Please accelerate efforts.`}
+                    value={warningMessage}
+                    onChange={(e) => setWarningMessage(e.target.value)}
+                    required
+                  ></textarea>
+                </form>
+              </div>
+              <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+                <button 
+                  onClick={() => setWarningModalTeam(null)}
+                  className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  form="warning-form"
+                  type="submit"
+                  className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-xl transition-colors shadow-md"
+                >
+                  Send Alert
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     );
   }
