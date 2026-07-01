@@ -146,41 +146,71 @@ export default function TeamsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {teams.map(team => (
-            <div key={team.id} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl hover:shadow-indigo-500/5 transition-all">
-              <div className="absolute top-0 right-0 p-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openModal(team)} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100"><Edit3 size={16}/></button>
-                <button onClick={() => handleDelete(team.id)} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"><Trash2 size={16}/></button>
+            <div key={team.id} className="bg-white rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl hover:shadow-indigo-500/10 transition-all flex flex-col h-full">
+              {/* Colored Banner Top */}
+              <div className="h-24 w-full relative" style={{ backgroundColor: team.color || '#4f46e5' }}>
+                <div className="absolute top-0 right-0 p-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <button onClick={() => openModal(team)} className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg backdrop-blur-sm transition-colors"><Edit3 size={16}/></button>
+                  <button onClick={() => handleDelete(team.id)} className="p-2 bg-white/20 hover:bg-red-500 text-white rounded-lg backdrop-blur-sm transition-colors"><Trash2 size={16}/></button>
+                </div>
+                {/* Team Icon/Avatar Overlapping */}
+                <div className="absolute -bottom-6 left-6">
+                  {team.image ? (
+                    <img src={team.image} alt={team.name} className="w-16 h-16 rounded-2xl object-cover shadow-md border-4 border-white bg-white" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl text-white shadow-md border-4 border-white" style={{ backgroundColor: team.color || '#4f46e5' }}>
+                      {team.name.charAt(0)}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="flex items-center gap-3 mb-4">
-                {team.image ? (
-                  <img src={team.image} alt={team.name} className="w-12 h-12 rounded-xl object-cover shadow-sm" style={{ borderColor: team.color || '#4f46e5', borderWidth: '2px' }} />
-                ) : (
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl text-white shadow-sm" style={{ backgroundColor: team.color || '#4f46e5' }}>
-                    {team.name.charAt(0)}
+              {/* Card Content */}
+              <div className="pt-10 px-6 pb-6 flex-1 flex flex-col">
+                <h3 className="font-black text-slate-800 text-xl mb-6">{team.name}</h3>
+
+                <div className="space-y-5 flex-1">
+                  {/* Leader Section */}
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-2">Team Leader</p>
+                    <div className="flex items-center gap-3">
+                      {team.leader?.avatar ? (
+                        <img src={team.leader.avatar} alt={team.leader.name} className="w-10 h-10 rounded-full object-cover shadow-sm border border-slate-200" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-sm border border-slate-200">
+                          {team.leader?.name?.charAt(0) || '?'}
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm font-bold text-slate-700">{team.leader?.name || 'Unassigned'}</p>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase">Leader</p>
+                      </div>
+                    </div>
                   </div>
-                )}
-                <div>
-                  <h3 className="font-black text-slate-800 text-lg">{team.name}</h3>
-                </div>
-              </div>
 
-              <div className="space-y-3">
-                <div className="bg-slate-50 rounded-xl p-3">
-                  <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Team Leader</p>
-                  <p className="text-sm font-bold text-slate-700">{team.leader?.name || 'Unassigned'}</p>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-3">
-                  <p className="text-[10px] font-black uppercase text-slate-400 mb-1 flex items-center justify-between">
-                    Members 
-                    <span className="bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">{team.members?.length || 0}</span>
-                  </p>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {team.members?.slice(0, 3).map(m => (
-                      <span key={m.id} className="text-xs bg-white border border-slate-200 text-slate-600 px-2 py-1 rounded-md">{m.name}</span>
-                    ))}
-                    {team.members?.length > 3 && (
-                      <span className="text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded-md">+{team.members.length - 3}</span>
+                  {/* Members Section */}
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-2 flex justify-between items-center">
+                      Team Members
+                      <span className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md">{team.members?.length || 0}</span>
+                    </p>
+                    {team.members?.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {team.members.map(m => (
+                          <div key={m.id} className="flex items-center gap-2 bg-slate-50 border border-slate-100 px-2.5 py-1.5 rounded-xl">
+                            {m.avatar ? (
+                              <img src={m.avatar} alt={m.name} className="w-5 h-5 rounded-full object-cover" />
+                            ) : (
+                              <div className="w-5 h-5 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-[10px]">
+                                {m.name.charAt(0)}
+                              </div>
+                            )}
+                            <span className="text-xs font-semibold text-slate-600">{m.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-400 italic">No members assigned.</p>
                     )}
                   </div>
                 </div>
@@ -258,8 +288,8 @@ export default function TeamsPage() {
                     onChange={(e) => setForm({...form, leaderId: e.target.value})}
                   >
                     <option value="">Select a Team Leader</option>
-                    {employees.map(emp => (
-                      <option key={emp.id} value={emp.id}>{emp.name} ({emp.role})</option>
+                    {employees.filter(emp => emp.role === 'employee').map(emp => (
+                      <option key={emp.id} value={emp.id}>{emp.name}</option>
                     ))}
                   </select>
                 </div>
@@ -277,9 +307,17 @@ export default function TeamsPage() {
                             onChange={() => handleMemberToggle(emp.id)}
                             className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                           />
-                          <div className="flex-1">
-                            <div className="flex justify-between items-center">
-                              <p className="text-sm font-bold text-slate-700">{emp.name}</p>
+                          <div className="flex items-center gap-3 flex-1">
+                            {emp.avatar ? (
+                              <img src={emp.avatar} alt={emp.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 border border-slate-200">
+                                {emp.name.charAt(0)}
+                              </div>
+                            )}
+                            <div className="flex-1">
+                              <div className="flex justify-between items-center">
+                                <p className="text-sm font-bold text-slate-700">{emp.name}</p>
                               {existingTeam && (
                                 <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded" style={{ backgroundColor: `${existingTeam.color || '#4f46e5'}20`, color: existingTeam.color || '#4f46e5' }}>
                                   In Team: {existingTeam.name}
