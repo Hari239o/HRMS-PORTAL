@@ -19,6 +19,46 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
+// GET my team (as leader or member)
+router.get('/my-team', authenticate, async (req, res) => {
+  try {
+    const employeeId = req.user.id;
+    // First, see if they are a leader of any team
+    let team = await prisma.team.findFirst({
+      where: { leaderId: employeeId },
+      include: {
+        leader: { select: { id: true, name: true, email: true, avatar: true } },
+        members: { select: { id: true, name: true, email: true, role: true, department: true, avatar: true } }
+      }
+    });
+
+    // If not a leader, see if they are a member of a team
+    if (!team) {
+      const employee = await prisma.employee.findUnique({
+        where: { id: employeeId },
+        include: {
+          team: {
+            include: {
+              leader: { select: { id: true, name: true, email: true, avatar: true } },
+              members: { select: { id: true, name: true, email: true, role: true, department: true, avatar: true } }
+            }
+          }
+        }
+      });
+      team = employee?.team;
+    }
+
+    if (!team) {
+      return res.json({ hasTeam: false });
+    }
+
+    res.json({ hasTeam: true, isLeader: team.leaderId === employeeId, team });
+  } catch (error) {
+    console.error('Error fetching my team:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // CREATE a new team
 router.post('/', authenticate, authorize(['admin']), async (req, res) => {
   const { name, targetRevenue, leaderId, memberIds } = req.body;

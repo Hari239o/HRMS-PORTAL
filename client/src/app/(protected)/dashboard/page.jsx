@@ -465,7 +465,7 @@ export default function Dashboard() {
           <AppGridItem title="Recruitment" icon={Briefcase} link="#" color="orange" />
           <AppGridItem title="Separation" icon={UserX} link="/resignations" color="rose" />
           <AppGridItem title="Member" icon={Users} link="#" color="teal" />
-          <AppGridItem title="Vibe" icon={Smile} link="#" color="amber" />
+          <AppGridItem title="Team" icon={Users} link="/my-team" color="amber" />
         </div>
 
       </div>
@@ -501,7 +501,7 @@ export default function Dashboard() {
         <AppGridItem title="Recruitment" icon={Briefcase} link="/recruitment" color="orange" />
         <AppGridItem title="Separation" icon={UserX} link="/resignations" color="rose" />
         <AppGridItem title="Member" icon={Users} link="/employees" color="teal" />
-        <AppGridItem title="Vibe" icon={Smile} link="#" color="amber" />
+        <AppGridItem title="Team" icon={Users} link="/my-team" color="amber" />
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6 mt-4">

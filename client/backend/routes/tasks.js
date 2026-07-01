@@ -4,9 +4,23 @@ const { authenticate, authorize } = require('../middleware/auth');
 const { ownerOrAdmin } = require('../middleware/rbac');
 const router = express.Router();
 
-router.post('/target', authenticate, authorize(['admin', 'hr']), async (req, res) => {
+router.post('/target', authenticate, async (req, res) => {
   const { employeeId, month, targetCount, title, description } = req.body;
+  
   try {
+    // Check Authorization
+    if (req.user.role !== 'admin' && req.user.role !== 'hr') {
+      const isLeader = await prisma.team.findFirst({
+        where: { 
+          leaderId: req.user.id,
+          members: { some: { id: employeeId } }
+        }
+      });
+      if (!isLeader) {
+        return res.status(403).json({ error: 'Access denied. You can only assign tasks to your team members.' });
+      }
+    }
+
     const existing = await prisma.target.findFirst({
       where: { employeeId, month }
     });
