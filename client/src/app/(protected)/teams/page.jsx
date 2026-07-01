@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { hasAdminAccess } from '@/utils/rbac';
 import api from '@/utils/api';
 import toast from 'react-hot-toast';
-import { Target, Plus, Users, Trash2, Edit3, X, Save } from 'lucide-react';
+import { Target, Plus, Users, Trash2, Edit3, X, Save, UploadCloud } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function TeamsPage() {
@@ -111,6 +111,27 @@ export default function TeamsPage() {
       setForm({ ...form, memberIds: form.memberIds.filter(id => id !== empId) });
     } else {
       setForm({ ...form, memberIds: [...form.memberIds, empId] });
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const toastId = toast.loading('Uploading image...');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post('/api/employees/upload-document', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (res.data.fileUrl) {
+        setForm({ ...form, image: res.data.fileUrl });
+        toast.success('Image uploaded successfully!', { id: toastId });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to upload image', { id: toastId });
     }
   };
 
@@ -241,97 +262,122 @@ export default function TeamsPage() {
               </button>
             </div>
             
-            <div className="p-6 overflow-y-auto flex-1">
-              <form id="team-form" onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 gap-5">
+            <div className="p-8 overflow-y-auto flex-1 bg-slate-50">
+              <form id="team-form" onSubmit={handleSubmit} className="space-y-6">
+                
+                {/* Team Info Section */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-5">
                   <div className="group">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Team Name</label>
+                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 transition-colors group-focus-within:text-blue-500">Team Name</label>
                     <input 
                       type="text" 
                       required 
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
                       value={form.name}
                       onChange={(e) => setForm({...form, name: e.target.value})}
                       placeholder="e.g. Alpha Squad"
                     />
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="group">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Team Color</label>
-                      <input 
-                        type="color" 
-                        className="w-full h-[46px] rounded-xl cursor-pointer bg-slate-50 border border-slate-200 p-1 focus:bg-white focus:border-blue-500 outline-none transition-all"
-                        value={form.color}
-                        onChange={(e) => setForm({...form, color: e.target.value})}
-                      />
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 transition-colors group-focus-within:text-blue-500">Team Color</label>
+                      <div className="relative">
+                        <input 
+                          type="color" 
+                          className="w-full h-[52px] rounded-xl cursor-pointer bg-slate-50 border border-slate-200 p-1.5 focus:bg-white focus:border-blue-500 outline-none transition-all"
+                          value={form.color}
+                          onChange={(e) => setForm({...form, color: e.target.value})}
+                        />
+                      </div>
                     </div>
                     <div className="group">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Image URL (Optional)</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
-                        value={form.image}
-                        onChange={(e) => setForm({...form, image: e.target.value})}
-                        placeholder="https://example.com/logo.png"
-                      />
+                      <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 transition-colors group-focus-within:text-blue-500">Team Graphic / Avatar</label>
+                      <div className="relative">
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          onChange={handleImageUpload}
+                        />
+                        <div className={`w-full h-[52px] rounded-xl border-2 border-dashed flex items-center justify-center gap-2 transition-all ${form.image ? 'bg-emerald-50 border-emerald-300 text-emerald-600' : 'bg-slate-50 border-slate-300 text-slate-500 group-hover:bg-blue-50 group-hover:border-blue-300 group-hover:text-blue-500'}`}>
+                          {form.image ? (
+                            <>
+                              <img src={form.image} alt="Uploaded" className="w-8 h-8 rounded-lg object-cover" />
+                              <span className="font-bold text-sm">Image Uploaded</span>
+                            </>
+                          ) : (
+                            <>
+                              <UploadCloud size={20} />
+                              <span className="font-bold text-sm">Upload File</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
                     </div>
+                  </div>
+
+                  <div className="group pt-2">
+                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 transition-colors group-focus-within:text-blue-500">Team Leader</label>
+                    <select 
+                      required 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all appearance-none"
+                      value={form.leaderId}
+                      onChange={(e) => setForm({...form, leaderId: e.target.value})}
+                    >
+                      <option value="">Select a Team Leader...</option>
+                      {employees.filter(emp => emp.role === 'employee').map(emp => (
+                        <option key={emp.id} value={emp.id}>{emp.name}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
-                <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Team Leader</label>
-                  <select 
-                    required 
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
-                    value={form.leaderId}
-                    onChange={(e) => setForm({...form, leaderId: e.target.value})}
-                  >
-                    <option value="">Select a Team Leader</option>
-                    {employees.filter(emp => emp.role === 'employee').map(emp => (
-                      <option key={emp.id} value={emp.id}>{emp.name}</option>
-                    ))}
-                  </select>
-                </div>
-
+                {/* Assign Members Section */}
                 <div>
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Assign Members (Interns & Employees)</label>
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 max-h-60 overflow-y-auto space-y-2">
+                  <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-2">Assign Members (Interns & Employees)</label>
+                  <div className="bg-white border border-slate-100 shadow-sm rounded-2xl p-2 max-h-72 overflow-y-auto space-y-1">
                     {employees.filter(e => e.role === 'employee' || e.role === 'intern').map(emp => {
                       const existingTeam = teams.find(t => t.members?.some(m => m.id === emp.id) && t.id !== form.id);
+                      const isSelected = form.memberIds.includes(emp.id);
                       return (
-                        <label key={emp.id} className="flex items-center gap-3 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 shadow-sm hover:shadow">
-                          <input 
-                            type="checkbox" 
-                            checked={form.memberIds.includes(emp.id)}
-                            onChange={() => handleMemberToggle(emp.id)}
-                            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                          />
+                        <div 
+                          key={emp.id} 
+                          onClick={() => handleMemberToggle(emp.id)}
+                          className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-300 border ${isSelected ? 'bg-blue-50/50 border-blue-200 shadow-sm' : 'bg-transparent border-transparent hover:bg-slate-50'}`}
+                        >
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 border-2 ${isSelected ? 'bg-blue-600 border-blue-600 scale-110' : 'bg-white border-slate-300 group-hover:border-blue-400'}`}>
+                            {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full animate-in zoom-in" />}
+                          </div>
+                          
                           <div className="flex items-center gap-3 flex-1">
                             {emp.avatar ? (
-                              <img src={emp.avatar} alt={emp.name} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
+                              <img src={emp.avatar} alt={emp.name} className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" />
                             ) : (
-                              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 border border-slate-200">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-sm font-black text-slate-500 border-2 border-white shadow-sm">
                                 {emp.name.charAt(0)}
                               </div>
                             )}
                             <div className="flex-1">
                               <div className="flex justify-between items-center">
-                                <p className="text-sm font-bold text-slate-700">{emp.name}</p>
+                                <p className={`text-sm font-black transition-colors ${isSelected ? 'text-blue-900' : 'text-slate-700'}`}>{emp.name}</p>
                                 {existingTeam && (
-                                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded" style={{ backgroundColor: `${existingTeam.color || '#4f46e5'}20`, color: existingTeam.color || '#4f46e5' }}>
+                                  <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full shadow-sm" style={{ backgroundColor: `${existingTeam.color || '#4f46e5'}15`, color: existingTeam.color || '#4f46e5' }}>
                                     In Team: {existingTeam.name}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] font-semibold text-slate-400 uppercase">{emp.role}</p>
+                              <p className={`text-[10px] font-bold uppercase mt-0.5 ${isSelected ? 'text-blue-500' : 'text-slate-400'}`}>{emp.role}</p>
                             </div>
                           </div>
-                        </label>
+                        </div>
                       );
                     })}
                     {employees.filter(e => e.role === 'employee' || e.role === 'intern').length === 0 && (
-                      <p className="text-sm text-slate-500 text-center py-4 font-medium">No eligible members found.</p>
+                      <div className="flex flex-col items-center justify-center py-8 text-slate-400">
+                        <Users size={32} className="mb-2 opacity-50" />
+                        <p className="text-sm font-bold">No eligible members found.</p>
+                      </div>
                     )}
                   </div>
                 </div>
