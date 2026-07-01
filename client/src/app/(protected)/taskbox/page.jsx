@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { CheckCircle, Clock, Calendar, Users, Target, Save, AlertTriangle, TrendingUp, X, Edit3 } from 'lucide-react';
 import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
+import ApprovalsPage from '../approvals/page';
 
 export default function TaskBoxPage() {
   const { user } = useAuth();
@@ -328,6 +329,11 @@ export default function TaskBoxPage() {
 
       </div>
     );
+  }
+
+  // Post Sales View
+  if (user?.role === 'post_sales' || user?.role === 'post sales') {
+    return <ApprovalsPage />;
   }
 
   // Employee View
