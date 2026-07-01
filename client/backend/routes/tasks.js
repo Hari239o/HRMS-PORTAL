@@ -168,7 +168,7 @@ router.get('/submit/pending', authenticate, authorize(['admin', 'hr', 'manager',
     employees.forEach(emp => employeeMap[emp.id] = emp.name);
 
     const mapped = submissions.map(s => {
-      const employeeName = employeeMap[s.employeeId] || 'Unknown';
+      const employeeName = employeeMap[s.employeeId] || 'Admin / Unknown';
       return {
         ...s,
         employeeName,

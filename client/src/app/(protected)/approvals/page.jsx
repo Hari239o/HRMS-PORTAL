@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 
 export default function ApprovalsPage() {
   const { user } = useAuth();
+  const isPostSales = user?.role === 'post_sales' || user?.role === 'post sales';
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -92,7 +93,7 @@ export default function ApprovalsPage() {
                   <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Employee</th>
                   <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Student Info</th>
                   <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Financials</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">Actions</th>
+                  {isPostSales && <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -126,6 +127,7 @@ export default function ApprovalsPage() {
                         </span>
                       </div>
                     </td>
+                    {isPostSales && (
                     <td className="px-6 py-4 text-right space-x-2">
                       <button 
                         onClick={() => handleApprove(sub.id)}
@@ -140,6 +142,7 @@ export default function ApprovalsPage() {
                         <XCircle size={16} /> Reject
                       </button>
                     </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
