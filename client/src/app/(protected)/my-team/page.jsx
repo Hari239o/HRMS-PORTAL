@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { hasAdminAccess } from '@/utils/rbac';
 import api from '@/utils/api';
 import toast from 'react-hot-toast';
 import { Users, Target, User, CheckCircle, Clock } from 'lucide-react';
@@ -9,6 +11,7 @@ import Image from 'next/image';
 
 export default function MyTeamPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [teamData, setTeamData] = useState(null);
   
@@ -21,8 +24,12 @@ export default function MyTeamPage() {
   const [targetCount, setTargetCount] = useState(30);
 
   useEffect(() => {
-    fetchMyTeam();
-  }, []);
+    if (user && hasAdminAccess(user)) {
+      router.push('/teams');
+    } else if (user) {
+      fetchMyTeam();
+    }
+  }, [user, router]);
 
   const fetchMyTeam = async () => {
     try {
