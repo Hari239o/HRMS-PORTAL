@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { hasAdminAccess } from '@/utils/rbac';
 import api from '@/utils/api';
 import toast from 'react-hot-toast';
-import { Users, Target, User, CheckCircle, Clock } from 'lucide-react';
+import { Users, Target, User, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 
 export default function MyTeamPage() {
