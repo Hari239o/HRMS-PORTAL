@@ -88,62 +88,79 @@ export default function MyTeamPage() {
   const { team, isLeader } = teamData;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6 pb-24">
-      {/* Header */}
-      <div className="rounded-3xl p-6 text-white shadow-lg relative overflow-hidden" style={{ backgroundColor: team.color || '#4f46e5' }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent pointer-events-none"></div>
-        <div className="relative flex items-center gap-4 mb-4">
-          {team.image ? (
-            <img src={team.image} alt={team.name} className="w-16 h-16 rounded-2xl object-cover border border-white/20 shadow-md" />
-          ) : (
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20">
-              <Users size={32} className="text-white" />
+    <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-8 pb-24">
+      {/* Hero Header */}
+      <div className="rounded-3xl shadow-xl relative overflow-hidden group" style={{ backgroundColor: team.color || '#4f46e5' }}>
+        <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/10 pointer-events-none"></div>
+        <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none transition-transform duration-700 group-hover:scale-110"></div>
+        
+        <div className="relative z-10 p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              {team.image ? (
+                <img src={team.image} alt={team.name} className="w-24 h-24 rounded-3xl object-cover border-4 border-white/20 shadow-2xl" />
+              ) : (
+                <div className="w-24 h-24 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-md border-4 border-white/20 shadow-2xl">
+                  <Users size={48} className="text-white" />
+                </div>
+              )}
+              <div className="absolute -bottom-2 -right-2 bg-emerald-500 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
+                <CheckCircle size={12} className="text-white" />
+              </div>
+            </div>
+            
+            <div>
+              <h1 className="text-3xl md:text-4xl font-black text-white drop-shadow-md tracking-tight mb-1">{team.name}</h1>
+              {isLeader && (
+                <div className="flex flex-col mt-3 space-y-2">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-black uppercase text-white/70 tracking-widest bg-black/20 px-3 py-1 rounded-full">Target Count</span>
+                    <span className="font-bold text-white text-lg">{team.targetTeamCount || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-black uppercase text-white/70 tracking-widest bg-black/20 px-3 py-1 rounded-full">Achieved Count</span>
+                    <span className="font-bold text-emerald-300 text-lg">{team.achievedTeamCount || 0}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {isLeader && (
+            <div className="flex flex-col items-start md:items-end gap-3 mt-4 md:mt-0 p-4 bg-black/10 rounded-2xl backdrop-blur-sm border border-white/10">
+              <div className="text-left md:text-right">
+                <p className="text-xs font-bold text-white/70 uppercase tracking-widest">You are the Team Leader</p>
+                <p className="font-medium text-white">Lead your team to success!</p>
+              </div>
+              <button 
+                onClick={() => setIsAssigning(!isAssigning)}
+                className="w-full md:w-auto bg-white text-slate-800 px-6 py-2.5 rounded-xl font-black text-sm shadow-xl hover:bg-slate-50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                {isAssigning ? (
+                  <><X size={16} /> Cancel Assignment</>
+                ) : (
+                  <><Target size={16} className="text-blue-500" /> Divide Work</>
+                )}
+              </button>
             </div>
           )}
-          <div>
-            <h1 className="text-2xl md:text-3xl font-black drop-shadow-sm">{team.name}</h1>
-            {isLeader && (
-              <div className="flex flex-col mt-2 space-y-1">
-                <p className="text-indigo-100 flex items-center gap-2 text-sm">
-                  <Target size={16} /> Team Target Count: {team.targetTeamCount || 0}
-                </p>
-                <p className="text-indigo-100 flex items-center gap-2 text-sm">
-                  <TrendingUp size={16} /> Achieved Count: <span className="font-bold text-white">{team.achievedTeamCount || 0}</span>
-                </p>
-              </div>
-            )}
-          </div>
         </div>
-        
-        {isLeader && (
-          <div className="relative z-10 mt-4 pt-4 border-t border-white/20 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-indigo-100">You are the Team Leader</p>
-              <p className="font-bold">Lead your team to success!</p>
-            </div>
-            <button 
-              onClick={() => setIsAssigning(!isAssigning)}
-              className="bg-white text-indigo-600 px-4 py-2 rounded-xl font-bold text-sm shadow-sm hover:bg-indigo-50 transition-colors"
-            >
-              {isAssigning ? 'Cancel' : 'Divide Work'}
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* Assign Work Panel (For Leaders Only) */}
+      {/* Assign Work Panel */}
       {isLeader && isAssigning && (
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 animate-in slide-in-from-top-4">
-          <h2 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-            <Target size={20} className="text-blue-500" />
+        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 animate-in slide-in-from-top-4 fade-in duration-300 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+          <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
+            <Target size={24} className="text-blue-500" />
             Assign Work to Member
           </h2>
-          <form onSubmit={handleAssignWork} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleAssignWork} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Team Member</label>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Team Member</label>
                 <select 
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700"
                   value={selectedMember}
                   onChange={(e) => setSelectedMember(e.target.value)}
                   required
@@ -155,10 +172,10 @@ export default function MyTeamPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Month</label>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Month</label>
                 <input 
                   type="month" 
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700"
                   value={taskMonth}
                   onChange={(e) => setTaskMonth(e.target.value)}
                   required
@@ -167,11 +184,11 @@ export default function MyTeamPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Task Title</label>
+              <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Task Title</label>
               <input 
                 type="text" 
                 placeholder="e.g. Sales Target - Q3"
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700"
                 value={taskTitle}
                 onChange={(e) => setTaskTitle(e.target.value)}
                 required
@@ -179,126 +196,151 @@ export default function MyTeamPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Instructions / Description</label>
+              <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Instructions / Description</label>
               <textarea 
                 placeholder="Details about what needs to be achieved..."
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none min-h-[100px]"
+                className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700 min-h-[120px] resize-y"
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Monthly Target Count</label>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Monthly Target Count</label>
                 <input 
                   type="number" 
                   min="1"
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700"
                   value={targetCount}
                   onChange={(e) => setTargetCount(e.target.value)}
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Target Revenue (₹)</label>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2 opacity-50">Target Revenue (Hidden)</label>
                 <input 
                   type="number" 
                   min="0"
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                  value={targetRevenue}
-                  onChange={(e) => setTargetRevenue(e.target.value)}
-                  required
+                  disabled
+                  placeholder="Not applicable for Team Leader"
+                  className="w-full p-4 bg-slate-100 border border-slate-200 rounded-2xl outline-none font-medium text-slate-400 opacity-70 cursor-not-allowed"
+                  value={0}
                 />
               </div>
             </div>
 
-            <button type="submit" className="w-full bg-blue-600 text-white font-bold p-3 rounded-xl hover:bg-blue-700 transition-colors">
-              Assign Task
+            <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black p-4 rounded-2xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center gap-2 text-lg">
+              <Save size={20} /> Finalize Assignment
             </button>
           </form>
         </div>
       )}
 
-      {/* Team Leader Details */}
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
-        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Team Leader</h2>
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-lg overflow-hidden relative">
-            {team.leader?.avatar ? (
-              <Image src={team.leader.avatar} alt="Avatar" layout="fill" objectFit="cover" />
-            ) : (
-              team.leader?.name?.charAt(0).toUpperCase()
-            )}
+      {/* Roster Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Leader Info */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sticky top-24">
+            <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+              Team Leader
+            </h2>
+            <div className="flex flex-col items-center text-center">
+              <div className="w-28 h-28 bg-gradient-to-br from-indigo-100 to-blue-50 rounded-3xl p-1 mb-4 shadow-inner">
+                <div className="w-full h-full rounded-2xl overflow-hidden relative bg-white">
+                  {team.leader?.avatar ? (
+                    <Image src={team.leader.avatar} alt="Avatar" layout="fill" objectFit="cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-4xl font-black text-indigo-300">
+                      {team.leader?.name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <h3 className="font-black text-xl text-slate-800">{team.leader?.name}</h3>
+              <p className="text-sm font-bold text-slate-400 mt-1">{isLeader && "(You)"}</p>
+              <p className="text-xs text-slate-500 mt-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">{team.leader?.email}</p>
+            </div>
           </div>
-          <div>
-            <p className="font-bold text-slate-800">{team.leader?.name} {isLeader && "(You)"}</p>
-            <p className="text-sm text-slate-500">{team.leader?.email}</p>
+        </div>
+
+        {/* Team Members */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                Active Roster
+              </h2>
+              <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-black">{team.members.length} Members</span>
+            </div>
+            
+            {team.members.length === 0 ? (
+              <div className="text-center py-12 px-4">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                  <Users size={32} className="text-slate-300" />
+                </div>
+                <p className="text-slate-500 font-medium">No members have been assigned to this team yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {team.members.map(member => {
+                  const hasTarget = !!member.target;
+                  const target = member.target || { targetCount: 0, achievedCount: 0 };
+                  const percentCount = target.targetCount > 0 ? Math.round((target.achievedCount / target.targetCount) * 100) : 0;
+
+                  return (
+                    <div key={member.id} className="group relative bg-white border border-slate-100 rounded-2xl p-4 hover:shadow-md transition-all duration-300 hover:border-blue-100 flex flex-col sm:flex-row gap-4 sm:items-center justify-between overflow-hidden">
+                      {/* Left Side: Info */}
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-100 rounded-xl overflow-hidden relative shadow-sm border border-slate-200/50">
+                          {member.avatar ? (
+                            <Image src={member.avatar} alt="Avatar" layout="fill" objectFit="cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-lg font-black text-slate-400">
+                              {member.name?.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-black text-slate-800">{member.name}</p>
+                            {user.id === member.id && <span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-bold">YOU</span>}
+                          </div>
+                          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-0.5">{member.role.replace('_', ' ')} • {member.department}</p>
+                        </div>
+                      </div>
+
+                      {/* Right Side: Progress */}
+                      <div className="flex-1 max-w-[200px] w-full sm:w-auto">
+                        {hasTarget ? (
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-end">
+                              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Assigned</span>
+                              <span className="text-xs font-black text-slate-700">{target.achievedCount} <span className="text-slate-400">/ {target.targetCount}</span></span>
+                            </div>
+                            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden shadow-inner">
+                              <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 relative transition-all duration-1000" style={{ width: `${percentCount}%` }}>
+                                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-end h-full">
+                            <span className="px-3 py-1 bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-wider rounded-lg border border-slate-200 border-dashed">No Target Set</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Team Members */}
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
-        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center justify-between">
-          <span>Team Members</span>
-          <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md">{team.members.length}</span>
-        </h2>
-        
-        {team.members.length === 0 ? (
-          <p className="text-slate-500 text-sm italic">No members in this team yet.</p>
-        ) : (
-          <div className="space-y-4">
-            {team.members.map(member => {
-              const hasTarget = !!member.target;
-              const target = member.target || { targetCount: 0, achievedCount: 0, targetRevenue: 0, achievedRevenue: 0 };
-              const showRevenue = hasApproverAccess(user);
-              
-              const percentCount = target.targetCount > 0 ? Math.round((target.achievedCount / target.targetCount) * 100) : 0;
-              const percentRevenue = target.targetRevenue > 0 ? Math.round((target.achievedRevenue / target.targetRevenue) * 100) : 0;
-
-              return (
-                <div key={member.id} className="flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                  <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden relative">
-                    {member.avatar ? (
-                      <Image src={member.avatar} alt="Avatar" layout="fill" objectFit="cover" />
-                    ) : (
-                      member.name?.charAt(0).toUpperCase()
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-slate-800">{member.name} {user.id === member.id && "(You)"}</p>
-                    <p className="text-xs text-slate-500 capitalize">{member.role.replace('_', ' ')} • {member.department}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    {hasTarget ? (
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded border border-emerald-200">Assigned</span>
-                    ) : (
-                      <span className="px-2 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-black uppercase tracking-wider rounded border border-rose-200">Not Assigned</span>
-                    )}
-                    
-                    {hasTarget && (
-                      <div className="text-[10px] text-right mt-1 text-slate-500">
-                        {showRevenue ? (
-                          <div className="font-bold">
-                            <span className="text-emerald-600">₹{target.achievedRevenue.toLocaleString()}</span> / ₹{target.targetRevenue.toLocaleString()}
-                          </div>
-                        ) : (
-                          <div className="font-bold">
-                            <span className="text-blue-600">{percentRevenue}%</span> Achieved
-                          </div>
-                        )}
-                        <div>Count: {target.achievedCount} / {target.targetCount}</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
     </div>
   );
 }
