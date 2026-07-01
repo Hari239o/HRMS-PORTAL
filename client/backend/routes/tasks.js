@@ -154,24 +154,21 @@ router.get('/submit/pending', authenticate, authorize(['admin', 'hr', 'manager',
   try {
     const submissions = await prisma.studentSubmission.findMany({
       where: { approvalStatus: 'Pending' },
-      include: {
-        target: {
-          include: {
-            employee: { select: { id: true, name: true, email: true, teamId: true } }
-          }
-        }
-      },
+      include: { target: true },
       orderBy: { date: 'asc' }
     });
-    // Add employee name explicitly since it's nested
+
+    const employeeIds = [...new Set(submissions.map(s => s.employeeId))];
+    const employees = await prisma.employee.findMany({
+      where: { id: { in: employeeIds } },
+      select: { id: true, name: true, email: true, teamId: true }
+    });
+    
+    const employeeMap = {};
+    employees.forEach(emp => employeeMap[emp.id] = emp.name);
+
     const mapped = submissions.map(s => {
-      let employeeName = 'Unknown';
-      if (s.target && s.target.employee) {
-        employeeName = s.target.employee.name;
-      } else {
-         // Fallback query if no target relation
-         employeeName = 'Employee';
-      }
+      const employeeName = employeeMap[s.employeeId] || 'Unknown';
       return {
         ...s,
         employeeName,
