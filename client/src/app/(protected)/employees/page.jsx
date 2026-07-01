@@ -510,12 +510,11 @@ const Employees = () => {
                     className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-800"
                   >
                     <option value="employee">Standard Employee</option>
-                    {isSuperAdmin(user) && (
-                      <option value="hr">HR Professional</option>
-                    )}
                     <option value="intern">Intern / Trainee</option>
+                    <option value="hr">HR Professional</option>
                     <option value="manager">Manager</option>
                     <option value="post_sales">Post Sales (Operations)</option>
+                    <option value="admin">System Admin</option>
                   </select>
                 </div>
                  <div>

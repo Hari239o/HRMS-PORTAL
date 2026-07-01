@@ -22,6 +22,7 @@ export default function MyTeamPage() {
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
   const [targetCount, setTargetCount] = useState(30);
+  const [targetRevenue, setTargetRevenue] = useState(0);
 
   useEffect(() => {
     if (user && hasAdminAccess(user)) {
@@ -55,13 +56,15 @@ export default function MyTeamPage() {
         month: taskMonth,
         title: taskTitle,
         description: taskDescription,
-        targetCount: parseInt(targetCount)
+        targetCount: parseInt(targetCount),
+        targetRevenue: parseFloat(targetRevenue)
       });
       toast.success('Work assigned successfully!');
       setIsAssigning(false);
       setTaskTitle('');
       setTaskDescription('');
       setTargetCount(30);
+      setTargetRevenue(0);
       setSelectedMember('');
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to assign work');
@@ -94,9 +97,11 @@ export default function MyTeamPage() {
           </div>
           <div>
             <h1 className="text-2xl font-black">{team.name}</h1>
-            <p className="text-indigo-100 flex items-center gap-2">
-              <Target size={16} /> Team Target: ₹{team.targetRevenue.toLocaleString()}
-            </p>
+            {isLeader && (
+              <p className="text-indigo-100 flex items-center gap-2 mt-1">
+                <Target size={16} /> Team Target: ₹{team.targetRevenue?.toLocaleString() || 0}
+              </p>
+            )}
           </div>
         </div>
         
@@ -173,16 +178,29 @@ export default function MyTeamPage() {
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Monthly Target Count (Submissions)</label>
-              <input 
-                type="number" 
-                min="1"
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                value={targetCount}
-                onChange={(e) => setTargetCount(e.target.value)}
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Monthly Target Count</label>
+                <input 
+                  type="number" 
+                  min="1"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={targetCount}
+                  onChange={(e) => setTargetCount(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Target Revenue (₹)</label>
+                <input 
+                  type="number" 
+                  min="0"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={targetRevenue}
+                  onChange={(e) => setTargetRevenue(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
             <button type="submit" className="w-full bg-blue-600 text-white font-bold p-3 rounded-xl hover:bg-blue-700 transition-colors">

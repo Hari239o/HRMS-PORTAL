@@ -122,18 +122,20 @@ model Salary {
 }
 
 model Target {
-  id            String              @id @default(uuid())
-  employeeId    String
-  month         String
-  title         String?
-  description   String?
-  targetCount   Int                 @default(30)
-  achievedCount Int                 @default(0)
-  deadline      DateTime?
-  status        String              @default("Pending")
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-  submissions   StudentSubmission[]
+  id              String              @id @default(uuid())
+  employeeId      String
+  month           String
+  title           String?
+  description     String?
+  targetCount     Int                 @default(30)
+  achievedCount   Int                 @default(0)
+  targetRevenue   Float               @default(0)
+  achievedRevenue Float               @default(0)
+  deadline        DateTime?
+  status          String              @default("Pending")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  submissions     StudentSubmission[]
 }
 
 model StudentSubmission {

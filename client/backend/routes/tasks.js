@@ -30,6 +30,7 @@ router.post('/target', authenticate, async (req, res) => {
         where: { id: existing.id },
         data: { 
           targetCount: targetCount || 30,
+          targetRevenue: req.body.targetRevenue ? parseFloat(req.body.targetRevenue) : existing.targetRevenue,
           title: title || existing.title,
           description: description || existing.description
         }
@@ -40,7 +41,9 @@ router.post('/target', authenticate, async (req, res) => {
           employeeId,
           month,
           targetCount: targetCount || 30,
+          targetRevenue: req.body.targetRevenue ? parseFloat(req.body.targetRevenue) : 0,
           achievedCount: 0,
+          achievedRevenue: 0,
           title,
           description
         }
@@ -180,7 +183,10 @@ router.patch('/submit/:id/approve', authenticate, authorize(['admin', 'hr', 'man
     if (submission.targetId) {
       await prisma.target.update({
         where: { id: submission.targetId },
-        data: { achievedCount: { increment: 1 } }
+        data: { 
+          achievedCount: { increment: 1 },
+          achievedRevenue: { increment: submission.amountPaid || 0 }
+        }
       });
     }
 
@@ -199,7 +205,10 @@ router.patch('/submit/:id/reject', authenticate, authorize(['admin', 'hr', 'mana
     if (submission.approvalStatus === 'Approved' && submission.targetId) {
       await prisma.target.update({
         where: { id: submission.targetId },
-        data: { achievedCount: { decrement: 1 } }
+        data: { 
+          achievedCount: { decrement: 1 },
+          achievedRevenue: { decrement: submission.amountPaid || 0 }
+        }
       });
     }
 
@@ -237,7 +246,10 @@ router.delete('/submit/:id', authenticate, ownerOrAdmin(async (req) => {
     if (target && target.achievedCount > 0 && submission.approvalStatus === 'Approved') {
       await prisma.target.update({
         where: { id: target.id },
-        data: { achievedCount: { decrement: 1 } }
+        data: { 
+          achievedCount: { decrement: 1 },
+          achievedRevenue: { decrement: submission.amountPaid || 0 }
+        }
       });
     }
 

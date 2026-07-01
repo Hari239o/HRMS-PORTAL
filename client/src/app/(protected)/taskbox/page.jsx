@@ -12,12 +12,13 @@ export default function TaskBoxPage() {
   const [loading, setLoading] = useState(true);
   
   // Admin state
-  const [employees, setEmployees] = useState([]);
-  const [selectedEmployee, setSelectedEmployee] = useState('');
+  const [teams, setTeams] = useState([]);
+  const [selectedTeamLeader, setSelectedTeamLeader] = useState('');
   const [taskMonth, setTaskMonth] = useState(new Date().toISOString().slice(0, 7));
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
   const [targetCount, setTargetCount] = useState(30);
+  const [targetRevenue, setTargetRevenue] = useState(0);
 
   // Employee state
   const [myTask, setMyTask] = useState(null);
@@ -31,8 +32,8 @@ export default function TaskBoxPage() {
     setLoading(true);
     try {
       if (hasAdminAccess(user)) {
-        const empRes = await api.get('/api/employees');
-        setEmployees(empRes.data);
+        const teamRes = await api.get('/api/teams');
+        setTeams(teamRes.data);
       } else {
         const res = await api.get(`/api/tasks/performance?month=${new Date().toISOString().slice(0, 7)}`);
         setMyTask(res.data.target);
@@ -48,16 +49,18 @@ export default function TaskBoxPage() {
     e.preventDefault();
     try {
       await api.post('/api/tasks/target', {
-        employeeId: selectedEmployee,
+        employeeId: selectedTeamLeader,
         month: taskMonth,
         title: taskTitle,
         description: taskDescription,
-        targetCount: parseInt(targetCount)
+        targetCount: parseInt(targetCount),
+        targetRevenue: parseFloat(targetRevenue)
       });
       toast.success('Task assigned successfully');
       setTaskTitle('');
       setTaskDescription('');
       setTargetCount(30);
+      setTargetRevenue(0);
     } catch (err) {
       toast.error('Failed to assign task');
     }
@@ -74,7 +77,7 @@ export default function TaskBoxPage() {
           </div>
           <div>
             <h1 className="text-2xl font-black text-slate-800">Task Box Management</h1>
-            <p className="text-sm text-slate-500">Assign monthly targets and work to employees</p>
+            <p className="text-sm text-slate-500">Assign monthly targets and work to teams</p>
           </div>
         </div>
 
@@ -83,16 +86,16 @@ export default function TaskBoxPage() {
           <form onSubmit={handleAssignTask} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Employee</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Team</label>
                 <select 
                   className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                  value={selectedEmployee}
-                  onChange={(e) => setSelectedEmployee(e.target.value)}
+                  value={selectedTeamLeader}
+                  onChange={(e) => setSelectedTeamLeader(e.target.value)}
                   required
                 >
-                  <option value="">Select Employee...</option>
-                  {employees.map(emp => (
-                    <option key={emp.id} value={emp.id}>{emp.name} ({emp.department})</option>
+                  <option value="">Select Team...</option>
+                  {teams.map(team => (
+                    <option key={team.id} value={team.leaderId}>{team.name} (Leader: {team.leader?.name})</option>
                   ))}
                 </select>
               </div>
@@ -108,7 +111,7 @@ export default function TaskBoxPage() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Target Name / Title</label>
                 <input 
@@ -120,12 +123,22 @@ export default function TaskBoxPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Target Metric (Numeric)</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Target Metric (Count)</label>
                 <input 
                   type="number"
                   className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                   value={targetCount}
                   onChange={(e) => setTargetCount(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Target Revenue (₹)</label>
+                <input 
+                  type="number"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={targetRevenue}
+                  onChange={(e) => setTargetRevenue(e.target.value)}
                   required
                 />
               </div>
