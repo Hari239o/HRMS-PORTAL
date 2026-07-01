@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { CheckCircle, Clock, Calendar, Users, Target, Save, AlertTriangle, TrendingUp, X } from 'lucide-react';
+import { CheckCircle, Clock, Calendar, Users, Target, Save, AlertTriangle, TrendingUp, X, Edit3 } from 'lucide-react';
 import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 export default function TaskBoxPage() {
@@ -47,6 +47,14 @@ export default function TaskBoxPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditTarget = (team) => {
+    setSelectedTeamLeader(team.leaderId);
+    setTargetCount(team.targetTeamCount || 30);
+    setTargetRevenue(team.targetTeamRevenue || 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast.success('Form populated. You can now reassign the target.');
   };
 
   const handleAssignTask = async (e) => {
@@ -199,13 +207,22 @@ export default function TaskBoxPage() {
                       <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Leader: {team.leader?.name}</p>
                     </div>
                   </div>
-                  <button 
-                    onClick={() => { setWarningModalTeam(team); setWarningMessage(''); }}
-                    className="p-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition-colors"
-                    title="Send Warning / Alert"
-                  >
-                    <AlertTriangle size={18} />
-                  </button>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => handleEditTarget(team)}
+                      className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                      title="Edit Target"
+                    >
+                      <Edit3 size={18} />
+                    </button>
+                    <button 
+                      onClick={() => { setWarningModalTeam(team); setWarningMessage(''); }}
+                      className="p-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition-colors"
+                      title="Send Warning / Alert"
+                    >
+                      <AlertTriangle size={18} />
+                    </button>
+                  </div>
                 </div>
                 <div className="p-4 space-y-4">
                   <div>

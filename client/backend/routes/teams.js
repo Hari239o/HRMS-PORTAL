@@ -29,8 +29,10 @@ router.get('/', authenticate, async (req, res) => {
       
       const achievedTeamRevenue = teamTargets.reduce((sum, target) => sum + (target.achievedRevenue || 0), 0);
       const achievedTeamCount = teamTargets.reduce((sum, target) => sum + (target.achievedCount || 0), 0);
-      const targetTeamRevenue = teamTargets.reduce((sum, target) => sum + (target.targetRevenue || 0), 0);
-      const targetTeamCount = teamTargets.reduce((sum, target) => sum + (target.targetCount || 0), 0);
+      
+      const leaderTarget = teamTargets.find(t => t.employeeId === team.leaderId);
+      const targetTeamRevenue = leaderTarget ? (leaderTarget.targetRevenue || 0) : 0;
+      const targetTeamCount = leaderTarget ? (leaderTarget.targetCount || 0) : 0;
 
       return {
         ...team,
