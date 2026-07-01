@@ -541,6 +541,7 @@ export default function Performance() {
                       <th className="px-6 py-5">Domain / College</th>
                       <th className="px-6 py-5">Payment Status</th>
                       <th className="px-6 py-5 text-center">Process Check</th>
+                      <th className="px-6 py-5 text-center">Approval Status</th>
                       <th className="px-6 py-5 text-right">Date / Action</th>
                     </tr>
                   </thead>
@@ -596,9 +597,20 @@ export default function Performance() {
                             </div>
                           </div>
                         </td>
+                        <td className="px-6 py-5 text-center">
+                          {sub.approvalStatus === 'Approved' && (
+                            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-emerald-200">Approved</span>
+                          )}
+                          {sub.approvalStatus === 'Rejected' && (
+                            <span className="px-3 py-1 bg-rose-100 text-rose-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-rose-200">Rejected</span>
+                          )}
+                          {(!sub.approvalStatus || sub.approvalStatus === 'Pending') && (
+                            <span className="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-amber-200">Pending</span>
+                          )}
+                        </td>
                         <td className="px-6 py-5 text-right">
                           <div className="flex flex-col items-end gap-3">
-                            <span className="text-slate-400 font-bold bg-slate-50 px-2 py-1 rounded text-[10px]">{new Date(sub.date).toLocaleDateString()}</span>
+                            <span className="text-slate-400 font-bold bg-slate-50 border border-slate-100 px-2 py-1 rounded text-[10px]">{new Date(sub.date).toLocaleDateString()}</span>
                             <button 
                               onClick={() => handleDeleteSubmission(sub.id)}
                               className="w-8 h-8 rounded-full bg-white border border-slate-200 text-rose-400 flex items-center justify-center hover:bg-rose-500 hover:text-white hover:border-rose-500 hover:shadow-lg hover:shadow-rose-500/30 transition-all opacity-0 group-hover:opacity-100"
@@ -611,7 +623,7 @@ export default function Performance() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="5" className="text-center py-20 bg-slate-50/50">
+                        <td colSpan="6" className="text-center py-20 bg-slate-50/50">
                           <div className="flex flex-col items-center justify-center text-slate-400">
                             <Star size={40} className="opacity-20 mb-4" />
                             <p className="font-bold">No students reported yet.</p>
