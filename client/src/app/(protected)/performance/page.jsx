@@ -88,7 +88,8 @@ export default function Performance() {
     (emp.department && emp.department.toLowerCase().includes(employeeSearch.toLowerCase()))
   );
 
-  const totalIntakes = submissions.length;
+  const totalIntakes = submissions.filter(s => s.approvalStatus === 'Approved').length;
+  const pendingIntakes = submissions.filter(s => !s.approvalStatus || s.approvalStatus === 'Pending').length;
   const progressPercent = targetData.targetCount ? Math.min(Math.round((targetData.achievedCount / targetData.targetCount) * 100), 100) : 0;
   const progressStatus = targetData.achievedCount >= targetData.targetCount ? 'On track' : 'Needs attention';
   const progressTone = targetData.achievedCount >= targetData.targetCount ? 'emerald' : 'amber';
@@ -309,9 +310,9 @@ export default function Performance() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-sky-100 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
           <div className="relative z-10 flex items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-sky-500/70">Total Intakes</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-sky-500/70">Total Approved Intakes</p>
               <h2 className="mt-2 text-4xl font-black text-slate-800">{totalIntakes}</h2>
-              <p className="mt-1 text-xs font-semibold text-slate-500">Logged this month</p>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{pendingIntakes > 0 ? `${pendingIntakes} pending approval` : 'Logged this month'}</p>
             </div>
             <div className="rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 p-3.5 text-white shadow-lg shadow-sky-500/30 transform transition-transform group-hover:rotate-12">
               <RefreshCw size={24} />

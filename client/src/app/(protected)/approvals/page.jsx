@@ -64,7 +64,7 @@ export default function ApprovalsPage() {
             <div className="p-2.5 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl shadow-lg shadow-blue-500/20 text-white">
               <ClipboardList size={24} />
             </div>
-            Pending Approvals
+            Post Sales Task Box
           </h1>
           <p className="text-slate-500 font-medium mt-1">Review and approve employee transactions</p>
         </div>

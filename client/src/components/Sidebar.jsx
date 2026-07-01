@@ -42,7 +42,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Separation', icon: UserMinus, path: '/resignations' },
     { name: 'Holidays', icon: CalendarDays, path: '/holidays' },
     { name: 'Performance', icon: Trophy, path: '/performance' },
-    { name: 'Approvals', icon: ClipboardList, path: '/approvals' },
+    { name: 'Post Sales Task Box', icon: ClipboardList, path: '/approvals' },
     { name: 'HR Documents', icon: FileText, path: '/documents' },
   ];
 
