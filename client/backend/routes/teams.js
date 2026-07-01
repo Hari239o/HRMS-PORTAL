@@ -75,8 +75,9 @@ router.get('/my-team', authenticate, async (req, res) => {
 
     const achievedTeamRevenue = targets.reduce((sum, target) => sum + (target.achievedRevenue || 0), 0);
     const achievedTeamCount = targets.reduce((sum, target) => sum + (target.achievedCount || 0), 0);
+    const targetTeamRevenue = targets.reduce((sum, target) => sum + (target.targetRevenue || 0), 0);
 
-    res.json({ hasTeam: true, isLeader: team.leaderId === employeeId, team: { ...team, achievedTeamRevenue, achievedTeamCount } });
+    res.json({ hasTeam: true, isLeader: team.leaderId === employeeId, team: { ...team, achievedTeamRevenue, achievedTeamCount, targetTeamRevenue } });
   } catch (error) {
     console.error('Error fetching my team:', error);
     res.status(500).json({ error: error.message });
