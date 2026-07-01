@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { hasAdminAccess } from '@/utils/rbac';
+import { hasAdminAccess, hasApproverAccess } from '@/utils/rbac';
 import api from '@/utils/api';
 import toast from 'react-hot-toast';
 import { Users, Target, User, CheckCircle, Clock, TrendingUp } from 'lucide-react';
@@ -249,21 +249,52 @@ export default function MyTeamPage() {
           <p className="text-slate-500 text-sm italic">No members in this team yet.</p>
         ) : (
           <div className="space-y-4">
-            {team.members.map(member => (
-              <div key={member.id} className="flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden relative">
-                  {member.avatar ? (
-                    <Image src={member.avatar} alt="Avatar" layout="fill" objectFit="cover" />
-                  ) : (
-                    member.name?.charAt(0).toUpperCase()
-                  )}
+            {team.members.map(member => {
+              const hasTarget = !!member.target;
+              const target = member.target || { targetCount: 0, achievedCount: 0, targetRevenue: 0, achievedRevenue: 0 };
+              const showRevenue = hasApproverAccess(user);
+              
+              const percentCount = target.targetCount > 0 ? Math.round((target.achievedCount / target.targetCount) * 100) : 0;
+              const percentRevenue = target.targetRevenue > 0 ? Math.round((target.achievedRevenue / target.targetRevenue) * 100) : 0;
+
+              return (
+                <div key={member.id} className="flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                  <div className="w-10 h-10 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden relative">
+                    {member.avatar ? (
+                      <Image src={member.avatar} alt="Avatar" layout="fill" objectFit="cover" />
+                    ) : (
+                      member.name?.charAt(0).toUpperCase()
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-slate-800">{member.name} {user.id === member.id && "(You)"}</p>
+                    <p className="text-xs text-slate-500 capitalize">{member.role.replace('_', ' ')} • {member.department}</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    {hasTarget ? (
+                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded border border-emerald-200">Assigned</span>
+                    ) : (
+                      <span className="px-2 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-black uppercase tracking-wider rounded border border-rose-200">Not Assigned</span>
+                    )}
+                    
+                    {hasTarget && (
+                      <div className="text-[10px] text-right mt-1 text-slate-500">
+                        {showRevenue ? (
+                          <div className="font-bold">
+                            <span className="text-emerald-600">₹{target.achievedRevenue.toLocaleString()}</span> / ₹{target.targetRevenue.toLocaleString()}
+                          </div>
+                        ) : (
+                          <div className="font-bold">
+                            <span className="text-blue-600">{percentRevenue}%</span> Achieved
+                          </div>
+                        )}
+                        <div>Count: {target.achievedCount} / {target.targetCount}</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="font-bold text-slate-800">{member.name} {user.id === member.id && "(You)"}</p>
-                  <p className="text-xs text-slate-500 capitalize">{member.role.replace('_', ' ')} • {member.department}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

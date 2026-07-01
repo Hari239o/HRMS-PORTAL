@@ -65,6 +65,14 @@ router.get('/my-team', authenticate, async (req, res) => {
       }
     });
 
+    team.members = team.members.map(member => {
+      const memberTarget = targets.find(t => t.employeeId === member.id);
+      return {
+        ...member,
+        target: memberTarget || null
+      };
+    });
+
     const achievedTeamRevenue = targets.reduce((sum, target) => sum + (target.achievedRevenue || 0), 0);
     const achievedTeamCount = targets.reduce((sum, target) => sum + (target.achievedCount || 0), 0);
 
