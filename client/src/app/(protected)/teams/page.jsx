@@ -6,9 +6,11 @@ import { hasAdminAccess } from '@/utils/rbac';
 import api from '@/utils/api';
 import toast from 'react-hot-toast';
 import { Target, Plus, Users, Trash2, Edit3, X, Save } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function TeamsPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [teams, setTeams] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,12 +55,14 @@ export default function TeamsPage() {
       if (form.id) {
         await api.put(`/api/teams/${form.id}`, form);
         toast.success('Team updated successfully');
+        setIsModalOpen(false);
+        fetchData();
       } else {
         await api.post('/api/teams', form);
         toast.success('Team created successfully');
+        setIsModalOpen(false);
+        router.push('/taskbox');
       }
-      setIsModalOpen(false);
-      fetchData();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Operation failed');
     }
@@ -148,7 +152,6 @@ export default function TeamsPage() {
                 </div>
                 <div>
                   <h3 className="font-black text-slate-800 text-lg">{team.name}</h3>
-                  <p className="text-xs font-bold text-slate-400">Target: ₹{team.targetRevenue.toLocaleString()}</p>
                 </div>
               </div>
 
@@ -200,7 +203,7 @@ export default function TeamsPage() {
             
             <div className="p-6 overflow-y-auto flex-1">
               <form id="team-form" onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 gap-5">
                   <div className="group">
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Team Name</label>
                     <input 
@@ -210,17 +213,6 @@ export default function TeamsPage() {
                       value={form.name}
                       onChange={(e) => setForm({...form, name: e.target.value})}
                       placeholder="e.g. Alpha Squad"
-                    />
-                  </div>
-                  <div className="group">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Target Revenue (₹)</label>
-                    <input 
-                      type="number" 
-                      required 
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
-                      value={form.targetRevenue}
-                      onChange={(e) => setForm({...form, targetRevenue: e.target.value})}
-                      placeholder="e.g. 500000"
                     />
                   </div>
                 </div>
@@ -234,7 +226,7 @@ export default function TeamsPage() {
                     onChange={(e) => setForm({...form, leaderId: e.target.value})}
                   >
                     <option value="">Select a Team Leader</option>
-                    {employees.filter(e => e.role === 'manager' || e.role === 'post_sales').map(emp => (
+                    {employees.map(emp => (
                       <option key={emp.id} value={emp.id}>{emp.name} ({emp.role})</option>
                     ))}
                   </select>
