@@ -267,20 +267,30 @@ export default function TeamsPage() {
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Assign Members (Interns & Employees)</label>
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 max-h-60 overflow-y-auto space-y-2">
-                    {employees.filter(e => e.role === 'employee' || e.role === 'intern').map(emp => (
-                      <label key={emp.id} className="flex items-center gap-3 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 shadow-sm hover:shadow">
-                        <input 
-                          type="checkbox" 
-                          checked={form.memberIds.includes(emp.id)}
-                          onChange={() => handleMemberToggle(emp.id)}
-                          className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                        />
-                        <div>
-                          <p className="text-sm font-bold text-slate-700">{emp.name}</p>
-                          <p className="text-[10px] font-semibold text-slate-400 uppercase">{emp.role}</p>
-                        </div>
-                      </label>
-                    ))}
+                    {employees.filter(e => e.role === 'employee' || e.role === 'intern').map(emp => {
+                      const existingTeam = teams.find(t => t.members?.some(m => m.id === emp.id) && t.id !== form.id);
+                      return (
+                        <label key={emp.id} className="flex items-center gap-3 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200 shadow-sm hover:shadow">
+                          <input 
+                            type="checkbox" 
+                            checked={form.memberIds.includes(emp.id)}
+                            onChange={() => handleMemberToggle(emp.id)}
+                            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                          />
+                          <div className="flex-1">
+                            <div className="flex justify-between items-center">
+                              <p className="text-sm font-bold text-slate-700">{emp.name}</p>
+                              {existingTeam && (
+                                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded" style={{ backgroundColor: `${existingTeam.color || '#4f46e5'}20`, color: existingTeam.color || '#4f46e5' }}>
+                                  In Team: {existingTeam.name}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[10px] font-semibold text-slate-400 uppercase">{emp.role}</p>
+                          </div>
+                        </label>
+                      );
+                    })}
                     {employees.filter(e => e.role === 'employee' || e.role === 'intern').length === 0 && (
                       <p className="text-sm text-slate-500 text-center py-4 font-medium">No eligible members found.</p>
                     )}
