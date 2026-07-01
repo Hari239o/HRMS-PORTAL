@@ -33,7 +33,7 @@ model Employee {
   
   teamId        String?
   team          Team?        @relation("TeamMembers", fields: [teamId], references: [id])
-  leadingTeam   Team?        @relation("TeamLeader")
+  leadingTeams  Team[]       @relation("TeamLeader")
 
   attendance    Attendance[]
   leaves        Leave[]
@@ -45,7 +45,7 @@ model Team {
   id            String       @id @default(uuid())
   name          String
   targetRevenue Float        @default(0)
-  leaderId      String       @unique
+  leaderId      String
   leader        Employee     @relation("TeamLeader", fields: [leaderId], references: [id])
   members       Employee[]   @relation("TeamMembers")
   createdAt     DateTime     @default(now())
