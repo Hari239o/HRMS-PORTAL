@@ -511,14 +511,10 @@ const Employees = () => {
                   >
                     <option value="employee">Standard Employee</option>
                     {isSuperAdmin(user) && (
-                      <>
-                        <option value="admin">System Administrator</option>
-                        <option value="hr">HR Professional</option>
-                      </>
+                      <option value="hr">HR Professional</option>
                     )}
                     <option value="intern">Intern / Trainee</option>
                     <option value="manager">Manager</option>
-                    <option value="operations_manager">Operations Manager</option>
                     <option value="post_sales">Post Sales (Operations)</option>
                   </select>
                 </div>
