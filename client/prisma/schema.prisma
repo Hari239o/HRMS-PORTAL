@@ -44,6 +44,8 @@ model Employee {
 model Team {
   id            String       @id @default(uuid())
   name          String
+  color         String?
+  image         String?
   targetRevenue Float        @default(0)
   leaderId      String
   leader        Employee     @relation("TeamLeader", fields: [leaderId], references: [id])

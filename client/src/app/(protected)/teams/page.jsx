@@ -21,7 +21,9 @@ export default function TeamsPage() {
     name: '',
     targetRevenue: '',
     leaderId: '',
-    memberIds: []
+    memberIds: [],
+    color: '#4f46e5',
+    image: ''
   });
 
   useEffect(() => {
@@ -86,7 +88,9 @@ export default function TeamsPage() {
         name: team.name,
         targetRevenue: team.targetRevenue,
         leaderId: team.leader?.id || '',
-        memberIds: team.members?.map(m => m.id) || []
+        memberIds: team.members?.map(m => m.id) || [],
+        color: team.color || '#4f46e5',
+        image: team.image || ''
       });
     } else {
       setForm({
@@ -94,7 +98,9 @@ export default function TeamsPage() {
         name: '',
         targetRevenue: '',
         leaderId: '',
-        memberIds: []
+        memberIds: [],
+        color: '#4f46e5',
+        image: ''
       });
     }
     setIsModalOpen(true);
@@ -147,9 +153,13 @@ export default function TeamsPage() {
               </div>
 
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-black text-xl">
-                  {team.name.charAt(0)}
-                </div>
+                {team.image ? (
+                  <img src={team.image} alt={team.name} className="w-12 h-12 rounded-xl object-cover shadow-sm" style={{ borderColor: team.color || '#4f46e5', borderWidth: '2px' }} />
+                ) : (
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl text-white shadow-sm" style={{ backgroundColor: team.color || '#4f46e5' }}>
+                    {team.name.charAt(0)}
+                  </div>
+                )}
                 <div>
                   <h3 className="font-black text-slate-800 text-lg">{team.name}</h3>
                 </div>
@@ -214,6 +224,28 @@ export default function TeamsPage() {
                       onChange={(e) => setForm({...form, name: e.target.value})}
                       placeholder="e.g. Alpha Squad"
                     />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-5">
+                    <div className="group">
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Team Color</label>
+                      <input 
+                        type="color" 
+                        className="w-full h-[46px] rounded-xl cursor-pointer bg-slate-50 border border-slate-200 p-1 focus:bg-white focus:border-blue-500 outline-none transition-all"
+                        value={form.color}
+                        onChange={(e) => setForm({...form, color: e.target.value})}
+                      />
+                    </div>
+                    <div className="group">
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Image URL (Optional)</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+                        value={form.image}
+                        onChange={(e) => setForm({...form, image: e.target.value})}
+                        placeholder="https://example.com/logo.png"
+                      />
+                    </div>
                   </div>
                 </div>
 

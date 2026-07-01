@@ -90,13 +90,18 @@ export default function MyTeamPage() {
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6 pb-24">
       {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white shadow-lg">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-            <Users size={24} className="text-white" />
-          </div>
+      <div className="rounded-3xl p-6 text-white shadow-lg relative overflow-hidden" style={{ backgroundColor: team.color || '#4f46e5' }}>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+        <div className="relative flex items-center gap-4 mb-4">
+          {team.image ? (
+            <img src={team.image} alt={team.name} className="w-16 h-16 rounded-2xl object-cover border border-white/20 shadow-md" />
+          ) : (
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20">
+              <Users size={32} className="text-white" />
+            </div>
+          )}
           <div>
-            <h1 className="text-2xl font-black">{team.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-black drop-shadow-sm">{team.name}</h1>
             {isLeader && (
               <p className="text-indigo-100 flex items-center gap-2 mt-1">
                 <Target size={16} /> Team Target: ₹{team.targetRevenue?.toLocaleString() || 0}

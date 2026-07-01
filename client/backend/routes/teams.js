@@ -61,11 +61,13 @@ router.get('/my-team', authenticate, async (req, res) => {
 
 // CREATE a new team
 router.post('/', authenticate, authorize(['admin']), async (req, res) => {
-  const { name, targetRevenue, leaderId, memberIds } = req.body;
+  const { name, targetRevenue, leaderId, memberIds, color, image } = req.body;
   try {
     const newTeam = await prisma.team.create({
       data: {
         name,
+        color: color || '#4f46e5',
+        image: image || '',
         targetRevenue: parseFloat(targetRevenue) || 0,
         leader: { connect: { id: leaderId } },
         members: {
@@ -82,12 +84,14 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
 
 // UPDATE a team
 router.put('/:id', authenticate, authorize(['admin']), async (req, res) => {
-  const { name, targetRevenue, leaderId, memberIds } = req.body;
+  const { name, targetRevenue, leaderId, memberIds, color, image } = req.body;
   try {
     const team = await prisma.team.update({
       where: { id: req.params.id },
       data: {
         name,
+        color: color || '#4f46e5',
+        image: image || '',
         targetRevenue: parseFloat(targetRevenue) || 0,
         leader: { connect: { id: leaderId } },
         members: {
