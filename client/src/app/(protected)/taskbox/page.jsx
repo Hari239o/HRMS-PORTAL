@@ -195,57 +195,87 @@ export default function TaskBoxPage() {
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {teams.map(team => (
-              <div key={team.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex justify-between items-center" style={{ backgroundColor: `${team.color || '#4f46e5'}10` }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-lg" style={{ backgroundColor: team.color || '#4f46e5' }}>
-                      {team.name.charAt(0)}
+            {teams.map(team => {
+              const progressCount = Math.min(100, team.targetTeamCount > 0 ? ((team.achievedTeamCount || 0) / team.targetTeamCount) * 100 : 0);
+              const progressRev = Math.min(100, team.targetTeamRevenue > 0 ? ((team.achievedTeamRevenue || 0) / team.targetTeamRevenue) * 100 : 0);
+              const teamColor = team.color || '#4f46e5';
+
+              return (
+                <div key={team.id} className="bg-white rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 transform hover:-translate-y-1">
+                  {/* Banner Header */}
+                  <div className="h-24 relative p-4 flex justify-between items-start" style={{ backgroundColor: teamColor }}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                    
+                    <div className="relative z-10">
+                      <h3 className="font-black text-xl text-white tracking-tight drop-shadow-md">{team.name}</h3>
+                      <p className="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1 mt-1">
+                        Leader: {team.leader?.name}
+                      </p>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-800">{team.name}</h3>
-                      <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Leader: {team.leader?.name}</p>
+
+                    <div className="relative z-10 flex gap-2">
+                      <button 
+                        onClick={() => handleEditTarget(team)}
+                        className="w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white backdrop-blur-sm text-white hover:text-blue-600 rounded-full transition-all shadow-sm"
+                        title="Edit Target"
+                      >
+                        <Edit3 size={14} />
+                      </button>
+                      <button 
+                        onClick={() => { setWarningModalTeam(team); setWarningMessage(''); }}
+                        className="w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-rose-500 backdrop-blur-sm text-white rounded-full transition-all shadow-sm"
+                        title="Send Warning / Alert"
+                      >
+                        <AlertTriangle size={14} />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => handleEditTarget(team)}
-                      className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
-                      title="Edit Target"
-                    >
-                      <Edit3 size={18} />
-                    </button>
-                    <button 
-                      onClick={() => { setWarningModalTeam(team); setWarningMessage(''); }}
-                      className="p-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition-colors"
-                      title="Send Warning / Alert"
-                    >
-                      <AlertTriangle size={18} />
-                    </button>
+
+                  {/* Body */}
+                  <div className="p-6 pt-8 relative">
+                    {/* Floating Avatar */}
+                    <div className="absolute -top-10 left-6">
+                      {team.leader?.avatar ? (
+                        <img src={team.leader.avatar} alt={team.leader?.name} className="w-14 h-14 rounded-2xl object-cover border-4 border-white shadow-md bg-white" />
+                      ) : (
+                        <div className="w-14 h-14 rounded-2xl border-4 border-white shadow-md flex items-center justify-center font-black text-xl text-white" style={{ backgroundColor: teamColor }}>
+                          {team.name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-6">
+                      {/* Target Count */}
+                      <div>
+                        <div className="flex justify-between items-end mb-2">
+                          <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Target Count</span>
+                          <span className="text-sm font-black text-slate-800">{team.achievedTeamCount || 0} <span className="text-slate-400 font-medium">/ {team.targetTeamCount || 0}</span></span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden shadow-inner">
+                          <div className="h-full rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 relative transition-all duration-1000" style={{ width: `${progressCount}%` }}>
+                            <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Revenue */}
+                      <div>
+                        <div className="flex justify-between items-end mb-2">
+                          <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Revenue</span>
+                          <span className="text-sm font-black text-slate-800">₹{(team.achievedTeamRevenue || 0).toLocaleString()} <span className="text-slate-400 font-medium">/ ₹{(team.targetTeamRevenue || 0).toLocaleString()}</span></span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden shadow-inner">
+                          <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 relative transition-all duration-1000" style={{ width: `${progressRev}%` }}>
+                            <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="p-4 space-y-4">
-                  <div>
-                    <div className="flex justify-between items-end mb-1">
-                      <span className="text-[10px] font-black uppercase text-slate-400">Target Count</span>
-                      <span className="text-sm font-bold text-slate-700">{team.achievedTeamCount || 0} <span className="text-slate-400">/ {team.targetTeamCount || 0}</span></span>
-                    </div>
-                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full bg-blue-500" style={{ width: `${Math.min(100, team.targetTeamCount > 0 ? ((team.achievedTeamCount || 0) / team.targetTeamCount) * 100 : 0)}%` }}></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between items-end mb-1">
-                      <span className="text-[10px] font-black uppercase text-slate-400">Revenue Generated</span>
-                      <span className="text-sm font-bold text-slate-700">₹{(team.achievedTeamRevenue || 0).toLocaleString()} <span className="text-slate-400">/ ₹{(team.targetTeamRevenue || 0).toLocaleString()}</span></span>
-                    </div>
-                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full bg-emerald-500" style={{ width: `${Math.min(100, team.targetTeamRevenue > 0 ? ((team.achievedTeamRevenue || 0) / team.targetTeamRevenue) * 100 : 0)}%` }}></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
