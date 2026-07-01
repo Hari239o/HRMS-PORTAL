@@ -91,7 +91,7 @@ export default function MyTeamPage() {
     <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6 pb-24">
       {/* Header */}
       <div className="rounded-3xl p-6 text-white shadow-lg relative overflow-hidden" style={{ backgroundColor: team.color || '#4f46e5' }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent pointer-events-none"></div>
         <div className="relative flex items-center gap-4 mb-4">
           {team.image ? (
             <img src={team.image} alt={team.name} className="w-16 h-16 rounded-2xl object-cover border border-white/20 shadow-md" />
@@ -116,7 +116,7 @@ export default function MyTeamPage() {
         </div>
         
         {isLeader && (
-          <div className="mt-4 pt-4 border-t border-white/20 flex items-center justify-between">
+          <div className="relative z-10 mt-4 pt-4 border-t border-white/20 flex items-center justify-between">
             <div>
               <p className="text-sm text-indigo-100">You are the Team Leader</p>
               <p className="font-bold">Lead your team to success!</p>
