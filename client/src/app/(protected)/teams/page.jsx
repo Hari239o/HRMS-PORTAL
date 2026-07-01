@@ -318,13 +318,14 @@ export default function TeamsPage() {
                             <div className="flex-1">
                               <div className="flex justify-between items-center">
                                 <p className="text-sm font-bold text-slate-700">{emp.name}</p>
-                              {existingTeam && (
-                                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded" style={{ backgroundColor: `${existingTeam.color || '#4f46e5'}20`, color: existingTeam.color || '#4f46e5' }}>
-                                  In Team: {existingTeam.name}
-                                </span>
-                              )}
+                                {existingTeam && (
+                                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded" style={{ backgroundColor: `${existingTeam.color || '#4f46e5'}20`, color: existingTeam.color || '#4f46e5' }}>
+                                    In Team: {existingTeam.name}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] font-semibold text-slate-400 uppercase">{emp.role}</p>
                             </div>
-                            <p className="text-[10px] font-semibold text-slate-400 uppercase">{emp.role}</p>
                           </div>
                         </label>
                       );
