@@ -150,7 +150,7 @@ router.get('/performance', authenticate, async (req, res) => {
   }
 });
 
-router.get('/submit/pending', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales']), async (req, res) => {
+router.get('/submit/pending', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales', 'post sales']), async (req, res) => {
   try {
     const submissions = await prisma.studentSubmission.findMany({
       where: { approvalStatus: 'Pending' },
@@ -186,7 +186,7 @@ router.get('/submit/pending', authenticate, authorize(['admin', 'hr', 'manager',
   }
 });
 
-router.patch('/submit/:id/approve', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales']), async (req, res) => {
+router.patch('/submit/:id/approve', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales', 'post sales']), async (req, res) => {
   try {
     const submission = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
     if (!submission) return res.status(404).json({ error: 'Submission not found' });
@@ -213,7 +213,7 @@ router.patch('/submit/:id/approve', authenticate, authorize(['admin', 'hr', 'man
   }
 });
 
-router.patch('/submit/:id/reject', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales']), async (req, res) => {
+router.patch('/submit/:id/reject', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales', 'post sales']), async (req, res) => {
   try {
     const submission = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
     if (!submission) return res.status(404).json({ error: 'Submission not found' });

@@ -541,7 +541,6 @@ export default function Performance() {
                       <th className="px-6 py-5">Domain / College</th>
                       <th className="px-6 py-5">Payment Status</th>
                       <th className="px-6 py-5 text-center">Process Check</th>
-                      <th className="px-6 py-5 text-center">Approval Status</th>
                       <th className="px-6 py-5 text-right">Date / Action</th>
                     </tr>
                   </thead>
@@ -549,7 +548,18 @@ export default function Performance() {
                     {submissions.length > 0 ? submissions.map((sub) => (
                       <tr key={sub.id} className="hover:bg-blue-50/30 transition-all border-b border-slate-50 last:border-0 group">
                         <td className="px-6 py-5">
-                          <p className="font-black text-sm text-slate-800 mb-0.5">{sub.studentName}</p>
+                          <p className="font-black text-sm text-slate-800 mb-1">{sub.studentName}</p>
+                          <div className="mb-2">
+                            {sub.approvalStatus === 'Approved' && (
+                              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded border border-emerald-200">Approved</span>
+                            )}
+                            {sub.approvalStatus === 'Rejected' && (
+                              <span className="px-2 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-black uppercase tracking-wider rounded border border-rose-200">Rejected</span>
+                            )}
+                            {(!sub.approvalStatus || sub.approvalStatus === 'Pending') && (
+                              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-black uppercase tracking-wider rounded border border-amber-200">Pending Approval</span>
+                            )}
+                          </div>
                           <div className="flex items-center gap-2 text-[10px] text-slate-400">
                             <span>{sub.mailId}</span>
                             <span>•</span>
@@ -597,17 +607,6 @@ export default function Performance() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-5 text-center">
-                          {sub.approvalStatus === 'Approved' && (
-                            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-emerald-200">Approved</span>
-                          )}
-                          {sub.approvalStatus === 'Rejected' && (
-                            <span className="px-3 py-1 bg-rose-100 text-rose-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-rose-200">Rejected</span>
-                          )}
-                          {(!sub.approvalStatus || sub.approvalStatus === 'Pending') && (
-                            <span className="px-3 py-1 bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-amber-200">Pending</span>
-                          )}
-                        </td>
                         <td className="px-6 py-5 text-right">
                           <div className="flex flex-col items-end gap-3">
                             <span className="text-slate-400 font-bold bg-slate-50 border border-slate-100 px-2 py-1 rounded text-[10px]">{new Date(sub.date).toLocaleDateString()}</span>
@@ -623,7 +622,7 @@ export default function Performance() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="6" className="text-center py-20 bg-slate-50/50">
+                        <td colSpan="5" className="text-center py-20 bg-slate-50/50">
                           <div className="flex flex-col items-center justify-center text-slate-400">
                             <Star size={40} className="opacity-20 mb-4" />
                             <p className="font-bold">No students reported yet.</p>

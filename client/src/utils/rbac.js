@@ -10,5 +10,5 @@ export const hasAdminAccess = (user) => {
 
 export const hasApproverAccess = (user) => {
   if (!user) return false;
-  return ['admin', 'hr', 'manager', 'post_sales'].includes(user.role) || isSuperAdmin(user);
+  return ['admin', 'hr', 'manager', 'post_sales', 'post sales'].includes(user.role) || isSuperAdmin(user);
 };

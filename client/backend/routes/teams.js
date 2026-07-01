@@ -55,6 +55,9 @@ router.get('/my-team', authenticate, async (req, res) => {
     // Calculate achieved team revenue for the current month
     const month = new Date().toISOString().substring(0, 7);
     const memberIds = team.members.map(m => m.id);
+    if (team.leaderId) {
+      memberIds.push(team.leaderId);
+    }
     const targets = await prisma.target.findMany({
       where: {
         employeeId: { in: memberIds },
