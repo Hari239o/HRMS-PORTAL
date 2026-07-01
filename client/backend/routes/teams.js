@@ -52,7 +52,20 @@ router.get('/my-team', authenticate, async (req, res) => {
       return res.json({ hasTeam: false });
     }
 
-    res.json({ hasTeam: true, isLeader: team.leaderId === employeeId, team });
+    // Calculate achieved team revenue for the current month
+    const month = new Date().toISOString().substring(0, 7);
+    const memberIds = team.members.map(m => m.id);
+    const targets = await prisma.target.findMany({
+      where: {
+        employeeId: { in: memberIds },
+        month: month
+      }
+    });
+
+    const achievedTeamRevenue = targets.reduce((sum, target) => sum + (target.achievedRevenue || 0), 0);
+    const achievedTeamCount = targets.reduce((sum, target) => sum + (target.achievedCount || 0), 0);
+
+    res.json({ hasTeam: true, isLeader: team.leaderId === employeeId, team: { ...team, achievedTeamRevenue, achievedTeamCount } });
   } catch (error) {
     console.error('Error fetching my team:', error);
     res.status(500).json({ error: error.message });

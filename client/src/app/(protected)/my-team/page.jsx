@@ -103,9 +103,14 @@ export default function MyTeamPage() {
           <div>
             <h1 className="text-2xl md:text-3xl font-black drop-shadow-sm">{team.name}</h1>
             {isLeader && (
-              <p className="text-indigo-100 flex items-center gap-2 mt-1">
-                <Target size={16} /> Team Target: ₹{team.targetRevenue?.toLocaleString() || 0}
-              </p>
+              <div className="flex flex-col mt-2 space-y-1">
+                <p className="text-indigo-100 flex items-center gap-2 text-sm">
+                  <Target size={16} /> Team Target Revenue: ₹{team.targetRevenue?.toLocaleString() || 0}
+                </p>
+                <p className="text-indigo-100 flex items-center gap-2 text-sm">
+                  <TrendingUp size={16} /> Achieved Revenue: <span className="font-bold text-white">₹{team.achievedTeamRevenue?.toLocaleString() || 0}</span>
+                </p>
+              </div>
             )}
           </div>
         </div>

@@ -59,6 +59,23 @@ router.post('/submit', authenticate, async (req, res) => {
   const { studentName, domain, collegeName, mailId, phoneNumber, totalAmount, amountPaid, remainingAmount, remainingAmountDate } = req.body;
   const employeeId = req.user.id;
   const month = new Date().toISOString().substring(0, 7); 
+  
+  if (parseFloat(remainingAmount) > 0) {
+    if (!remainingAmountDate) {
+      return res.status(400).json({ error: 'Due date is required for the remaining amount.' });
+    }
+    const selectedDate = new Date(remainingAmountDate);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    const diffTime = selectedDate.getTime() - currentDate.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays > 10) {
+      return res.status(400).json({ error: 'The remaining amount due date must be within 10 days from today.' });
+    } else if (diffDays < 0) {
+      return res.status(400).json({ error: 'The due date cannot be in the past.' });
+    }
+  }
 
   try {
     const target = await prisma.target.findFirst({
