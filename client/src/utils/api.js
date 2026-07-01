@@ -103,17 +103,35 @@ api.interceptors.response.use(
 
     // Handle 401 Unauthorized globally
     if (status === 401) {
-      // Optional: Logic to attempt token refresh could go here if the backend supported it.
-      // e.g. const newToken = await api.post('/auth/refresh', { refreshToken });
-      
-      // Since no refresh token is provided by backend, log out the user
-      toast.error('Session Expired: Please login again.');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.dispatchEvent(new Event('auth_logout'));
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 1500);
+      // Allow specific error messages for login failures to pass through
+      if (originalRequest.url?.includes('/auth/login')) {
+        toast.error(message || 'Invalid credentials');
+        return Promise.reject(error);
+      }
+
+      // Prevent multiple toasts and redirects for concurrent 401s
+      if (!window.isLoggingOut) {
+        window.isLoggingOut = true;
+        
+        // Only show the toast if we're not already on the login page
+        if (window.location.pathname !== '/') {
+          toast.error('Session Expired: Please login again.', { id: 'session-expired' });
+        }
+        
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.dispatchEvent(new Event('auth_logout'));
+        
+        // Only redirect if not already on the login page
+        if (window.location.pathname !== '/') {
+          setTimeout(() => {
+            window.isLoggingOut = false;
+            window.location.href = '/';
+          }, 1500);
+        } else {
+           window.isLoggingOut = false;
+        }
+      }
     } else if (status === 403) {
       toast.error(typeof serverError === 'string' && serverError.includes('device') ? 'Device Access Restricted' : 'Access Denied: You do not have permission for this action.');
     } else if (status === 503) {
