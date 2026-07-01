@@ -5,6 +5,7 @@ import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { Plus, Users, Briefcase, Trash2, Link as LinkIcon, Send } from 'lucide-react';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 export default function RecruitmentPage() {
   const { user } = useAuth();
@@ -117,12 +118,12 @@ export default function RecruitmentPage() {
           <div>
             <h1 className="text-2xl font-black text-slate-800">Recruitment & Referrals</h1>
             <p className="text-sm text-slate-500">
-              {user.role === 'admin' ? 'Manage open positions and referrals' : 'Refer friends for open positions'}
+              {hasAdminAccess(user) ? 'Manage open positions and referrals' : 'Refer friends for open positions'}
             </p>
           </div>
         </div>
         
-        {user.role === 'admin' && (
+        {hasAdminAccess(user) && (
           <button 
             onClick={() => setShowAddJob(!showAddJob)} 
             className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-all flex items-center gap-2 shadow-sm"
@@ -133,7 +134,7 @@ export default function RecruitmentPage() {
         )}
       </div>
 
-      {user.role === 'admin' && showAddJob && (
+      {hasAdminAccess(user) && showAddJob && (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 animate-in fade-in slide-in-from-top-4 duration-300">
           <h2 className="text-lg font-bold text-slate-800 mb-4">Post a New Position</h2>
           <form onSubmit={handleCreateJob} className="space-y-4">
@@ -249,7 +250,7 @@ export default function RecruitmentPage() {
                   <h3 className="text-lg font-black text-slate-800">{job.title}</h3>
                   <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">{job.department}</p>
                 </div>
-                {user.role === 'admin' ? (
+                {hasAdminAccess(user) ? (
                   <button onClick={() => handleDeleteJob(job.id)} className="text-slate-400 hover:text-rose-500 p-1 transition-colors">
                     <Trash2 size={16} />
                   </button>
@@ -287,7 +288,7 @@ export default function RecruitmentPage() {
               </div>
 
               {/* Admin Referral Count Preview (optional) */}
-              {user.role === 'admin' && job.referrals && job.referrals.length > 0 && (
+              {hasAdminAccess(user) && job.referrals && job.referrals.length > 0 && (
                 <div className="mt-4 pt-4 border-t border-slate-100">
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
                     {job.referrals.length} Referral{job.referrals.length > 1 ? 's' : ''}

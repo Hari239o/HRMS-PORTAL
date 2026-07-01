@@ -6,6 +6,7 @@ import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { IndianRupee, Download, Mail, Plus, User, Trash2, Edit2 } from 'lucide-react';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 export default function Salary() {
   const { user } = useAuth();
@@ -41,7 +42,7 @@ export default function Salary() {
   useEffect(() => {
     if (!user) return;
     fetchSalaries();
-    if (user?.role === 'admin') fetchEmployees();
+    if (hasAdminAccess(user)) fetchEmployees();
   }, [user?.id, user?.role]);
 
   const fetchSalaries = async () => {
@@ -200,7 +201,7 @@ export default function Salary() {
     <div className="space-y-6 fade-in">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-slate-800">Payroll Management</h1>
-        {user.role === 'admin' && (
+        {hasAdminAccess(user) && (
           <button onClick={openModalForNew} className="btn-primary">
             <Plus size={20} /> Record Salary
           </button>
@@ -236,18 +237,18 @@ export default function Salary() {
                 <td className="px-6 py-4 text-right flex justify-end gap-2">
                   <button
                     onClick={() => downloadPayslip(s)}
-                    className={`p-2 rounded-lg ${s.status === 'Released' || user.role === 'admin' ? 'text-blue-600 hover:bg-blue-50' : 'text-slate-400 cursor-not-allowed'}`}
+                    className={`p-2 rounded-lg ${s.status === 'Released' || hasAdminAccess(user) ? 'text-blue-600 hover:bg-blue-50' : 'text-slate-400 cursor-not-allowed'}`}
                     title={s.status === 'Released' ? 'Download Payslip' : 'Payslip not released yet'}
                     disabled={s.status !== 'Released' && user.role !== 'admin'}
                   >
                     <Download size={18} />
                   </button>
-                  {user.role === 'admin' && s.status !== 'Released' && (
+                  {hasAdminAccess(user) && s.status !== 'Released' && (
                     <button onClick={() => openModalForEdit(s)} className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg" title="Edit Record">
                       <Edit2 size={18} />
                     </button>
                   )}
-                  {user.role === 'admin' && s.status !== 'Released' && (
+                  {hasAdminAccess(user) && s.status !== 'Released' && (
                     <button 
                       onClick={() => releasePayslip(s.id)} 
                       disabled={isReleasing === s.id}
@@ -257,12 +258,12 @@ export default function Salary() {
                       <span className="text-sm font-semibold">{isReleasing === s.id ? 'Releasing...' : 'Release'}</span>
                     </button>
                   )}
-                  {user.role === 'admin' && (
+                  {hasAdminAccess(user) && (
                     <button onClick={() => sendEmail(s.id)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Email Payslip">
                       <Mail size={18} />
                     </button>
                   )}
-                  {user.role === 'admin' && (
+                  {hasAdminAccess(user) && (
                     <button onClick={() => handleDelete(s.id)} className="p-2 text-rose-600 hover:bg-rose-50 rounded-lg" title="Delete Record">
                       <Trash2 size={18} />
                     </button>

@@ -38,6 +38,7 @@ import {
   Smile
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 import { 
   BarChart, 
   Bar, 
@@ -115,7 +116,7 @@ export default function Dashboard() {
     if (!user) return;
     try {
       setLoading(true);
-      if (user.role === 'admin') {
+      if (hasAdminAccess(user)) {
         const fullRes = await api.get(`/api/reports/dashboard-full?month=${new Date().getMonth() + 1}&year=${new Date().getFullYear()}`);
         const data = fullRes.data;
         

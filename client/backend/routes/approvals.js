@@ -278,7 +278,7 @@ async function updateRequestStatus(requestId, status, performedBy, performedByNa
   return updatedRequest;
 }
 
-router.post('/:id/approve', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/:id/approve', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { approvedAmount, note } = req.body;
     const updatedRequest = await updateRequestStatus(req.params.id, 'approved', req.user.id, req.user.name, req.user.role, {
@@ -300,7 +300,7 @@ router.post('/:id/approve', authenticate, authorize(['admin']), async (req, res)
   }
 });
 
-router.post('/:id/reject', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/:id/reject', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { reason } = req.body;
     if (!reason || !reason.toString().trim()) {
@@ -323,7 +323,7 @@ router.post('/:id/reject', authenticate, authorize(['admin']), async (req, res) 
   }
 });
 
-router.post('/:id/request-changes', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/:id/request-changes', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { reason } = req.body;
     if (!reason || !reason.toString().trim()) {

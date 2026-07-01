@@ -6,7 +6,7 @@ const PDFDocument = require('pdfkit');
 
 const router = express.Router();
 
-router.get('/dashboard-stats', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/dashboard-stats', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
   try {
     const totalEmployees = await prisma.employee.count({
@@ -70,7 +70,7 @@ router.get('/dashboard-stats', authenticate, authorize(['admin']), async (req, r
   }
 });
 
-router.get('/analytics/monthly', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/analytics/monthly', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { month, year } = req.query;
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
   const endDate = DateTime.fromISO(startDate).plus({ months: 1 }).minus({ days: 1 }).toISODate();
@@ -99,7 +99,7 @@ router.get('/analytics/monthly', authenticate, authorize(['admin']), async (req,
   }
 });
 
-router.get('/monthly', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/monthly', authenticate, authorize(['admin', 'hr']), async (req, res) => {
     const { month, year, department } = req.query;
     const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
     const endDate = DateTime.fromISO(startDate).plus({ months: 1 }).minus({ days: 1 }).toISODate();
@@ -150,7 +150,7 @@ router.get('/monthly', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-router.get('/export', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/export', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const employees = await prisma.employee.findMany({
       where: { role: { not: 'admin' } }
@@ -289,7 +289,7 @@ async function sendPDF(res, title, headers, rows) {
   doc.end();
 }
 
-router.get('/leads', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/leads', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { start, end } = parseDateRange(req);
     const format = req.query.format || 'json';
@@ -345,7 +345,7 @@ router.get('/leads', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-router.get('/calls', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/calls', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { start, end } = parseDateRange(req);
     const format = req.query.format || 'json';
@@ -399,7 +399,7 @@ router.get('/calls', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-router.get('/followups', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/followups', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { start, end } = parseDateRange(req);
     const format = req.query.format || 'json';
@@ -453,7 +453,7 @@ router.get('/followups', authenticate, authorize(['admin']), async (req, res) =>
   }
 });
 
-router.get('/employees-report', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/employees-report', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { start, end } = parseDateRange(req);
     const format = req.query.format || 'json';
@@ -495,7 +495,7 @@ router.get('/employees-report', authenticate, authorize(['admin']), async (req, 
   }
 });
 
-router.get('/revenue', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/revenue', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { start, end } = parseDateRange(req);
     const format = req.query.format || 'json';
@@ -534,7 +534,7 @@ router.get('/revenue', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-router.get('/payments', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/payments', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { start, end } = parseDateRange(req);
     const format = req.query.format || 'json';
@@ -573,7 +573,7 @@ router.get('/payments', authenticate, authorize(['admin']), async (req, res) => 
   }
 });
 
-router.get('/admissions', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/admissions', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { start, end } = parseDateRange(req);
     const format = req.query.format || 'json';
@@ -612,7 +612,7 @@ router.get('/admissions', authenticate, authorize(['admin']), async (req, res) =
   }
 });
 
-router.get('/recent-activity', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/recent-activity', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const attendanceRecords = await prisma.attendance.findMany({
       orderBy: { checkIn: 'desc' },
@@ -637,7 +637,7 @@ router.get('/recent-activity', authenticate, authorize(['admin']), async (req, r
   }
 });
 
-router.get('/dashboard-full', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/dashboard-full', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { month, year } = req.query;
   const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
   const startDate = `${year}-${String(month).padStart(2, '0')}-01`;

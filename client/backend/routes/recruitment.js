@@ -24,7 +24,7 @@ router.get('/jobs', authenticate, async (req, res) => {
 });
 
 // Admin creates a job
-router.post('/jobs', authenticate, authorize(['admin']), upload.single('jdFile'), async (req, res) => {
+router.post('/jobs', authenticate, authorize(['admin', 'hr']), upload.single('jdFile'), async (req, res) => {
   const { title, department, description, requirements, salary, location, status } = req.body;
   try {
     let jdUrl = null;
@@ -59,7 +59,7 @@ router.post('/jobs', authenticate, authorize(['admin']), upload.single('jdFile')
 });
 
 // Admin updates a job
-router.patch('/jobs/:id', authenticate, authorize(['admin']), async (req, res) => {
+router.patch('/jobs/:id', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { title, department, description, requirements, salary, location, jdUrl, status } = req.body;
   try {
     const job = await prisma.job.update({
@@ -73,7 +73,7 @@ router.patch('/jobs/:id', authenticate, authorize(['admin']), async (req, res) =
 });
 
 // Admin deletes a job
-router.delete('/jobs/:id', authenticate, authorize(['admin']), async (req, res) => {
+router.delete('/jobs/:id', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     await prisma.jobReferral.deleteMany({ where: { jobId: req.params.id } });
     await prisma.job.delete({ where: { id: req.params.id } });
@@ -105,7 +105,7 @@ router.post('/referrals', authenticate, async (req, res) => {
 });
 
 // Admin gets all referrals
-router.get('/referrals', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/referrals', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const referrals = await prisma.jobReferral.findMany({
       include: {
@@ -123,7 +123,7 @@ router.get('/referrals', authenticate, authorize(['admin']), async (req, res) =>
 });
 
 // Admin updates referral status
-router.patch('/referrals/:id/status', authenticate, authorize(['admin']), async (req, res) => {
+router.patch('/referrals/:id/status', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { status } = req.body;
   try {
     const referral = await prisma.jobReferral.update({

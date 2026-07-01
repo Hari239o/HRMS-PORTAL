@@ -5,6 +5,7 @@ import api from '@/utils/api';
 import toast from 'react-hot-toast';
 import { Settings as SettingsIcon, Clock, Save, Lock, Key } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 const Settings = () => {
   const { user } = useAuth();
@@ -89,7 +90,7 @@ const Settings = () => {
         <div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
             <SettingsIcon className="text-blue-600" size={32} />
-            {user?.role === 'admin' ? 'System ' : 'Account '}<span className="text-blue-600">Settings</span>
+            {hasAdminAccess(user) ? 'System ' : 'Account '}<span className="text-blue-600">Settings</span>
           </h2>
           <p className="text-slate-500 font-medium">Manage your preferences and security</p>
         </div>
@@ -162,7 +163,7 @@ const Settings = () => {
         </div>
 
         {/* System Settings (Admin Only) */}
-        {user?.role === 'admin' && (
+        {hasAdminAccess(user) && (
           <div className="card shadow-xl shadow-slate-100 border-none p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">

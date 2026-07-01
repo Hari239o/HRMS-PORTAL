@@ -47,7 +47,7 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
-router.put('/status', authenticate, authorize(['admin']), async (req, res) => {
+router.put('/status', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { leaveId, status } = req.body;
   try {
     const leave = await prisma.leave.update({

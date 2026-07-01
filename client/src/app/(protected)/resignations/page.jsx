@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 import { 
   UserMinus, Calendar, Clock, CheckCircle2, XCircle, Info, MessageSquare, AlertTriangle, 
   Search, Filter, Activity, ArrowRight, Briefcase
@@ -155,7 +156,7 @@ const Resignations = () => {
                 Employee Separation
               </h1>
               <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl">
-                {user.role === 'admin' 
+                {hasAdminAccess(user) 
                   ? 'Manage organizational exits, review resignation requests, and track notice periods to ensure smooth transitions.' 
                   : 'Initiate your separation process formally. Track your notice period and official offboarding status.'}
               </p>
@@ -178,7 +179,7 @@ const Resignations = () => {
         </div>
 
         {/* Admin Metrics Dashboard */}
-        {user.role === 'admin' && (
+        {hasAdminAccess(user) && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-6">
               <div className="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center text-amber-500">
@@ -256,8 +257,8 @@ const Resignations = () => {
               <table className="w-full text-sm text-left">
                 <thead className="text-[10px] text-slate-500 uppercase bg-slate-50 border-b border-slate-200 font-bold tracking-wider">
                   <tr>
-                    {user.role === 'admin' && <th className="px-6 py-4">Employee Details</th>}
-                    {user.role === 'admin' && <th className="px-6 py-4">Primary Reason</th>}
+                    {hasAdminAccess(user) && <th className="px-6 py-4">Employee Details</th>}
+                    {hasAdminAccess(user) && <th className="px-6 py-4">Primary Reason</th>}
                     <th className="px-6 py-4">Submitted Date</th>
                     <th className="px-6 py-4">Requested LWD</th>
                     <th className="px-6 py-4">Official LWD</th>
@@ -268,7 +269,7 @@ const Resignations = () => {
                 <tbody className="divide-y divide-slate-100">
                   {filteredResignations.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50 transition-colors">
-                      {user.role === 'admin' && (
+                      {hasAdminAccess(user) && (
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold">
@@ -281,7 +282,7 @@ const Resignations = () => {
                           </div>
                         </td>
                       )}
-                      {user.role === 'admin' && (
+                      {hasAdminAccess(user) && (
                         <td className="px-6 py-4 font-medium text-slate-700">
                           {item.primaryReason || 'Other'}
                         </td>
@@ -300,7 +301,7 @@ const Resignations = () => {
                         {getStatusBadge(item.status)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        {user.role === 'admin' ? (
+                        {hasAdminAccess(user) ? (
                           <button
                             onClick={() => {
                               setSelectedResignation(item);

@@ -5,6 +5,7 @@ import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { FileText, CheckCircle, UploadCloud, File, AlertCircle, Image as ImageIcon, Briefcase, PenTool, DownloadCloud, Search } from 'lucide-react';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 const REQUIRED_DOCS = [
   { id: 'tenth', title: '10th Certificate', icon: FileText },
@@ -31,7 +32,7 @@ export default function Documents() {
   useEffect(() => {
     if (!user) return;
     fetchMyDocuments();
-    if (user.role === 'admin') {
+    if (hasAdminAccess(user)) {
       fetchAllEmployees();
     }
   }, [user]);
@@ -88,7 +89,7 @@ export default function Documents() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('docType', selectedDocType);
-    if (user.role === 'admin' && selectedEmpId) {
+    if (hasAdminAccess(user) && selectedEmpId) {
       formData.append('employeeId', selectedEmpId);
     }
 
@@ -168,7 +169,7 @@ export default function Documents() {
         <p className="text-slate-500 mt-1">{selectedEmpId ? 'Manage documents for the selected employee.' : 'Upload and manage your mandatory company documents securely.'}</p>
       </div>
 
-      {user?.role === 'admin' && (
+      {hasAdminAccess(user) && (
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center">
           <div className="flex-1 w-full">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Select Employee</label>

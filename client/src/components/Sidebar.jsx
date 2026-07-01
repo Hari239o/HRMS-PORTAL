@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 import { 
   LayoutDashboard, 
   CalendarCheck, 
@@ -134,7 +135,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </div>
         </div>
 
-        {!isStudent && user.role === 'admin' && (
+        {!isStudent && hasAdminAccess(user) && (
           <div>
             <p className="px-4 mb-4 mt-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Administration</p>
             <div className="space-y-1.5">
@@ -184,7 +185,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </div>
           
           <div className="flex gap-2 mb-3">
-            {user.role === 'admin' ? (
+            {hasAdminAccess(user) ? (
               <Link 
                 href="/settings"
                 className={`flex-1 p-2 rounded-xl transition-all flex items-center justify-center border ${pathname === '/settings' ? 'bg-[#ff5a1f]/10 text-[#ff5a1f] border-[#ff5a1f]/20' : 'bg-white text-slate-500 hover:text-[#ff5a1f] hover:shadow-sm border-slate-200'}`}

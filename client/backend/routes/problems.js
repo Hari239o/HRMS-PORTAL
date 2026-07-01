@@ -82,7 +82,7 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
-router.put('/:id/status', authenticate, authorize(['admin']), async (req, res) => {
+router.put('/:id/status', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { status, resolutionNotes } = req.body;
   try {
     const updateData = { status };

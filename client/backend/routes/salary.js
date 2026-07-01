@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-router.post('/', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { employeeId, month, basicSalary, hra, specialAllowance, incentives, otherAllowances, pf, esi, professionalTax, tds, otherDeductions, bonus, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
     const totalEarnings = (parseFloat(basicSalary) || 0) + (parseFloat(hra) || 0) + (parseFloat(specialAllowance) || 0) + (parseFloat(incentives) || 0) + (parseFloat(otherAllowances) || 0) + (parseFloat(bonus) || 0);
@@ -60,7 +60,7 @@ router.post('/', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-router.put('/:salaryId', authenticate, authorize(['admin']), async (req, res) => {
+router.put('/:salaryId', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { salaryId } = req.params;
   const { employeeId, month, basicSalary, hra, specialAllowance, incentives, otherAllowances, pf, esi, professionalTax, tds, otherDeductions, bonus, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
@@ -479,7 +479,7 @@ router.get('/generate/:salaryId', authenticate, async (req, res) => {
   }
 });
 
-router.patch('/release/:salaryId', authenticate, authorize(['admin']), async (req, res) => {
+router.patch('/release/:salaryId', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { salaryId } = req.params;
   try {
     const salary = await prisma.salary.findUnique({ where: { id: salaryId } });
@@ -516,7 +516,7 @@ router.patch('/release/:salaryId', authenticate, authorize(['admin']), async (re
   }
 });
 
-router.post('/send-email', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/send-email', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { salaryId } = req.body;
   try {
     const salary = await prisma.salary.findUnique({ where: { id: salaryId } });
@@ -558,7 +558,7 @@ router.post('/send-email', authenticate, authorize(['admin']), async (req, res) 
   }
 });
 
-router.delete('/:salaryId', authenticate, authorize(['admin']), async (req, res) => {
+router.delete('/:salaryId', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const { salaryId } = req.params;
     const salary = await prisma.salary.findUnique({ where: { id: salaryId } });

@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 export default function Performance() {
   const { user } = useAuth();
@@ -94,7 +95,7 @@ export default function Performance() {
 
   useEffect(() => {
     fetchPerformance();
-    if (user?.role === 'admin') {
+    if (hasAdminAccess(user)) {
       fetchWorkforce();
     }
   }, [user?.id, user?.role]);
@@ -303,8 +304,8 @@ export default function Performance() {
           <div className="relative z-10 flex items-start justify-between gap-4">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/70">Coverage Focus</p>
-              <h2 className="mt-2 text-4xl font-black text-slate-800">{user.role === 'admin' ? employees.length : 'Self'}</h2>
-              <p className="mt-1 text-xs font-semibold text-slate-500">{user.role === 'admin' ? 'Active employees monitored' : 'Individual KPI dashboard'}</p>
+              <h2 className="mt-2 text-4xl font-black text-slate-800">{hasAdminAccess(user) ? employees.length : 'Self'}</h2>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{hasAdminAccess(user) ? 'Active employees monitored' : 'Individual KPI dashboard'}</p>
             </div>
             <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-3.5 text-white shadow-lg shadow-emerald-500/30 transform transition-transform group-hover:rotate-12">
               <Users size={24} />
@@ -322,7 +323,7 @@ export default function Performance() {
             <div>
               <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${progressTone === 'emerald' ? 'text-emerald-500/70' : 'text-amber-500/70'}`}>Current Status</p>
               <h2 className="mt-2 text-2xl md:text-3xl font-black text-slate-800 leading-tight">{progressStatus}</h2>
-              <p className="mt-1 text-xs font-semibold text-slate-500">{user.role === 'admin' ? 'Review organizational progress' : 'Stay aligned with your quota'}</p>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{hasAdminAccess(user) ? 'Review organizational progress' : 'Stay aligned with your quota'}</p>
             </div>
             <div className={`rounded-2xl p-3.5 text-white shadow-lg transform transition-transform group-hover:rotate-12 ${progressTone === 'emerald' ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/30' : 'bg-gradient-to-br from-amber-500 to-orange-500 shadow-amber-500/30'}`}>
               <Shield size={24} />
@@ -604,7 +605,7 @@ export default function Performance() {
       )}
 
       {/* ADMIN CONTROL PANEL OVERHAUL */}
-      {user.role === 'admin' && (
+      {hasAdminAccess(user) && (
         <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700 delay-500 mt-8">
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

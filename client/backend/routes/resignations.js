@@ -84,7 +84,7 @@ router.post('/', authenticate, async (req, res) => {
   }
 });
 
-router.patch('/:id', authenticate, authorize(['admin']), async (req, res) => {
+router.patch('/:id', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { status, officialLWD, adminRemarks, eligibleForRehire, noticeWaived } = req.body;
   const { id } = req.params;
 

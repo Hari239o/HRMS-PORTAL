@@ -5,6 +5,7 @@ import api from '@/utils/api';
 import toast from 'react-hot-toast';
 import { Plus, Edit, Trash2, Mail, Briefcase, User, ShieldCheck, Folder, CheckCircle, XCircle, File, AlertTriangle, Bell, Key, Activity, Users, Building2, MapPin, Smartphone } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 const Employees = () => {
   const { user } = useAuth();
@@ -58,7 +59,7 @@ const Employees = () => {
 
   const fetchEmployees = async () => {
     try {
-      const endpoint = user.role === 'admin' ? '/api/employees' : '/api/employees/directory';
+      const endpoint = hasAdminAccess(user) ? '/api/employees' : '/api/employees/directory';
       const res = await api.get(`${endpoint}`);
       setEmployees(res.data);
     } catch (err) {
@@ -202,9 +203,9 @@ const Employees = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight">Workforce Management</h2>
-          <p className="text-slate-500 mt-1 font-medium">{user.role === 'admin' ? 'Enterprise staff directory and real-time operations overview' : 'View your profile'}</p>
+          <p className="text-slate-500 mt-1 font-medium">{hasAdminAccess(user) ? 'Enterprise staff directory and real-time operations overview' : 'View your profile'}</p>
         </div>
-        {user.role === 'admin' && (
+        {hasAdminAccess(user) && (
           <button 
             onClick={() => { resetForm(); setShowModal(true); }}
             className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200 transition-all active:scale-95"
@@ -214,7 +215,7 @@ const Employees = () => {
         )}
       </div>
 
-      {user.role === 'admin' && (
+      {hasAdminAccess(user) && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
             <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
@@ -321,7 +322,7 @@ const Employees = () => {
                 <a href={`mailto:${emp.email}`} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Send Direct Email">
                   <Mail size={16} />
                 </a>
-                {user.role === 'admin' && (
+                {hasAdminAccess(user) && (
                   <>
                     <button onClick={() => sendNotice(emp.id)} className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Send HR Notice">
                       <Bell size={16} />
@@ -370,7 +371,7 @@ const Employees = () => {
                 >
                   <Folder size={14} /> View KYC Docs
                 </button>
-                {user.role === 'admin' && (
+                {hasAdminAccess(user) && (
                   <div className="flex gap-2">
                     <button 
                       onClick={() => handleEdit(emp)} 
@@ -509,11 +510,16 @@ const Employees = () => {
                     className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-800"
                   >
                     <option value="employee">Standard Employee</option>
-                    <option value="admin">System Administrator</option>
+                    {isSuperAdmin(user) && (
+                      <>
+                        <option value="admin">System Administrator</option>
+                        <option value="hr">HR Professional</option>
+                      </>
+                    )}
                     <option value="intern">Intern / Trainee</option>
                     <option value="manager">Manager</option>
-                    <option value="hr">HR Professional</option>
                     <option value="operations_manager">Operations Manager</option>
+                    <option value="post_sales">Post Sales (Operations)</option>
                   </select>
                 </div>
                  <div>

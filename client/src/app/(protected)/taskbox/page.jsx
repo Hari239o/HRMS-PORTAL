@@ -5,6 +5,7 @@ import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { CheckCircle, Clock, Calendar, Users, Target, Save } from 'lucide-react';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 export default function TaskBoxPage() {
   const { user } = useAuth();
@@ -29,7 +30,7 @@ export default function TaskBoxPage() {
     if (!user) return;
     setLoading(true);
     try {
-      if (user.role === 'admin') {
+      if (hasAdminAccess(user)) {
         const empRes = await api.get('/api/employees');
         setEmployees(empRes.data);
       } else {
@@ -64,7 +65,7 @@ export default function TaskBoxPage() {
 
   if (loading) return <div className="p-8 text-center">Loading...</div>;
 
-  if (user?.role === 'admin') {
+  if (hasAdminAccess(user)) {
     return (
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center gap-3 mb-6">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Users, Search } from 'lucide-react';
 import api from '@/utils/api';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 const OrgNode = ({ profile, title, isMain = false, themeColor = "slate" }) => {
   if (!profile) return null;
@@ -53,7 +54,7 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isOpen && user?.role === 'admin') {
+    if (isOpen && hasAdminAccess(user)) {
       const fetchEmployees = async () => {
         try {
           const res = await api.get('/api/employees');
@@ -112,7 +113,7 @@ export default function OrgStructureModal({ isOpen, onClose, user }) {
         </div>
 
         {}
-        {user?.role === 'admin' && (
+        {hasAdminAccess(user) && (
           <div className="px-4 sm:px-12 pt-6 pb-2 max-w-md mx-auto w-full z-10 relative">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block text-center">View Structure For</label>
             <div className="relative">

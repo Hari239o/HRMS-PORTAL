@@ -4,7 +4,7 @@ const { authenticate, authorize } = require('../middleware/auth');
 const { ownerOrAdmin } = require('../middleware/rbac');
 const router = express.Router();
 
-router.post('/target', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/target', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { employeeId, month, targetCount, title, description } = req.body;
   try {
     const existing = await prisma.target.findFirst({

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 import { 
   Plus, Calendar, Clock, CheckCircle2, XCircle, Info, MessageSquare, AlertTriangle, 
   ShieldAlert, Search, Filter, Activity, Download, ArrowRight, Paperclip
@@ -208,7 +209,7 @@ const Leaves = () => {
       </div>
 
       {/* Admin Quick Stats & Export */}
-      {user.role === 'admin' && (
+      {hasAdminAccess(user) && (
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 animate-in slide-in-from-bottom-4 duration-500">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full sm:w-auto">
             <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-4 hover:border-blue-200 transition-colors">
@@ -370,7 +371,7 @@ const Leaves = () => {
                       </div>
                     </div>
                     
-                    {user.role === 'admin' && leave.status === 'Pending' && (
+                    {hasAdminAccess(user) && leave.status === 'Pending' && (
                       <div className="mt-auto pt-4 flex flex-col gap-2">
                         <button 
                           onClick={() => handleUpdateLeaveStatus(leave.id, 'Approved')}
@@ -476,7 +477,7 @@ const Leaves = () => {
                       </div>
                     </div>
                     
-                    {user.role === 'admin' && problem.status === 'Pending' && (
+                    {hasAdminAccess(user) && problem.status === 'Pending' && (
                       <div className="mt-auto pt-4 flex flex-col gap-2">
                         <button 
                           onClick={() => handleUpdateProblemStatus(problem.id, 'Resolved')}

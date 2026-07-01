@@ -5,10 +5,11 @@ import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { CalendarDays, Trash2, Plus, Calendar, Bell, Palmtree, Clock, Info, UploadCloud, Heart, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 export default function Holidays() {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = hasAdminAccess(user);
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({ name: '', date: '', type: 'Custom', image: '' });

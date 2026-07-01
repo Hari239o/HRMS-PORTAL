@@ -4,7 +4,7 @@ const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { name, date, type } = req.body;
   try {
     const newHoliday = await prisma.holiday.create({
@@ -35,7 +35,7 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
-router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
+router.delete('/:id', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     await prisma.holiday.delete({ where: { id: req.params.id } });
     res.json({ message: 'Holiday deleted' });

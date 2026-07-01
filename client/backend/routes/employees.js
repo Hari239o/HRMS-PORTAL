@@ -8,7 +8,7 @@ const { sendEmail } = require('../utils/email');
 
 const router = express.Router();
 
-router.get('/', authenticate, authorize(['admin']), async (req, res) => {
+router.get('/', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const employees = await prisma.employee.findMany({
       orderBy: { name: 'asc' }
@@ -255,9 +255,14 @@ router.get('/me', authenticate, async (req, res) => {
   }
 });
 
-router.post('/', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { name, email, password, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
+    const isSuperAdmin = req.user.role === 'admin' || req.user.email === 'harikishorereddy9908@gmail.com';
+    if (req.user.role === 'hr' && !isSuperAdmin && (role === 'admin' || role === 'hr')) {
+      return res.status(403).json({ error: 'HR cannot create Admin or HR accounts.' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     
     await prisma.employee.create({
@@ -385,11 +390,21 @@ router.post('/upload-document', authenticate, upload.single('file'), async (req,
   }
 });
 
-router.put('/:id', authenticate, authorize(['admin']), async (req, res) => {
+router.put('/:id', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { name, email, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
     const empToUpdate = await prisma.employee.findUnique({ where: { id: req.params.id } });
     if (empToUpdate) {
+      const isSuperAdmin = req.user.role === 'admin' || req.user.email === 'harikishorereddy9908@gmail.com';
+      if (req.user.role === 'hr' && !isSuperAdmin) {
+        if (empToUpdate.role === 'admin' || empToUpdate.role === 'hr') {
+          return res.status(403).json({ error: 'HR cannot modify Admin or HR accounts.' });
+        }
+        if (role === 'admin' || role === 'hr') {
+          return res.status(403).json({ error: 'HR cannot assign Admin or HR roles.' });
+        }
+      }
+
       if (empToUpdate.email === 'harikishorereddy9908@gmail.com' && req.user.email !== 'harikishorereddy9908@gmail.com') {
         return res.status(403).json({ error: 'Super Admin account cannot be modified by others.' });
       }
@@ -423,13 +438,18 @@ router.put('/:id', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-router.put('/:id/reset-password', authenticate, authorize(['admin']), async (req, res) => {
+router.put('/:id/reset-password', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { newPassword } = req.body;
   if (!newPassword) return res.status(400).json({ error: 'New password is required' });
   
   try {
     const empToUpdate = await prisma.employee.findUnique({ where: { id: req.params.id } });
     if (empToUpdate) {
+      const isSuperAdmin = req.user.role === 'admin' || req.user.email === 'harikishorereddy9908@gmail.com';
+      if (req.user.role === 'hr' && !isSuperAdmin && (empToUpdate.role === 'admin' || empToUpdate.role === 'hr')) {
+        return res.status(403).json({ error: 'HR cannot reset passwords for Admin or HR accounts.' });
+      }
+
       if (empToUpdate.email === 'harikishorereddy9908@gmail.com' && req.user.email !== 'harikishorereddy9908@gmail.com') {
         return res.status(403).json({ error: 'Super Admin password cannot be reset by others.' });
       }
@@ -450,15 +470,20 @@ router.put('/:id/reset-password', authenticate, authorize(['admin']), async (req
   }
 });
 
-router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
+router.delete('/:id', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const empToDelete = await prisma.employee.findUnique({ where: { id: req.params.id } });
     if (empToDelete) {
+      const isSuperAdmin = req.user.role === 'admin' || req.user.email === 'harikishorereddy9908@gmail.com';
+      if (req.user.role === 'hr' && !isSuperAdmin && (empToDelete.role === 'admin' || empToDelete.role === 'hr')) {
+        return res.status(403).json({ error: 'HR cannot delete Admin or HR accounts.' });
+      }
+
       if (empToDelete.email === 'harikishorereddy9908@gmail.com') {
         return res.status(403).json({ error: 'Super Admin account is permanent and cannot be deleted.' });
       }
       if (empToDelete.email === 'admin@geonixa.com') {
-        return res.status(403).json({ error: 'Permanent Admin account cannot be deleted.' });
+        return res.status(403).json({ error: 'Admin account is permanent and cannot be deleted.' });
       }
     }
 
@@ -488,8 +513,20 @@ router.delete('/:id', authenticate, authorize(['admin']), async (req, res) => {
   }
 });
 
-router.patch('/:id/reset-device', authenticate, authorize(['admin']), async (req, res) => {
+router.patch('/:id/reset-device', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
+    const empToUpdate = await prisma.employee.findUnique({ where: { id: req.params.id } });
+    if (empToUpdate) {
+      const isSuperAdmin = req.user.role === 'admin' || req.user.email === 'harikishorereddy9908@gmail.com';
+      if (req.user.role === 'hr' && !isSuperAdmin && (empToUpdate.role === 'admin' || empToUpdate.role === 'hr')) {
+        return res.status(403).json({ error: 'HR cannot reset device IDs for Admin or HR accounts.' });
+      }
+
+      if (empToUpdate.email === 'harikishorereddy9908@gmail.com' && req.user.email !== 'harikishorereddy9908@gmail.com') {
+        return res.status(403).json({ error: 'Super Admin device cannot be reset by others.' });
+      }
+    }
+
     await prisma.employee.update({
       where: { id: req.params.id },
       data: { deviceId: null }
@@ -501,7 +538,7 @@ router.patch('/:id/reset-device', authenticate, authorize(['admin']), async (req
   }
 });
 
-router.patch('/:id/badge', authenticate, authorize(['admin']), async (req, res) => {
+router.patch('/:id/badge', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { starPerformer } = req.body;
   try {
     await prisma.employee.update({
@@ -515,7 +552,7 @@ router.patch('/:id/badge', authenticate, authorize(['admin']), async (req, res) 
   }
 });
 
-router.post('/:id/send-notice', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/:id/send-notice', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const emp = await prisma.employee.findUnique({
       where: { id: req.params.id }
@@ -546,7 +583,7 @@ router.post('/:id/send-notice', authenticate, authorize(['admin']), async (req, 
   }
 });
 
-router.post('/:id/send-warning', authenticate, authorize(['admin']), async (req, res) => {
+router.post('/:id/send-warning', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   try {
     const emp = await prisma.employee.findUnique({
       where: { id: req.params.id }

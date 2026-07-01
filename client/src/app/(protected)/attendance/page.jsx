@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { Clock, CheckCircle, Fingerprint, Filter, Users, MapPin, AlertCircle, X, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Briefcase } from 'lucide-react';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, format, isSameMonth, isToday, addMonths, subMonths } from 'date-fns';
+import { hasAdminAccess, isSuperAdmin } from '@/utils/rbac';
 
 const OFFICE_LOCATION = { latitude: 17.4392424, longitude: 78.3948356 };
 const ATTENDANCE_WINDOW = { from: '11:00', to: '20:00' };
@@ -88,7 +89,7 @@ export default function Attendance() {
       const todayRec = res.data.find(r => r.date === today);
       setTodayRecord(todayRec);
 
-      if (user && user.role === 'admin') {
+      if (user && hasAdminAccess(user)) {
         const issuesRes = await api.get(`/api/approvals?status=pending&type=missed_checkout`);
         setPendingIssues(issuesRes.data.requests || []);
       }
@@ -432,7 +433,7 @@ export default function Attendance() {
       )}
 
       {/* Admin Pending Issues */}
-      {user?.role === 'admin' && pendingIssues.length > 0 && (
+      {hasAdminAccess(user) && pendingIssues.length > 0 && (
         <div className="mt-8">
           <h3 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
             <AlertCircle className="text-rose-500" /> Pending Attendance Issues
@@ -470,7 +471,7 @@ export default function Attendance() {
               <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
                 <CalendarIcon size={20} />
               </div>
-              <h3 className="text-lg font-black text-slate-800">Attendance Calendar {user.role === 'admin' && !filterEmployee && '(Company Aggregate)'}</h3>
+              <h3 className="text-lg font-black text-slate-800">Attendance Calendar {hasAdminAccess(user) && !filterEmployee && '(Company Aggregate)'}</h3>
             </div>
             <div className="flex items-center gap-4">
               <button onClick={() => setCurrentCalendarDate(subMonths(currentCalendarDate, 1))} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-600">
@@ -504,7 +505,7 @@ export default function Attendance() {
                 let statusIcon = null;
 
                 if (isCurrentMonth) {
-                  if (user.role === 'admin' && !filterEmployee) {
+                  if (hasAdminAccess(user) && !filterEmployee) {
                     // Aggregate View
                     const dayRecords = filteredHistory.filter(r => r.date === dateStr);
                     const presentCount = dayRecords.filter(r => r.status === 'Present').length;
@@ -579,7 +580,7 @@ export default function Attendance() {
             </div>
             
             <div className="flex flex-wrap items-center justify-center gap-6 mt-6 pt-6 border-t border-slate-100">
-              {user.role === 'admin' && !filterEmployee ? (
+              {hasAdminAccess(user) && !filterEmployee ? (
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><div className="w-3 h-3 rounded bg-blue-100 border border-blue-300"></div> Total Daily Punches</div>
               ) : (
                 <>
@@ -596,7 +597,7 @@ export default function Attendance() {
 
       {/* History Table */}
       <div className="card overflow-hidden p-0 border border-slate-100 shadow-xl bg-white relative">
-        {user.role === 'admin' && (
+        {hasAdminAccess(user) && (
           <div className="px-4 md:px-8 py-6 border-b border-slate-100 bg-slate-50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
             <div className="w-full">
               <label className="flex text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 items-center gap-1"><Filter size={12}/> Filter by Day</label>
@@ -654,13 +655,13 @@ export default function Attendance() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className={`text-[16px] font-bold font-serif ${statusColor}`}>{row.status}</span>
-                      {user.role === 'admin' && row.employee?.name && (
+                      {hasAdminAccess(user) && row.employee?.name && (
                         <span className="text-[13px] font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-100 shadow-sm">
                           {row.employee.name}
                         </span>
                       )}
                     </div>
-                    {user.role === 'admin' ? (
+                    {hasAdminAccess(user) ? (
                       <select 
                         value={row.status}
                         onChange={(e) => handleStatusChange(row.id, e.target.value)}
@@ -687,7 +688,7 @@ export default function Attendance() {
                       {timeString}
                     </div>
                   )}
-                  {user.role === 'admin' && (row.checkInLatitude || row.checkOutLatitude) && (
+                  {hasAdminAccess(user) && (row.checkInLatitude || row.checkOutLatitude) && (
                     <div className="text-[11px] text-slate-500 mt-1 flex gap-3">
                       {row.checkInLatitude && (
                         <span>In Radius: <span className="font-bold text-blue-600">{getDistance(row.checkInLatitude, row.checkInLongitude, OFFICE_LOCATION.latitude, OFFICE_LOCATION.longitude)}m</span></span>
