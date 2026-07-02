@@ -57,7 +57,7 @@ export default function ProtectedLayout({ children }) {
             </button>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 md:pb-8 pb-24">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 md:pb-8 pb-32">
           <div className="w-full max-w-[1600px] mx-auto">
             {children}
           </div>
