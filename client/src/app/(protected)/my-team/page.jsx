@@ -135,7 +135,6 @@ export default function MyTeamPage() {
   }
 
   const { team, isLeader } = teamData;
-  const isPostSales = team.name?.toLowerCase().includes('post sales');
   
   // Calculate leader's stats based on the backend computed values
   const leaderTargetCount = team.leaderIndividualTarget?.targetCount || 0;
@@ -286,18 +285,16 @@ export default function MyTeamPage() {
                   required
                 />
               </div>
-              {isPostSales && (
-                <div>
-                  <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Target Revenue (₹)</label>
-                  <input 
-                    type="number"
-                    min="0"
-                    className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700"
-                    value={targetRevenue}
-                    onChange={(e) => setTargetRevenue(e.target.value)}
-                  />
-                </div>
-              )}
+              <div>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Target Revenue (₹)</label>
+                <input 
+                  type="number"
+                  min="0"
+                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700"
+                  value={targetRevenue}
+                  onChange={(e) => setTargetRevenue(e.target.value)}
+                />
+              </div>
             </div>
 
             <button 
