@@ -262,7 +262,7 @@ router.patch('/submit/:id/default', authenticate, authorize(['admin', 'hr', 'man
 
 router.patch('/submit/:id/update-payment', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales', 'post sales']), async (req, res) => {
   try {
-    const { additionalPayment } = req.body;
+    const { additionalPayment, paymentDate } = req.body;
     const payment = parseFloat(additionalPayment);
 
     if (isNaN(payment) || payment <= 0) {
@@ -275,12 +275,16 @@ router.patch('/submit/:id/update-payment', authenticate, authorize(['admin', 'hr
       return res.status(400).json({ error: 'Payment exceeds remaining balance' });
     }
 
+    const isFullyPaid = (submission.remainingAmount - payment) === 0;
+    const paymentDateObj = paymentDate ? new Date(paymentDate) : new Date();
+
     // Update submission
     await prisma.studentSubmission.update({
       where: { id: req.params.id },
       data: { 
         amountPaid: { increment: payment },
-        remainingAmount: { decrement: payment }
+        remainingAmount: { decrement: payment },
+        lastPaymentDate: paymentDateObj
       }
     });
 
@@ -292,6 +296,38 @@ router.patch('/submit/:id/update-payment', authenticate, authorize(['admin', 'hr
           achievedRevenue: { increment: payment }
         }
       });
+    }
+
+    // Notifications for full payment
+    if (isFullyPaid) {
+      try {
+        await prisma.notification.create({
+          data: {
+            userId: submission.employeeId,
+            title: 'Full Payment Received',
+            message: `The full payment for student ${submission.studentName} has been received!`,
+            type: 'payment_completed'
+          }
+        });
+
+        const employee = await prisma.employee.findUnique({
+          where: { id: submission.employeeId },
+          include: { team: true }
+        });
+        
+        if (employee && employee.team && employee.team.leaderId) {
+          await prisma.notification.create({
+            data: {
+              userId: employee.team.leaderId,
+              title: 'Team Member Fully Paid Intake',
+              message: `${employee.name} has secured full payment for student ${submission.studentName}!`,
+              type: 'team_payment_completed'
+            }
+          });
+        }
+      } catch (notifErr) {
+        console.error('Error sending notifications:', notifErr);
+      }
     }
 
     res.json({ success: true, message: 'Payment updated successfully' });

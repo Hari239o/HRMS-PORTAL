@@ -161,6 +161,7 @@ model StudentSubmission {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   defaultWarning      String?
+  lastPaymentDate     DateTime?
 }
 
 model Approval {

@@ -17,6 +17,7 @@ export default function Performance() {
   const [clearances, setClearances] = useState([]);
   const [selectedClearance, setSelectedClearance] = useState(null);
   const [paymentAmount, setPaymentAmount] = useState('');
+  const [paymentDate, setPaymentDate] = useState('');
   const [isDefaulting, setIsDefaulting] = useState(false);
   const [warningText, setWarningText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -153,11 +154,13 @@ export default function Performance() {
     
     try {
       await api.patch(`/api/tasks/submit/${selectedClearance.id}/update-payment`, {
-        additionalPayment: paymentAmount
+        additionalPayment: paymentAmount,
+        paymentDate: paymentDate || new Date().toISOString()
       });
       toast.success('Payment updated successfully');
       setSelectedClearance(null);
       setPaymentAmount('');
+      setPaymentDate('');
       fetchClearances();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to update payment');
@@ -1238,7 +1241,7 @@ export default function Performance() {
                     {isDefaulting ? 'Mark as Defaulted' : 'Update Payment'}
                   </h3>
                   <button 
-                    onClick={() => { setSelectedClearance(null); setPaymentAmount(''); setIsDefaulting(false); setWarningText(''); }}
+                    onClick={() => { setSelectedClearance(null); setPaymentAmount(''); setPaymentDate(''); setIsDefaulting(false); setWarningText(''); }}
                     className="text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     <X size={24} />
@@ -1250,7 +1253,7 @@ export default function Performance() {
                     <p className="text-sm font-bold text-slate-700 mb-2">Student: {selectedClearance.studentName}</p>
                     <div className="flex justify-between text-xs font-bold mb-1">
                       <span className="text-emerald-600">Total Paid: ₹{selectedClearance.amountPaid?.toLocaleString()}</span>
-                      <span className="text-slate-400">Date: {format(new Date(selectedClearance.updatedAt || selectedClearance.date), 'dd MMM')}</span>
+                      <span className="text-slate-400">Date: {format(new Date(selectedClearance.lastPaymentDate || selectedClearance.updatedAt || selectedClearance.date), 'dd MMM')}</span>
                     </div>
                     <p className="text-sm font-black text-rose-600 mt-2">Remaining Balance: ₹{selectedClearance.remainingAmount?.toLocaleString()}</p>
                   </div>
@@ -1270,17 +1273,31 @@ export default function Performance() {
 
                   {!isDefaulting ? (
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">New Payment Amount (₹)</label>
-                      <input
-                        type="number"
-                        required
-                        min="1"
-                        max={selectedClearance.remainingAmount}
-                        value={paymentAmount}
-                        onChange={(e) => setPaymentAmount(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent block p-4 font-medium transition-all"
-                        placeholder="Enter amount paid"
-                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-bold text-slate-700 mb-2">Payment Amount (₹)</label>
+                          <input
+                            type="number"
+                            required
+                            min="1"
+                            max={selectedClearance.remainingAmount}
+                            value={paymentAmount}
+                            onChange={(e) => setPaymentAmount(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent block p-4 font-medium transition-all"
+                            placeholder="Enter amount"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-bold text-slate-700 mb-2">Date Received</label>
+                          <input
+                            type="date"
+                            required
+                            value={paymentDate}
+                            onChange={(e) => setPaymentDate(e.target.value)}
+                            className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent block p-4 font-medium transition-all"
+                          />
+                        </div>
+                      </div>
                       <button
                         type="submit"
                         className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm px-5 py-4 transition-all shadow-lg shadow-blue-500/30"
