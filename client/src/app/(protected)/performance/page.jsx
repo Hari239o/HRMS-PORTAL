@@ -466,39 +466,7 @@ export default function Performance() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-8 duration-700 delay-500">
           
           
-          {/* Defaulted / Withdrawn Notifications */}
-          {submissions.filter(s => s.approvalStatus === 'Defaulted').length > 0 && (
-            <div className="lg:col-span-3 mb-4">
-              <div className="bg-rose-50 border border-rose-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-2 h-full bg-rose-500"></div>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-rose-100 rounded-xl text-rose-600">
-                    <AlertTriangle size={20} />
-                  </div>
-                  <h3 className="font-black text-rose-800 text-lg">Defaulted Applications & Warnings</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {submissions.filter(s => s.approvalStatus === 'Defaulted').map(sub => (
-                    <div key={sub.id} className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm flex flex-col gap-2">
-                      <div className="flex justify-between items-start">
-                        <span className="font-bold text-slate-800">{sub.studentName}</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{format(new Date(sub.updatedAt), 'dd MMM yyyy')}</span>
-                      </div>
-                      <div className="bg-rose-50/50 p-3 rounded-xl border border-rose-100 text-sm font-semibold text-rose-700">
-                        {sub.defaultWarning || "Application defaulted or withdrawn."}
-                      </div>
-                      <div className="flex justify-between text-xs font-bold mt-1">
-                        <span className="text-slate-500">Revenue Deducted: ₹{sub.amountPaid?.toLocaleString()}</span>
-                        <span className="text-slate-500">Target Count Deducted: 1</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* DATA ENTRY FORM */}
+                    {/* DATA ENTRY FORM */}
           <div className="lg:col-span-1">
             <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-xl border border-white p-8 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
@@ -642,10 +610,16 @@ export default function Performance() {
                   </thead>
                   <tbody className="text-xs font-medium text-slate-700">
                     {submissions.length > 0 ? submissions.map((sub) => (
-                      <tr key={sub.id} className="hover:bg-blue-50/30 transition-all border-b border-slate-50 last:border-0 group">
+                      <tr key={sub.id} className={`transition-all border-b border-slate-50 last:border-0 group ${sub.approvalStatus === 'Defaulted' ? 'bg-rose-50 hover:bg-rose-100/80' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-emerald-50 hover:bg-emerald-100/80' : 'hover:bg-blue-50/30'}`}>
                         <td className="px-6 py-5">
                           <p className="font-black text-sm text-slate-800 mb-1">{sub.studentName}</p>
                           <div className="mb-2">
+                            {sub.approvalStatus === 'Defaulted' && (
+                              <span className="px-2 py-0.5 bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider rounded border border-rose-700 block w-max mb-1">Defaulted / Withdrawn</span>
+                            )}
+                            {sub.approvalStatus === 'Defaulted' && sub.defaultWarning && (
+                              <p className="mb-2 text-[10px] text-rose-700 font-bold max-w-xs">{sub.defaultWarning}</p>
+                            )}
                             {sub.approvalStatus === 'Approved' && (
                               <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded border border-emerald-200">Approved</span>
                             )}
@@ -947,11 +921,17 @@ export default function Performance() {
                   </thead>
                   <tbody className="divide-y divide-slate-50 text-xs font-medium text-slate-700">
                     {adminIntakes.length > 0 ? adminIntakes.map((sub) => (
-                      <tr key={sub.id} className="hover:bg-blue-50/30 transition-all group">
+                      <tr key={sub.id} className={`transition-all group ${sub.approvalStatus === 'Defaulted' ? 'bg-rose-50 hover:bg-rose-100/80' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-emerald-50 hover:bg-emerald-100/80' : 'hover:bg-blue-50/30'}`}>
                         <td className="px-6 py-5">
                           <p className="font-black text-sm text-slate-800 mb-0.5">{sub.studentName}</p>
                           <p className="font-bold text-blue-600 text-[10px] uppercase tracking-wide bg-blue-50 px-2 py-0.5 rounded w-max">{sub.domain}</p>
                           <p className="text-[10px] text-slate-400 mt-1">{sub.collegeName}</p>
+                          {sub.approvalStatus === 'Defaulted' && (
+                            <div className="mt-2">
+                              <span className="px-2 py-0.5 bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider rounded border border-rose-700 block w-max mb-1">Defaulted / Withdrawn</span>
+                              {sub.defaultWarning && <p className="mt-1 text-[10px] text-rose-700 font-bold max-w-[200px]">{sub.defaultWarning}</p>}
+                            </div>
+                          )}
                         </td>
                         <td className="px-6 py-5">
                           <p className="font-bold text-slate-700 mb-0.5">{sub.mailId}</p>
