@@ -5,13 +5,18 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles } from 'lucide-react';
+import { Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles, Clock, Wallet } from 'lucide-react';
+import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { hasAdminAccess, isSuperAdmin, hasApproverAccess } from '@/utils/rbac';
 
 export default function Performance() {
   const { user } = useAuth();
   const isStandardEmployee = !['admin', 'hr', 'manager', 'post_sales', 'post sales'].includes(user?.role);
+  const isPostSales = user?.role === 'post_sales' || user?.role === 'post sales';
+  const [clearances, setClearances] = useState([]);
+  const [selectedClearance, setSelectedClearance] = useState(null);
+  const [paymentAmount, setPaymentAmount] = useState('');
   const [loading, setLoading] = useState(true);
   const [employees, setEmployees] = useState([]);
   const [targetData, setTargetData] = useState({ targetCount: 30, achievedCount: 0 });
@@ -95,6 +100,12 @@ export default function Performance() {
   const progressStatus = targetData.achievedCount >= targetData.targetCount ? 'On track' : 'Needs attention';
   const progressTone = targetData.achievedCount >= targetData.targetCount ? 'emerald' : 'amber';
 
+    useEffect(() => {
+    if (isPostSales) {
+      fetchClearances();
+    }
+  }, [isPostSales]);
+
   useEffect(() => {
     fetchPerformance();
     if (hasAdminAccess(user)) {
@@ -121,6 +132,33 @@ export default function Performance() {
       setEmployees(res.data || []);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  
+  const fetchClearances = async () => {
+    try {
+      const res = await api.get('/api/tasks/submit/clearances');
+      setClearances(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUpdatePayment = async (e) => {
+    e.preventDefault();
+    if (!selectedClearance || !paymentAmount) return;
+    
+    try {
+      await api.patch(`/api/tasks/submit/${selectedClearance.id}/update-payment`, {
+        additionalPayment: paymentAmount
+      });
+      toast.success('Payment updated successfully');
+      setSelectedClearance(null);
+      setPaymentAmount('');
+      fetchClearances();
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Failed to update payment');
     }
   };
 
