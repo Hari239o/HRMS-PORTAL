@@ -160,7 +160,10 @@ model StudentSubmission {
   date                DateTime @default(now())
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  defaultWarning      String?\n  courseType          String?\n  courseDuration      String?\n  fileUrl             String?
+  defaultWarning      String?
+  courseType          String?
+  courseDuration      String?
+  fileUrl             String?
   lastPaymentDate     DateTime?
 }
 
