@@ -64,6 +64,7 @@ const Reports = () => {
     try {
       toast.loading('Generating Enterprise Report...');
       const response = await api.get(`${process.env.NEXT_PUBLIC_API_URL || ``}/api/reports/export`, {
+        params: { month: filters.month, year: filters.year },
         responseType: 'blob'
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
