@@ -1,3 +1,5 @@
+const upload = require('../utils/uploadMiddleware');
+const { uploadStreamToGCS } = require('../utils/gcs');
 const express = require('express');
 const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
@@ -55,8 +57,16 @@ router.post('/target', authenticate, async (req, res) => {
   }
 });
 
-router.post('/submit', authenticate, async (req, res) => {
-  const { studentName, domain, collegeName, mailId, phoneNumber, totalAmount, amountPaid, remainingAmount, remainingAmountDate } = req.body;
+router.post('/submit', authenticate, upload.single('file'), async (req, res) => {
+  const { studentName, domain, collegeName, mailId, phoneNumber, totalAmount, amountPaid, remainingAmount, remainingAmountDate, courseType, courseDuration } = req.body;
+  let fileUrl = null;
+  if (req.file) {
+    try {
+      fileUrl = await uploadStreamToGCS(req.file, 'submissions');
+    } catch (error) {
+      console.error('File upload failed', error);
+    }
+  }
   const employeeId = req.user.id;
   const month = new Date().toISOString().substring(0, 7); 
   

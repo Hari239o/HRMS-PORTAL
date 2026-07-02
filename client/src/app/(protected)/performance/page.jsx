@@ -35,7 +35,10 @@ export default function Performance() {
     totalAmount: '',
     amountPaid: '',
     remainingAmount: '',
-    remainingAmountDate: ''
+    remainingAmountDate: '',
+    courseType: 'Live',
+    courseDuration: '1',
+    file: null
   });
 
   // Admin View Intakes State
