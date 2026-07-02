@@ -300,6 +300,7 @@ const Employees = () => {
         </div>
       )}
 
+      {hasAdminAccess(user) && (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {employees.map((emp) => {
           const statusObj = getEmployeeStatus(emp.id);
@@ -439,6 +440,7 @@ const Employees = () => {
           </div>
         )})}
       </div>
+      )}
 
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
