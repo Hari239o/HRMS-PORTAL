@@ -357,44 +357,6 @@ export default function Dashboard() {
     return (
       <div className="flex flex-col gap-5 md:gap-6 pb-12 w-full max-w-lg mx-auto md:max-w-none fade-in">
         
-        {/* Search Bar */}
-        <div className="relative w-full z-20">
-          <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-            <Search size={18} className="text-slate-400" />
-          </div>
-          <input 
-            type="text" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by Member name or Member ID" 
-            className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200/80 rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-400 transition-all hover:border-slate-300"
-          />
-          
-          {searchQuery.trim().length > 0 && (
-            <div className="absolute top-full mt-2 w-full bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-h-80 overflow-y-auto">
-              {allEmployees.filter(emp => emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || emp.empId?.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
-                allEmployees.filter(emp => emp.name.toLowerCase().includes(searchQuery.toLowerCase()) || emp.empId?.toLowerCase().includes(searchQuery.toLowerCase())).map(emp => (
-                  <div key={emp.id} className="flex items-center gap-4 p-4 border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-tr from-blue-100 to-blue-50 text-blue-600 flex items-center justify-center shrink-0 shadow-sm ring-1 ring-slate-200">
-                      {emp.avatar ? (
-                        <img src={emp.avatar} alt={emp.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="font-black text-sm">{emp.name.charAt(0)}</span>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-bold text-slate-800 text-sm">{emp.name} {emp.empId && <span className="text-slate-400 font-normal ml-1">({emp.empId})</span>}</p>
-                      <p className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">{emp.designation || emp.role?.replace('_', ' ')}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="p-4 text-center text-slate-500 text-sm font-medium">No members found matching "{searchQuery}"</div>
-              )}
-            </div>
-          )}
-        </div>
-
         {/* Banner Removed */}
 
         {/* Wall of Fame (Employee View) */}
