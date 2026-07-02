@@ -11,6 +11,7 @@ import { hasAdminAccess, isSuperAdmin, hasApproverAccess } from '@/utils/rbac';
 
 export default function Performance() {
   const { user } = useAuth();
+  const isStandardEmployee = !['admin', 'hr', 'manager', 'post_sales', 'post sales'].includes(user?.role);
   const [loading, setLoading] = useState(true);
   const [employees, setEmployees] = useState([]);
   const [targetData, setTargetData] = useState({ targetCount: 30, achievedCount: 0 });
@@ -249,7 +250,9 @@ export default function Performance() {
   return (
     <div className="space-y-8 pb-12 max-w-7xl mx-auto">
       
-      {/* HEADER SECTION WITH GLASSMORPHISM */}
+      {isStandardEmployee && (
+  <>
+  {/* HEADER SECTION WITH GLASSMORPHISM */}
       <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-10 shadow-2xl border border-slate-800 animate-in slide-in-from-top-8 duration-700">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-purple-600/30 to-pink-600/30 pointer-events-none"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
@@ -400,7 +403,10 @@ export default function Performance() {
         </div>
       </div>
 
-      {user.role !== 'admin' && (
+      
+  </>
+)}
+{isStandardEmployee && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-8 duration-700 delay-500">
           
           {/* DATA ENTRY FORM */}
