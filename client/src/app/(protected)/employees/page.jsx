@@ -673,6 +673,7 @@ const Employees = () => {
                 <div className="col-span-1 md:col-span-2 mt-4 bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50">
                   <h4 className="text-xs font-black uppercase tracking-widest text-blue-600 mb-4">Organizational Hierarchy</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {['employee', 'intern', 'post_sales', 'team_leader'].includes(formData.role) && (
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Direct Manager</label>
                       <select 
@@ -684,6 +685,8 @@ const Employees = () => {
                         {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                       </select>
                     </div>
+                    )}
+                    {['employee', 'intern', 'post_sales', 'team_leader', 'manager'].includes(formData.role) && (
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">HR Representative</label>
                       <select 
@@ -695,6 +698,8 @@ const Employees = () => {
                         {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                       </select>
                     </div>
+                    )}
+                    {['employee', 'intern', 'post_sales'].includes(formData.role) && (
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Team Leader</label>
                       <select 
@@ -706,7 +711,8 @@ const Employees = () => {
                         {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                       </select>
                     </div>
-                  </div>
+                    )}
+                  </div></div>
                 </div>
 
               </div>
