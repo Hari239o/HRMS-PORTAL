@@ -220,6 +220,46 @@ router.get('/submit/clearances', authenticate, authorize(['admin', 'hr', 'manage
   }
 });
 
+router.patch('/submit/:id/default', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales', 'post sales']), async (req, res) => {
+  try {
+    const { warning } = req.body;
+    
+    if (!warning) {
+      return res.status(400).json({ error: 'Warning description is required' });
+    }
+
+    const submission = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
+    if (!submission) return res.status(404).json({ error: 'Submission not found' });
+    if (submission.approvalStatus !== 'Approved') {
+      return res.status(400).json({ error: 'Can only default an approved submission' });
+    }
+
+    // Update submission
+    await prisma.studentSubmission.update({
+      where: { id: req.params.id },
+      data: { 
+        approvalStatus: 'Defaulted',
+        defaultWarning: warning
+      }
+    });
+
+    // Reduce Target Revenue and Count
+    if (submission.targetId) {
+      await prisma.target.update({
+        where: { id: submission.targetId },
+        data: { 
+          achievedRevenue: { decrement: submission.amountPaid },
+          achievedCount: { decrement: 1 }
+        }
+      });
+    }
+
+    res.json({ message: 'Submission marked as defaulted and target updated' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.patch('/submit/:id/update-payment', authenticate, authorize(['admin', 'hr', 'manager', 'post_sales', 'post sales']), async (req, res) => {
   try {
     const { additionalPayment } = req.body;
