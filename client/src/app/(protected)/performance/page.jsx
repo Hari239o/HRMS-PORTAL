@@ -610,7 +610,7 @@ export default function Performance() {
                   </thead>
                   <tbody className="text-xs font-medium text-slate-700">
                     {submissions.length > 0 ? submissions.map((sub) => (
-                      <tr key={sub.id} className={`transition-all border-b border-slate-50 last:border-0 group ${sub.approvalStatus === 'Defaulted' ? 'bg-rose-50 hover:bg-rose-100/80' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-emerald-50 hover:bg-emerald-100/80' : 'hover:bg-blue-50/30'}`}>
+                      <tr key={sub.id} className={`transition-all border-b border-slate-50 last:border-0 group ${sub.approvalStatus === 'Defaulted' ? 'bg-red-200 hover:bg-red-300' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-green-200 hover:bg-green-300' : 'hover:bg-blue-50/30'}`}>
                         <td className="px-6 py-5">
                           <p className="font-black text-sm text-slate-800 mb-1">{sub.studentName}</p>
                           <div className="mb-2">
@@ -921,7 +921,7 @@ export default function Performance() {
                   </thead>
                   <tbody className="divide-y divide-slate-50 text-xs font-medium text-slate-700">
                     {adminIntakes.length > 0 ? adminIntakes.map((sub) => (
-                      <tr key={sub.id} className={`transition-all group ${sub.approvalStatus === 'Defaulted' ? 'bg-rose-50 hover:bg-rose-100/80' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-emerald-50 hover:bg-emerald-100/80' : 'hover:bg-blue-50/30'}`}>
+                      <tr key={sub.id} className={`transition-all group ${sub.approvalStatus === 'Defaulted' ? 'bg-red-200 hover:bg-red-300' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-green-200 hover:bg-green-300' : 'hover:bg-blue-50/30'}`}>
                         <td className="px-6 py-5">
                           <p className="font-black text-sm text-slate-800 mb-0.5">{sub.studentName}</p>
                           <p className="font-bold text-blue-600 text-[10px] uppercase tracking-wide bg-blue-50 px-2 py-0.5 rounded w-max">{sub.domain}</p>
