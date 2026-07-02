@@ -390,11 +390,13 @@ router.patch('/submit/:id/reject', authenticate, authorize(['admin', 'hr', 'mana
   }
 });
 
-router.delete('/submit/:id', authenticate, ownerOrAdmin(async (req) => {
+router.delete('/submit/:id', authenticate, async (req, res, next) => {
+  if (req.user.role === 'admin' || req.user.role === 'post_sales' || req.user.role === 'post sales') return next();
   const prisma = require('../../prisma/client');
   const doc = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
-  return doc ? doc.employeeId : null;
-}), async (req, res) => {
+  if (doc && doc.employeeId === req.user.id) return next();
+  return res.status(403).json({ error: 'Access denied' });
+}, async (req, res) => {
   try {
     const submission = await prisma.studentSubmission.findUnique({ where: { id: req.params.id } });
     if (!submission) {
