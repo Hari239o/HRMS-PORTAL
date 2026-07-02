@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { AlertTriangle, Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles, Clock, Wallet, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles, Clock, Wallet, CheckCircle2, CheckCircle, Mail, Phone, LinkIcon, ClipboardList } from 'lucide-react';
 import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { hasAdminAccess, isSuperAdmin, hasApproverAccess } from '@/utils/rbac';
