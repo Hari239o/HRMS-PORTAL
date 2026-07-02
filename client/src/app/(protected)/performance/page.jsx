@@ -213,9 +213,18 @@ export default function Performance() {
     }
 
     try {
-      await api.post(`${process.env.NEXT_PUBLIC_API_URL || ``}/api/tasks/submit`, form);
+      const formData = new FormData();
+      Object.keys(form).forEach(key => {
+        if (form[key] !== null && form[key] !== undefined) {
+          formData.append(key, form[key]);
+        }
+      });
+      await api.post(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/tasks/submit`, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
       toast.success('Sale registered successfully!');
-      setForm({ studentName: '', domain: '', collegeName: '', mailId: '', phoneNumber: '', totalAmount: '', amountPaid: '', remainingAmount: '', remainingAmountDate: '' });
+      setForm({ studentName: '', domain: '', collegeName: '', mailId: '', phoneNumber: '', totalAmount: '', amountPaid: '', remainingAmount: '', remainingAmountDate: '', courseType: 'Live', courseDuration: '1', file: null });
+      if (document.querySelector('input[type="file"]')) {
+        document.querySelector('input[type="file"]').value = '';
+      }
       fetchPerformance();
     } catch (err) {
       toast.error('Submission failed');
@@ -529,6 +538,40 @@ export default function Performance() {
                     placeholder="student@example.com"
                   />
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="group">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Course Type</label>
+                    <select
+                      required
+                      className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
+                      value={form.courseType}
+                      onChange={(e) => setForm({...form, courseType: e.target.value})}
+                    >
+                      <option value="Live">Live</option>
+                      <option value="Recorded">Recorded</option>
+                    </select>
+                  </div>
+                  <div className="group">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Duration (Months)</label>
+                    <input
+                      type="number"
+                      required
+                      min="1"
+                      className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm"
+                      value={form.courseDuration}
+                      onChange={(e) => setForm({...form, courseDuration: e.target.value})}
+                    />
+                  </div>
+                </div>
+                <div className="group">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Upload Receipt/File (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm cursor-pointer"
+                    onChange={(e) => setForm({...form, file: e.target.files[0]})}
+                  />
+                </div>
                 <div className="group">
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Total Invoice Amount (₹)</label>
                   <input 
@@ -603,112 +646,104 @@ export default function Performance() {
                 </button>
               </div>
               
-              <div className="overflow-x-auto flex-1 p-2">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100">
-                      <th className="px-6 py-5">Student / Contact</th>
-                      <th className="px-6 py-5">Domain / College</th>
-                      <th className="px-6 py-5">Payment Status</th>
-                      <th className="px-6 py-5 text-center">Process Check</th>
-                      <th className="px-6 py-5 text-right">Date / Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-xs font-medium text-slate-700">
-                    {submissions.length > 0 ? submissions.map((sub) => (
-                      <tr key={sub.id} className={`transition-all border-b border-slate-50 last:border-0 group ${sub.approvalStatus === 'Defaulted' ? 'bg-red-200 hover:bg-red-300' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-green-200 hover:bg-green-300' : 'hover:bg-blue-50/30'}`}>
-                        <td className="px-6 py-5">
-                          <p className="font-black text-sm text-slate-800 mb-1">{sub.studentName}</p>
-                          <div className="mb-2">
-                            {sub.approvalStatus === 'Defaulted' && (
-                              <span className="px-2 py-0.5 bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider rounded border border-rose-700 block w-max mb-1">Defaulted / Withdrawn</span>
-                            )}
+              <div className="flex-1 p-6 space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar bg-slate-50/50">
+                {submissions.length > 0 ? submissions.map((sub) => {
+                  const percentComplete = sub.remainingAmount === 0 ? 100 : 10;
+                  return (
+                    <div key={sub.id} className={`bg-white rounded-2xl p-5 border-2 transition-all shadow-sm hover:shadow-md ${sub.approvalStatus === 'Defaulted' ? 'border-rose-200 bg-rose-50/30' : sub.remainingAmount === 0 ? 'border-emerald-200' : 'border-slate-100 hover:border-blue-200'}`}>
+                      <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
+                        <div className="flex gap-4 items-start">
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-inner ${sub.approvalStatus === 'Defaulted' ? 'bg-rose-500' : sub.remainingAmount === 0 ? 'bg-gradient-to-br from-emerald-400 to-emerald-600' : 'bg-gradient-to-br from-blue-500 to-purple-600'}`}>
+                            {sub.studentName.charAt(0)}
+                          </div>
+                          <div>
+                            <h4 className="font-black text-slate-800 text-lg flex items-center gap-2">
+                              {sub.studentName}
+                              {sub.approvalStatus === 'Defaulted' && (
+                                <span className="px-2 py-0.5 bg-rose-100 text-rose-700 text-[10px] font-black uppercase tracking-wider rounded-lg border border-rose-200">Defaulted / Withdrawn</span>
+                              )}
+                              {sub.remainingAmount === 0 && sub.approvalStatus !== 'Defaulted' && (
+                                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-wider rounded-lg border border-emerald-200 flex items-center gap-1"><CheckCircle size={10} /> Fully Paid</span>
+                              )}
+                              {sub.remainingAmount > 0 && sub.approvalStatus !== 'Defaulted' && (
+                                <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-lg border border-amber-200 flex items-center gap-1"><Clock size={10} /> Pending</span>
+                              )}
+                            </h4>
+                            <div className="text-xs font-bold text-slate-500 flex flex-wrap gap-2 items-center mt-1">
+                              <span className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-md text-slate-600"><Mail size={12}/> {sub.mailId}</span>
+                              <span className="flex items-center gap-1 bg-slate-100 px-2 py-1 rounded-md text-slate-600"><Phone size={12}/> {sub.phoneNumber}</span>
+                            </div>
                             {sub.approvalStatus === 'Defaulted' && sub.defaultWarning && (
-                              <p className="mb-2 text-[10px] text-rose-700 font-bold max-w-xs">{sub.defaultWarning}</p>
-                            )}
-                            {sub.approvalStatus === 'Approved' && (
-                              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded border border-emerald-200">Approved</span>
-                            )}
-                            {sub.approvalStatus === 'Rejected' && (
-                              <span className="px-2 py-0.5 bg-rose-100 text-rose-700 text-[9px] font-black uppercase tracking-wider rounded border border-rose-200">Rejected</span>
-                            )}
-                            {(!sub.approvalStatus || sub.approvalStatus === 'Pending') && (
-                              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-black uppercase tracking-wider rounded border border-amber-200">Pending Approval</span>
+                              <p className="mt-2 text-xs text-rose-700 font-bold bg-rose-100/50 p-2 rounded-lg border border-rose-100 flex items-start gap-1"><AlertTriangle size={14} className="mt-0.5 flex-shrink-0"/> {sub.defaultWarning}</p>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                            <span>{sub.mailId}</span>
-                            <span>•</span>
-                            <span>{sub.phoneNumber}</span>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Enrollment Date</p>
+                          <p className="text-sm font-bold text-slate-700">
+                            {format(new Date(sub.date || sub.createdAt), 'dd MMM yyyy, HH:mm')}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100/50">
+                        <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Domain</p>
+                          <p className="text-sm font-bold text-slate-800">{sub.domain}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Course Details</p>
+                          <p className="text-sm font-bold text-slate-800">{sub.courseType || 'Live'} • {sub.courseDuration || '1'} Month(s)</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">College</p>
+                          <p className="text-sm font-bold text-slate-800 line-clamp-1" title={sub.collegeName}>{sub.collegeName}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Receipt</p>
+                          {sub.fileUrl ? (
+                            <a href={sub.fileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-lg hover:bg-blue-200 transition-colors">
+                              <LinkIcon size={12} /> View File
+                            </a>
+                          ) : (
+                            <span className="text-xs font-bold text-slate-400">No file</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex flex-col md:flex-row items-center gap-4">
+                        <div className="flex-1 w-full">
+                          <div className="flex justify-between items-center mb-1.5">
+                            <span className="text-xs font-black text-slate-600">Payment Progress</span>
+                            <span className="text-xs font-black text-blue-600">{percentComplete}%</span>
                           </div>
-                        </td>
-                        <td className="px-6 py-5">
-                          <p className="font-bold text-slate-700 mb-0.5">{sub.domain}</p>
-                          <p className="text-[10px] text-slate-400 uppercase tracking-wide">{sub.collegeName}</p>
-                        </td>
-                        <td className="px-6 py-5">
-                          <div className="space-y-1">
-                            {sub.remainingAmount > 0 ? (
-                              <>
-                                <div className="flex justify-between items-center bg-slate-50 px-2 py-1 rounded">
-                                  <span className="text-[10px] font-bold text-slate-500">Total:</span>
-                                  <span className="font-black text-slate-800">₹{sub.totalAmount || 0}</span>
-                                </div>
-                                <div className="flex justify-between items-center bg-emerald-50 px-2 py-1 rounded border border-emerald-100/50">
-                                  <span className="text-[10px] font-bold text-emerald-600">Paid:</span>
-                                  <span className="font-black text-emerald-700">₹{sub.amountPaid || 0}</span>
-                                </div>
-                                <div className="flex justify-between items-center bg-rose-50 px-2 py-1 rounded border border-rose-100/50">
-                                  <span className="text-[10px] font-bold text-rose-500">Due {sub.remainingAmountDate ? `(${new Date(sub.remainingAmountDate).toLocaleDateString()})` : ''}:</span>
-                                  <span className="font-black text-rose-600">₹{sub.remainingAmount}</span>
-                                </div>
-                              </>
-                            ) : (
-                              <div className="flex justify-between items-center bg-emerald-50 px-2 py-2 rounded border border-emerald-200 shadow-sm">
-                                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">Total Amount Paid:</span>
-                                <span className="font-black text-emerald-700">₹{sub.amountPaid || sub.totalAmount}</span>
-                              </div>
-                            )}
+                          <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                            <div className={`h-2.5 rounded-full transition-all duration-1000 ${percentComplete === 100 ? 'bg-emerald-500' : 'bg-blue-500'}`} style={{ width: `${percentComplete}%` }}></div>
                           </div>
-                        </td>
-                        <td className="px-6 py-5">
-                          <div className="flex flex-col gap-2 items-center">
-                            <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 shadow-inner w-max">
-                              <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Answered')} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.callStatus === 'Answered' ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Call Done</button>
-                              <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Dropped')} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.callStatus === 'Dropped' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>No Ans</button>
+                        </div>
+                        <div className="flex gap-4 whitespace-nowrap">
+                          <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Paid</p>
+                            <p className="text-sm font-black text-emerald-600">₹{sub.amountPaid?.toLocaleString()}</p>
+                          </div>
+                          {sub.remainingAmount > 0 && (
+                            <div>
+                              <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest text-right">Due</p>
+                              <p className="text-sm font-black text-rose-600">₹{sub.remainingAmount?.toLocaleString()}</p>
                             </div>
-                            <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 shadow-inner w-max">
-                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Paid')} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Paid' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Fee Paid</button>
-                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Dropped')} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Dropped' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Dropped</button>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-5 text-right">
-                          <div className="flex flex-col items-end gap-3">
-                            <span className="text-slate-400 font-bold bg-slate-50 border border-slate-100 px-2 py-1 rounded text-[10px]">{new Date(sub.date).toLocaleDateString()}</span>
-                            <button 
-                              onClick={() => handleDeleteSubmission(sub.id)}
-                              className="w-8 h-8 rounded-full bg-white border border-slate-200 text-rose-400 flex items-center justify-center hover:bg-rose-500 hover:text-white hover:border-rose-500 hover:shadow-lg hover:shadow-rose-500/30 transition-all opacity-0 group-hover:opacity-100"
-                              title="Delete Record"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )) : (
-                      <tr>
-                        <td colSpan="5" className="text-center py-20 bg-slate-50/50">
-                          <div className="flex flex-col items-center justify-center text-slate-400">
-                            <Star size={40} className="opacity-20 mb-4" />
-                            <p className="font-bold">No students reported yet.</p>
-                            <p className="text-[10px] uppercase tracking-wider mt-1">Start logging your intakes today</p>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }) : (
+                  <div className="flex flex-col items-center justify-center text-slate-400 h-64">
+                    <div className="p-4 bg-slate-100 rounded-full mb-3">
+                      <ClipboardList size={32} className="opacity-50" />
+                    </div>
+                    <p className="text-sm font-black tracking-wide">NO INTAKES LOGGED YET</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
