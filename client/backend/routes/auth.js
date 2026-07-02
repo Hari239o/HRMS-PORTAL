@@ -240,11 +240,9 @@ router.put('/change-password', authenticate, async (req, res) => {
 
 router.post('/logout', authenticate, async (req, res) => {
   try {
-    await prisma.employee.update({
-      where: { id: req.user.id },
-      data: { deviceId: null }
-    });
-    res.json({ message: 'Logged out successfully, device unlocked.' });
+    // DO NOT reset deviceId on logout to enforce single device lock.
+    // If an employee wants to use a new device, the admin must reset it manually.
+    res.json({ message: 'Logged out successfully.' });
   } catch (error) {
     console.error('Logout error:', error);
     res.status(500).json({ error: 'Failed to logout' });
