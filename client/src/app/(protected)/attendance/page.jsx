@@ -115,13 +115,23 @@ export default function Attendance() {
 
   const resolveIssue = async (issueId, action) => {
     try {
-      await api.post(`/api/approvals/${issueId}/${action}`, { note: 'Resolved via dashboard' });
+      let reasonText = 'Resolved via dashboard';
+      if (action === 'reject') {
+        const input = window.prompt("Please enter the reason for rejection:");
+        if (input === null) return; // User clicked Cancel
+        if (!input.trim()) {
+          toast.error("Rejection reason is required");
+          return;
+        }
+        reasonText = input.trim();
+      }
+      
+      await api.post(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/approvals/${issueId}/${action}`, { note: reasonText, reason: reasonText });
       toast.success(`Issue ${action} successfully`);
       fetchData();
     } catch (err) {
       toast.error(err.response?.data?.error || `Failed to ${action} issue`);
-    }
-  };
+    }};
 
   const handleCheckIn = () => {
     if (!navigator.geolocation) {
