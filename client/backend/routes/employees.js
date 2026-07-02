@@ -259,8 +259,24 @@ router.post('/', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { name, email, password, role, department, avatar, assets, weekOff, manager, hrManager, teamLeader, empId, designation, pan, uan, bankName, accountNumber } = req.body;
   try {
     const isSuperAdmin = req.user.role === 'admin' || req.user.email === 'harikishorereddy9908@gmail.com';
-    if (req.user.role === 'hr' && !isSuperAdmin && (role === 'admin' || role === 'hr')) {
-      return res.status(403).json({ error: 'HR cannot create Admin or HR accounts.' });
+    
+    if (!isSuperAdmin) {
+      const rolesRank = {
+        'employee': 1,
+        'intern': 1,
+        'post_sales': 2,
+        'team_leader': 5,
+        'manager': 8,
+        'hr': 8,
+        'admin': 10
+      };
+      
+      const userRank = rolesRank[req.user.role] || 0;
+      const targetRank = rolesRank[role] || 0;
+      
+      if (targetRank >= userRank) {
+        return res.status(403).json({ error: 'You cannot create an account with a role equal to or higher than your own.' });
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

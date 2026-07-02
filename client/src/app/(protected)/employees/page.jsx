@@ -35,6 +35,27 @@ const Employees = () => {
     bankName: '',
     accountNumber: ''
   });
+  const getAvailableRoles = () => {
+    const roles = [
+      { value: 'employee', label: 'Standard Employee', rank: 1 },
+      { value: 'intern', label: 'Intern / Trainee', rank: 1 },
+      { value: 'post_sales', label: 'Post Sales (Operations)', rank: 2 },
+      { value: 'team_leader', label: 'Team Leader', rank: 5 },
+      { value: 'hr', label: 'HR Professional', rank: 8 },
+      { value: 'manager', label: 'Manager', rank: 8 },
+      { value: 'admin', label: 'System Admin', rank: 10 }
+    ];
+
+    if (!user) return roles;
+    if (user.role === 'admin') return roles;
+
+    let userRank = 0;
+    const userRoleObj = roles.find(r => r.value === user.role);
+    if (userRoleObj) userRank = userRoleObj.rank;
+
+    return roles.filter(r => r.rank < userRank);
+  };
+
 
   useEffect(() => {
     fetchData();
@@ -601,12 +622,9 @@ const Employees = () => {
                     onChange={(e) => setFormData({...formData, role: e.target.value})}
                     className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold text-slate-800"
                   >
-                    <option value="employee">Standard Employee</option>
-                    <option value="intern">Intern / Trainee</option>
-                    <option value="hr">HR Professional</option>
-                    <option value="manager">Manager</option>
-                    <option value="post_sales">Post Sales (Operations)</option>
-                    <option value="admin">System Admin</option>
+                    {getAvailableRoles().map(r => (
+                      <option key={r.value} value={r.value}>{r.label}</option>
+                    ))}
                   </select>
                 </div>
                  <div>
