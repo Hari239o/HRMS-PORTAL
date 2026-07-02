@@ -8,8 +8,8 @@ router.get('/', authenticate, async (req, res) => {
   try {
     let teams = await prisma.team.findMany({
       include: {
-        leader: { select: { id: true, name: true, email: true } },
-        members: { select: { id: true, name: true, email: true, role: true } }
+        leader: { select: { id: true, name: true, email: true, avatar: true } },
+        members: { select: { id: true, name: true, email: true, role: true, department: true, avatar: true } }
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -30,16 +30,39 @@ router.get('/', authenticate, async (req, res) => {
       const achievedTeamRevenue = teamTargets.reduce((sum, target) => sum + (target.achievedRevenue || 0), 0);
       const achievedTeamCount = teamTargets.reduce((sum, target) => sum + (target.achievedCount || 0), 0);
       
+      // Calculate individual targets for members
+      const membersWithTargets = team.members.map(member => {
+        const target = teamTargets.find(t => t.employeeId === member.id) || null;
+        return {
+          ...member,
+          target
+        };
+      });
+
+      // Calculate leader targets
       const leaderTarget = teamTargets.find(t => t.employeeId === team.leaderId);
       const targetTeamRevenue = leaderTarget ? (leaderTarget.targetRevenue || 0) : 0;
       const targetTeamCount = leaderTarget ? (leaderTarget.targetCount || 0) : 0;
 
+      // The leader's individual target is the total target minus all assigned targets to members
+      const assignedTargetsToMembersCount = membersWithTargets.reduce((sum, m) => sum + (m.target?.targetCount || 0), 0);
+      const assignedTargetsToMembersRev = membersWithTargets.reduce((sum, m) => sum + (m.target?.targetRevenue || 0), 0);
+      
+      const leaderIndividualTarget = {
+        targetCount: Math.max(0, targetTeamCount - assignedTargetsToMembersCount),
+        achievedCount: leaderTarget ? (leaderTarget.achievedCount || 0) : 0,
+        targetRevenue: Math.max(0, targetTeamRevenue - assignedTargetsToMembersRev),
+        achievedRevenue: leaderTarget ? (leaderTarget.achievedRevenue || 0) : 0
+      };
+
       return {
         ...team,
+        members: membersWithTargets,
         achievedTeamRevenue,
         achievedTeamCount,
         targetTeamRevenue,
-        targetTeamCount
+        targetTeamCount,
+        leaderIndividualTarget
       };
     });
 
