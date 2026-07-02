@@ -109,10 +109,78 @@ router.get('/my-team', authenticate, async (req, res) => {
     const leaderTarget = targets.find(t => t.employeeId === team.leaderId);
     const targetTeamRevenue = leaderTarget ? (leaderTarget.targetRevenue || 0) : 0;
     const targetTeamCount = leaderTarget ? (leaderTarget.targetCount || 0) : 0;
+    
+    // Calculate leader's individual target count by subtracting members' targets
+    let leaderIndividualTargetCount = targetTeamCount;
+    if (leaderTarget && team.members && team.members.length > 0) {
+      const sumMembersTargets = team.members.reduce((sum, member) => {
+        return sum + (member.target ? (member.target.targetCount || 0) : 0);
+      }, 0);
+      leaderIndividualTargetCount = Math.max(0, targetTeamCount - sumMembersTargets);
+    }
+    
+    const calculatedLeaderTarget = leaderTarget ? {
+      ...leaderTarget,
+      targetCount: leaderIndividualTargetCount
+    } : null;
 
-    res.json({ hasTeam: true, isLeader: team.leaderId === employeeId, team: { ...team, achievedTeamRevenue, achievedTeamCount, targetTeamRevenue, targetTeamCount } });
+    res.json({ hasTeam: true, isLeader: team.leaderId === employeeId, team: { ...team, achievedTeamRevenue, achievedTeamCount, targetTeamRevenue, targetTeamCount, leaderIndividualTarget: calculatedLeaderTarget } });
   } catch (error) {
     console.error('Error fetching my team:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// UPDATE team member target
+router.put('/update-member-target/:memberId', authenticate, async (req, res) => {
+  const { targetCount, month } = req.body;
+  const memberId = req.params.memberId;
+  const leaderId = req.user.id;
+
+  try {
+    // Verify the caller is the leader of the team this member belongs to
+    const member = await prisma.employee.findUnique({
+      where: { id: memberId },
+      include: { team: true }
+    });
+
+    if (!member || !member.team || member.team.leaderId !== leaderId) {
+      return res.status(403).json({ error: 'You are not authorized to edit this member\'s target.' });
+    }
+
+    const currentMonth = month || new Date().toISOString().substring(0, 7);
+
+    // Find if target exists
+    const existingTarget = await prisma.target.findFirst({
+      where: {
+        employeeId: memberId,
+        month: currentMonth
+      }
+    });
+
+    let target;
+    if (existingTarget) {
+      target = await prisma.target.update({
+        where: { id: existingTarget.id },
+        data: { targetCount: parseInt(targetCount, 10) }
+      });
+    } else {
+      target = await prisma.target.create({
+        data: {
+          employeeId: memberId,
+          month: currentMonth,
+          targetCount: parseInt(targetCount, 10),
+          targetRevenue: 0,
+          achievedCount: 0,
+          achievedRevenue: 0
+        }
+      });
+    }
+
+    res.json({ success: true, target });
+  } catch (error) {
+    console.error('Error updating member target:', error);
     res.status(500).json({ error: error.message });
   }
 });
