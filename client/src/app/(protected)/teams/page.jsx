@@ -122,6 +122,7 @@ export default function TeamsPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('docType', 'team_avatar');
       const res = await api.post('/api/employees/upload-document', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
