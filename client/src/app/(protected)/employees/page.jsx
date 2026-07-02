@@ -262,21 +262,26 @@ const Employees = () => {
 
       
       { (user?.role === 'post_sales' || user?.role === 'post sales') && (
-        <div className="bg-white rounded-3xl p-6 shadow-xl border border-slate-200 mb-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -z-10 -mr-20 -mt-20"></div>
-          <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
-              <Users size={20} />
-            </div>
-            <div>
-              <h4 className="text-lg font-black text-slate-900 tracking-tight">
-                Employee Revenue Analytics
-              </h4>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Real-time performance overview</p>
+        <div className="bg-gradient-to-br from-slate-900 via-[#0f172a] to-slate-900 rounded-[32px] p-6 md:p-8 shadow-2xl border border-slate-800 mb-8 relative overflow-hidden">
+          {/* Decorative backgrounds */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] -z-10 -mr-40 -mt-40 pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[80px] -z-10 -ml-20 -mb-20 pointer-events-none"></div>
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b border-slate-800/60 pb-6 relative z-10">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <Users size={28} />
+              </div>
+              <div>
+                <h4 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">
+                  Performance Analytics
+                </h4>
+                <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Revenue Tracking Matrix</p>
+              </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar relative z-10">
             {Object.entries(
               clearances.reduce((acc, sub) => {
                 const name = sub.employeeName || 'Unknown';
@@ -286,31 +291,56 @@ const Employees = () => {
                 acc[name].pending += (sub.remainingAmount || 0);
                 return acc;
               }, {})
-            ).map(([emp, stats]) => (
-              <div key={emp} className="bg-slate-50 hover:bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 font-bold flex items-center justify-center text-xs">
-                    {emp.charAt(0).toUpperCase()}
+            ).map(([emp, stats]) => {
+              const percentage = stats.total > 0 ? Math.round((stats.received / stats.total) * 100) : 0;
+              return (
+                <div key={emp} className="bg-slate-800/40 backdrop-blur-md p-5 rounded-2xl border border-slate-700/50 hover:bg-slate-800/60 transition-all hover:border-slate-600 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6 group">
+                  
+                  {/* Left: Employee Info */}
+                  <div className="flex items-center gap-4 min-w-[200px]">
+                    <div className="w-12 h-12 rounded-xl bg-slate-700 text-white font-black flex items-center justify-center text-lg shadow-inner border border-slate-600 group-hover:bg-blue-600 group-hover:border-blue-500 transition-colors">
+                      {emp.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h5 className="text-lg font-black text-white">{emp}</h5>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Executive</span>
+                    </div>
                   </div>
-                  <span className="text-sm font-bold text-slate-800">{emp}</span>
+
+                  {/* Middle: Progress Bar */}
+                  <div className="flex-1 w-full max-w-xl">
+                    <div className="flex justify-between items-end mb-2">
+                      <span className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">Target Achievement</span>
+                      <span className="text-xs md:text-sm font-black text-emerald-400">{percentage}%</span>
+                    </div>
+                    <div className="w-full bg-slate-700/50 rounded-full h-2 shadow-inner overflow-hidden">
+                      <div 
+                        className="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all duration-1000"
+                        style={{ width: `${Math.min(percentage, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Right: Metrics */}
+                  <div className="flex items-center justify-between lg:justify-end gap-4 md:gap-8 w-full lg:w-auto">
+                    <div className="flex flex-col items-start lg:items-end">
+                      <span className="text-slate-500 uppercase tracking-widest text-[9px] font-bold mb-1">Target</span>
+                      <span className="font-black text-white text-sm md:text-base">₹{stats.total.toLocaleString()}</span>
+                    </div>
+                    <div className="w-px h-8 bg-slate-700 hidden md:block"></div>
+                    <div className="flex flex-col items-center lg:items-end">
+                      <span className="text-emerald-500/70 uppercase tracking-widest text-[9px] font-bold mb-1">Achieved</span>
+                      <span className="font-black text-emerald-400 text-sm md:text-base">₹{stats.received.toLocaleString()}</span>
+                    </div>
+                    <div className="w-px h-8 bg-slate-700 hidden md:block"></div>
+                    <div className="flex flex-col items-end">
+                      <span className="text-amber-500/70 uppercase tracking-widest text-[9px] font-bold mb-1">Deficit</span>
+                      <span className="font-black text-amber-400 text-sm md:text-base">₹{stats.pending.toLocaleString()}</span>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="grid grid-cols-3 gap-2 text-center divide-x divide-slate-200/60">
-                  <div className="flex flex-col items-center">
-                    <span className="text-slate-400 uppercase tracking-widest text-[9px] font-bold mb-1">Total</span>
-                    <span className="font-black text-slate-700 text-xs">₹{stats.total.toLocaleString()}</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span className="text-slate-400 uppercase tracking-widest text-[9px] font-bold mb-1">Received</span>
-                    <span className="font-black text-emerald-600 text-xs">₹{stats.received.toLocaleString()}</span>
-                  </div>
-                  <div className="flex flex-col items-center pl-2">
-                    <span className="text-slate-400 uppercase tracking-widest text-[9px] font-bold mb-1">Pending</span>
-                    <span className="font-black text-amber-500 text-xs">₹{stats.pending.toLocaleString()}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
