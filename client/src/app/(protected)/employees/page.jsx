@@ -262,12 +262,21 @@ const Employees = () => {
 
       
       { (user?.role === 'post_sales' || user?.role === 'post sales') && (
-        <div className="bg-slate-900 rounded-3xl p-6 shadow-xl border border-slate-700 col-span-1 md:col-span-3 mb-6">
-          <h4 className="text-sm font-bold text-slate-300 mb-4 uppercase tracking-widest flex items-center gap-2">
-            <Users size={16} className="text-blue-400" />
-            Employee Wise Revenue Analytics
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+        <div className="bg-white rounded-3xl p-6 shadow-xl border border-slate-200 mb-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -z-10 -mr-20 -mt-20"></div>
+          <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
+              <Users size={20} />
+            </div>
+            <div>
+              <h4 className="text-lg font-black text-slate-900 tracking-tight">
+                Employee Revenue Analytics
+              </h4>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Real-time performance overview</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
             {Object.entries(
               clearances.reduce((acc, sub) => {
                 const name = sub.employeeName || 'Unknown';
@@ -278,20 +287,26 @@ const Employees = () => {
                 return acc;
               }, {})
             ).map(([emp, stats]) => (
-              <div key={emp} className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/50">
-                <span className="text-sm font-bold text-white mb-3 block border-b border-slate-700 pb-2">{emp}</span>
-                <div className="flex justify-between text-xs mt-2">
-                  <div className="flex flex-col">
-                    <span className="text-slate-500 uppercase tracking-widest text-[9px]">Total</span>
-                    <span className="font-medium text-slate-200">₹{stats.total.toLocaleString()}</span>
+              <div key={emp} className="bg-slate-50 hover:bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 font-bold flex items-center justify-center text-xs">
+                    {emp.charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-slate-500 uppercase tracking-widest text-[9px]">Received</span>
-                    <span className="font-medium text-emerald-400">₹{stats.received.toLocaleString()}</span>
+                  <span className="text-sm font-bold text-slate-800">{emp}</span>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-2 text-center divide-x divide-slate-200/60">
+                  <div className="flex flex-col items-center">
+                    <span className="text-slate-400 uppercase tracking-widest text-[9px] font-bold mb-1">Total</span>
+                    <span className="font-black text-slate-700 text-xs">₹{stats.total.toLocaleString()}</span>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-slate-500 uppercase tracking-widest text-[9px]">Pending</span>
-                    <span className="font-medium text-amber-400">₹{stats.pending.toLocaleString()}</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-slate-400 uppercase tracking-widest text-[9px] font-bold mb-1">Received</span>
+                    <span className="font-black text-emerald-600 text-xs">₹{stats.received.toLocaleString()}</span>
+                  </div>
+                  <div className="flex flex-col items-center pl-2">
+                    <span className="text-slate-400 uppercase tracking-widest text-[9px] font-bold mb-1">Pending</span>
+                    <span className="font-black text-amber-500 text-xs">₹{stats.pending.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
