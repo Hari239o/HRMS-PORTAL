@@ -285,7 +285,7 @@ export default function TaskBoxPage() {
 
         {/* Team Details Modal */}
         {selectedTeamDetails && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
             <div className="bg-white rounded-[32px] w-full max-w-4xl max-h-[90vh] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
               {/* Modal Header */}
               <div className="p-6 md:p-8 border-b border-slate-100 bg-slate-50/80 flex justify-between items-start relative overflow-hidden">
@@ -409,7 +409,7 @@ export default function TaskBoxPage() {
 
         {/* Warning Modal */}{/* Warning Modal */}
         {warningModalTeam && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
               <div className="p-6 border-b border-slate-100 bg-rose-50 flex justify-between items-center">
                 <h2 className="text-xl font-black text-rose-800 flex items-center gap-2">

@@ -1342,7 +1342,7 @@ export default function Performance() {
 
           {/* Update Payment Modal */}
           {selectedClearance && (
-            <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
               <div className="bg-white rounded-[32px] w-full max-w-md p-8 shadow-2xl relative animate-in zoom-in-95 duration-300">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="font-black text-2xl text-slate-800">Payment Update</h3>

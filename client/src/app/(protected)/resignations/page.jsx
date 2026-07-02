@@ -350,7 +350,7 @@ const Resignations = () => {
 
       {/* Employee Request Modal */}
       {showResignationForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-[24px] w-full max-w-3xl overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
             <div className="p-8 border-b border-slate-100 bg-slate-900 text-white relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent"></div>
@@ -448,7 +448,7 @@ const Resignations = () => {
 
       {/* Admin Action Modal */}
       {showActionModal && selectedResignation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-[24px] w-full max-w-4xl overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
             <div className="p-8 border-b border-slate-100 bg-white flex items-center justify-between sticky top-0 z-10 shadow-sm">
               <div>

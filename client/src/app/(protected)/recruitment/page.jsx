@@ -181,7 +181,7 @@ export default function RecruitmentPage() {
 
       {/* Refer a Friend Modal (Employee) */}
       {showReferral && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 p-6">
             <h3 className="text-xl font-black text-slate-800 mb-4">Refer a Friend</h3>
             <form onSubmit={handleSubmitReferral} className="space-y-4">

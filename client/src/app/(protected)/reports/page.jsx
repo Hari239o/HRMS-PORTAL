@@ -241,7 +241,7 @@ const Reports = () => {
 
       {/* Glassmorphic Employee Activity Modal */}
       {selectedEmp && (
-        <div className="fixed inset-0 z-50 flex justify-center p-4 sm:p-6 overflow-y-auto overflow-x-hidden">
+        <div className="fixed inset-0 z-[100] flex justify-center p-4 sm:p-6 overflow-y-auto overflow-x-hidden">
           {/* Backdrop */}
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setSelectedEmp(null)}></div>
           

@@ -345,7 +345,7 @@ export default function Holidays() {
 
       {/* Schedule Holiday Modal */}
       {showModal && isAdmin && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="bg-[#0f172a] px-8 py-6 relative overflow-hidden">
               <div className="absolute right-0 top-0 w-32 h-32 bg-blue-500/20 blur-2xl rounded-full pointer-events-none -mr-10 -mt-10"></div>

@@ -160,7 +160,7 @@ const Login = () => {
 
       {/* Device Lock Modal */}
       {deviceLocked && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="p-8 text-center">
               <div className="mx-auto w-20 h-20 bg-red-50 rounded-full flex flex-col items-center justify-center text-red-500 mb-6 relative">
