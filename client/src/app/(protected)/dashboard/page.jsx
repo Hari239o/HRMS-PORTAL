@@ -464,7 +464,7 @@ export default function Dashboard() {
           <AppGridItem title="HR Policies" icon={FileSpreadsheet} link="/hr-policies" color="purple" />
           <AppGridItem title="Recruitment" icon={Briefcase} link="#" color="orange" />
           <AppGridItem title="Separation" icon={UserX} link="/resignations" color="rose" />
-          <AppGridItem title="Member" icon={Users} link="#" color="teal" />
+          <AppGridItem title="Member" icon={Users} link={(user?.role === 'post_sales' || user?.role === 'post sales') ? "/employees" : "#"} color="teal" />
           <AppGridItem title="Team" icon={Users} link="/my-team" color="amber" />
         </div>
 

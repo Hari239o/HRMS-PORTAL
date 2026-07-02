@@ -1125,43 +1125,6 @@ export default function Performance() {
                 <h3 className="text-2xl font-black text-slate-800">₹{totalRevenuePending.toLocaleString()}</h3>
               </div>
             </div>
-
-            <div className="bg-slate-900 rounded-3xl p-6 shadow-xl border border-slate-700 col-span-1 md:col-span-3">
-              <h4 className="text-sm font-bold text-slate-300 mb-4 uppercase tracking-widest flex items-center gap-2">
-                <Users size={16} className="text-blue-400" />
-                Employee Wise Revenue Analytics
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
-                {Object.entries(
-                  clearances.reduce((acc, sub) => {
-                    const name = sub.employeeName || 'Unknown';
-                    if (!acc[name]) acc[name] = { total: 0, received: 0, pending: 0 };
-                    acc[name].total += (sub.totalAmount || 0);
-                    acc[name].received += (sub.amountPaid || 0);
-                    acc[name].pending += (sub.remainingAmount || 0);
-                    return acc;
-                  }, {})
-                ).map(([emp, stats]) => (
-                  <div key={emp} className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/50">
-                    <span className="text-sm font-bold text-white mb-3 block border-b border-slate-700 pb-2">{emp}</span>
-                    <div className="flex justify-between text-xs mt-2">
-                      <div className="flex flex-col">
-                        <span className="text-slate-500 uppercase tracking-widest text-[9px]">Total</span>
-                        <span className="font-medium text-slate-200">₹{stats.total.toLocaleString()}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-slate-500 uppercase tracking-widest text-[9px]">Received</span>
-                        <span className="font-medium text-emerald-400">₹{stats.received.toLocaleString()}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-slate-500 uppercase tracking-widest text-[9px]">Pending</span>
-                        <span className="font-medium text-amber-400">₹{stats.pending.toLocaleString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Pending Clearances Box */}
