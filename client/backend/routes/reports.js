@@ -1,3 +1,4 @@
+const ExcelJS = require('exceljs');
 const express = require('express');
 const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
@@ -182,8 +183,23 @@ router.get('/export', authenticate, authorize(['admin']), async (req, res) => {
     const today = DateTime.now().setZone('Asia/Kolkata').toISODate();
     let title = month && year ? `Master_Log_${month}_${year}` : `Master_Log_${today}`;
     
-    let csv = 'Employee Name,Department,Date,Status,Punch In,Punch Out,Hours at Office\n';
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Attendance');
+
+    worksheet.columns = [
+      { header: 'Employee Name', key: 'name', width: 25 },
+      { header: 'Department', key: 'department', width: 20 },
+      { header: 'Date', key: 'date', width: 15 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Punch In', key: 'punchIn', width: 15 },
+      { header: 'Punch Out', key: 'punchOut', width: 15 },
+      { header: 'Hours at Office', key: 'hours', width: 15 }
+    ];
     
+    // Style header row
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD3D3D3' } };
+
     allAttendance.forEach(a => {
       let punchIn = a.checkIn ? DateTime.fromJSDate(a.checkIn).setZone('Asia/Kolkata').toFormat('HH:mm:ss') : 'N/A';
       let punchOut = a.checkOut ? DateTime.fromJSDate(a.checkOut).setZone('Asia/Kolkata').toFormat('HH:mm:ss') : 'N/A';
@@ -194,12 +210,22 @@ router.get('/export', authenticate, authorize(['admin']), async (req, res) => {
         hours = diff.hours.toFixed(2);
       }
       
-      csv += `"${a.employee?.name || 'Unknown'}","${a.employee?.department || 'Unknown'}","${a.date}","${a.status}","${punchIn}","${punchOut}","${hours}"\n`;
+      worksheet.addRow({
+        name: a.employee?.name || 'Unknown',
+        department: a.employee?.department || 'Unknown',
+        date: a.date,
+        status: a.status,
+        punchIn,
+        punchOut,
+        hours
+      });
     });
 
-    res.setHeader('Content-Disposition', `attachment; filename="${title}.csv"`);
-    res.type('text/csv');
-    res.send(csv);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${title}.xlsx"`);
+    
+    await workbook.xlsx.write(res);
+    res.end();
   } catch (error) {
     console.error('Export error:', error);
     res.status(500).json({ error: error.message });

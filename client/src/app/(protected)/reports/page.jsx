@@ -70,7 +70,7 @@ const Reports = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Attendance_Report_${filters.month}_${filters.year}.csv`);
+      link.setAttribute('download', `Attendance_Report_${filters.month}_${filters.year}.xlsx`);
       document.body.appendChild(link);
       link.click();
       toast.dismiss();
