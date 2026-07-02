@@ -136,9 +136,7 @@ export default function TeamsPage() {
     }
   };
 
-  if (!hasAdminAccess(user)) {
-    return <div className="p-8 text-center text-slate-500 font-bold">Access Denied</div>;
-  }
+
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
@@ -152,6 +150,7 @@ export default function TeamsPage() {
           </h1>
           <p className="text-slate-500 font-medium mt-1">Manage workforce groups and revenue goals</p>
         </div>
+        {hasAdminAccess(user) && (
         <button 
           onClick={() => openModal()}
           className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2"
@@ -159,6 +158,7 @@ export default function TeamsPage() {
           <Plus size={20} />
           Create Team
         </button>
+        )}
       </div>
 
       {loading ? (
@@ -170,10 +170,11 @@ export default function TeamsPage() {
           {teams.map(team => (
             <div key={team.id} className="bg-white rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-xl hover:shadow-indigo-500/10 transition-all flex flex-col h-full">
               {/* Colored Banner Top */}
-              <div className="h-24 w-full relative" style={{ backgroundColor: team.color || '#4f46e5' }}>
+              <div className="h-32 w-full relative bg-cover bg-center" style={{ backgroundColor: team.color || '#4f46e5', backgroundImage: team.image ? `url(${team.image})` : 'none' }}>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
                 <div className="absolute top-0 right-0 p-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                  <button onClick={() => openModal(team)} className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg backdrop-blur-sm transition-colors"><Edit3 size={16}/></button>
-                  <button onClick={() => handleDelete(team.id)} className="p-2 bg-white/20 hover:bg-red-500 text-white rounded-lg backdrop-blur-sm transition-colors"><Trash2 size={16}/></button>
+                  {hasAdminAccess(user) && <button onClick={() => openModal(team)} className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg backdrop-blur-sm transition-colors"><Edit3 size={16}/></button>}
+                  {hasAdminAccess(user) && <button onClick={() => handleDelete(team.id)} className="p-2 bg-white/20 hover:bg-red-500 text-white rounded-lg backdrop-blur-sm transition-colors"><Trash2 size={16}/></button>}
                 </div>
                 {/* Team Icon/Avatar Overlapping */}
                 <div className="absolute -bottom-6 left-6">

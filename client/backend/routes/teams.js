@@ -1,3 +1,4 @@
+const { generateSignedUrl } = require('../utils/gcs');
 const express = require('express');
 const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
@@ -23,8 +24,24 @@ router.get('/', authenticate, async (req, res) => {
       }
     });
 
-    teams = teams.map(team => {
-      const memberIds = [...team.members.map(m => m.id), team.leaderId];
+    teams = await Promise.all(teams.map(async team => {
+      
+      
+      if (team.image) {
+        team.image = await generateSignedUrl(team.image, 60 * 24 * 7);
+      }
+if (team.leader && team.leader.avatar) {
+        team.leader.avatar = await generateSignedUrl(team.leader.avatar, 60 * 24 * 7);
+      }
+      
+      if (team.members) {
+        for (let m of team.members) {
+          if (m.avatar) {
+            m.avatar = await generateSignedUrl(m.avatar, 60 * 24 * 7);
+          }
+        }
+      }
+const memberIds = [...team.members.map(m => m.id), team.leaderId];
       const teamTargets = allTargets.filter(t => memberIds.includes(t.employeeId));
       
       const achievedTeamRevenue = teamTargets.reduce((sum, target) => sum + (target.achievedRevenue || 0), 0);
@@ -64,7 +81,7 @@ router.get('/', authenticate, async (req, res) => {
         targetTeamCount,
         leaderIndividualTarget
       };
-    });
+    }));
 
     res.json(teams);
   } catch (error) {
