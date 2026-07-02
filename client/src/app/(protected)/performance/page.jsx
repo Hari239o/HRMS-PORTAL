@@ -241,11 +241,11 @@ export default function Performance() {
         }
       });
       if (editingId) {
-        await api.put(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/tasks/submit/${editingId}`, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
+        await api.put(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/tasks/submit/${editingId}`, formData);
         toast.success('Sale updated successfully!');
         setEditingId(null);
       } else {
-        await api.post(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/tasks/submit`, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
+        await api.post(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/tasks/submit`, formData);
         toast.success('Sale registered successfully!');
       }
       setForm({ studentName: '', domain: '', collegeName: '', mailId: '', phoneNumber: '', totalAmount: '', amountPaid: '', remainingAmount: '', remainingAmountDate: '', courseType: 'Live', courseDuration: '1', file: null });
