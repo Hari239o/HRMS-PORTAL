@@ -188,8 +188,7 @@ router.get('/submit/clearances', authenticate, authorize(['admin', 'hr', 'manage
   try {
     const submissions = await prisma.studentSubmission.findMany({
       where: { 
-        approvalStatus: 'Approved',
-        remainingAmount: { gt: 0 }
+        approvalStatus: 'Approved'
       },
       include: { target: true },
       orderBy: { date: 'asc' }

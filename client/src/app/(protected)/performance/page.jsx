@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles, Clock, Wallet } from 'lucide-react';
+import { Trophy, Star, Shield, Award, Send, Users, Smartphone, RefreshCw, Trash2, Download, Search, X, Target, TrendingUp, Sparkles, Clock, Wallet, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { hasAdminAccess, isSuperAdmin, hasApproverAccess } from '@/utils/rbac';
@@ -981,90 +981,222 @@ export default function Performance() {
         </div>
       )}
 
-      {isPostSales && (
-        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-xl border border-white p-8 mb-12 relative overflow-hidden animate-in slide-in-from-bottom-8 duration-700">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
-          
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h3 className="font-black text-2xl text-slate-800 flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-xl text-blue-600">
-                  <Wallet size={20} />
-                </div>
-                Pending Clearances
-              </h3>
-              <p className="text-sm font-semibold text-slate-400 mt-1">Manage and update payments for approved transactions</p>
+      {isPostSales && (() => {
+        const pendingClearances = clearances.filter(c => c.remainingAmount > 0);
+        const completedClearances = clearances.filter(c => c.remainingAmount === 0);
+        
+        const totalRevenueCollected = clearances.reduce((sum, c) => sum + (c.amountPaid || 0), 0);
+        const totalRevenuePending = pendingClearances.reduce((sum, c) => sum + (c.remainingAmount || 0), 0);
+        
+        // Group pending by employee
+        const pendingByEmployee = {};
+        pendingClearances.forEach(c => {
+          if (!pendingByEmployee[c.employeeName]) {
+            pendingByEmployee[c.employeeName] = 0;
+          }
+          pendingByEmployee[c.employeeName] += (c.remainingAmount || 0);
+        });
+        
+        return (
+        <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700 mb-12">
+          {/* Dashboard Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex items-center gap-4 relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full blur-2xl"></div>
+              <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center relative z-10">
+                <Shield size={28} />
+              </div>
+              <div className="relative z-10">
+                <p className="text-sm font-bold text-slate-400">Total Cleared Revenue</p>
+                <h3 className="text-2xl font-black text-slate-800">₹{totalRevenueCollected.toLocaleString()}</h3>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex items-center gap-4 relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-50 rounded-full blur-2xl"></div>
+              <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center relative z-10">
+                <Wallet size={28} />
+              </div>
+              <div className="relative z-10">
+                <p className="text-sm font-bold text-slate-400">Total Pending Revenue</p>
+                <h3 className="text-2xl font-black text-slate-800">₹{totalRevenuePending.toLocaleString()}</h3>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-6 shadow-xl border border-slate-700 flex flex-col justify-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+              <h4 className="text-sm font-bold text-slate-400 mb-2 relative z-10">Pending by Employee</h4>
+              <div className="flex flex-col gap-2 relative z-10 max-h-[80px] overflow-y-auto pr-2 custom-scrollbar">
+                {Object.keys(pendingByEmployee).length > 0 ? (
+                  Object.entries(pendingByEmployee).map(([emp, amount]) => (
+                    <div key={emp} className="flex justify-between items-center text-xs">
+                      <span className="font-bold text-slate-200 truncate pr-2">{emp}</span>
+                      <span className="font-black text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">₹{amount.toLocaleString()}</span>
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-xs font-semibold text-slate-500 italic">No pending revenue!</span>
+                )}
+              </div>
             </div>
           </div>
-          
-          {clearances.length === 0 ? (
-            <div className="bg-slate-50/50 rounded-[2rem] p-12 text-center border-2 border-dashed border-slate-200">
-              <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield size={32} />
+
+          {/* Pending Clearances Box */}
+          <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-xl border border-white p-8 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+            
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="font-black text-2xl text-slate-800 flex items-center gap-3">
+                  <div className="p-2 bg-amber-100 rounded-xl text-amber-600">
+                    <Wallet size={20} />
+                  </div>
+                  Pending Clearances
+                </h3>
+                <p className="text-sm font-semibold text-slate-400 mt-1">Manage and update payments for approved transactions</p>
               </div>
-              <h3 className="text-lg font-black text-slate-700 mb-1">No pending clearances!</h3>
-              <p className="text-slate-500 font-medium text-sm">All approved transactions have been fully paid.</p>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50/50">
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Date</th>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Employee</th>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Student Info</th>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Financials</th>
-                    <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {clearances.map(sub => (
-                    <tr key={sub.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <Clock size={14} className="text-slate-400" />
-                          <span className="text-sm font-bold text-slate-700">{format(new Date(sub.date), 'dd MMM yyyy')}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs">
-                            {sub.employeeName.charAt(0)}
-                          </div>
-                          <span className="text-sm font-bold text-slate-800">{sub.employeeName}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-sm font-bold text-slate-800">{sub.studentName}</p>
-                        <p className="text-xs font-semibold text-slate-500">{sub.domain} • {sub.collegeName}</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-1">
-                          <span className="text-xs font-bold bg-green-50 text-green-700 px-2 py-1 rounded-md w-max">
-                            Paid: ₹{sub.amountPaid?.toLocaleString()}
-                          </span>
-                          <span className="text-xs font-bold bg-amber-50 text-amber-700 px-2 py-1 rounded-md w-max">
-                            Total: ₹{sub.totalAmount?.toLocaleString()}
-                          </span>
-                          <span className="text-xs font-bold bg-red-50 text-red-700 px-2 py-1 rounded-md w-max">
-                            Remaining: ₹{sub.remainingAmount?.toLocaleString()}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right space-x-2">
-                        <button 
-                          onClick={() => setSelectedClearance(sub)}
-                          className="px-4 py-2.5 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 rounded-xl transition-colors inline-flex items-center gap-2 font-bold text-xs"
-                        >
-                          <Wallet size={16} /> Update Payment
-                        </button>
-                      </td>
+            
+            {pendingClearances.length === 0 ? (
+              <div className="bg-slate-50/50 rounded-[2rem] p-12 text-center border-2 border-dashed border-slate-200">
+                <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 size={32} />
+                </div>
+                <h3 className="text-lg font-black text-slate-700 mb-1">No pending clearances!</h3>
+                <p className="text-slate-500 font-medium text-sm">All approved transactions have been fully paid.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/50">
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Date</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Employee</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Student Info</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Financials</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {pendingClearances.map(sub => (
+                      <tr key={sub.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <Clock size={14} className="text-slate-400" />
+                            <span className="text-sm font-bold text-slate-700">{format(new Date(sub.date), 'dd MMM yyyy')}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs">
+                              {sub.employeeName.charAt(0)}
+                            </div>
+                            <span className="text-sm font-bold text-slate-800">{sub.employeeName}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-sm font-bold text-slate-800">{sub.studentName}</p>
+                          <p className="text-xs font-semibold text-slate-500">{sub.domain} • {sub.collegeName}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs font-bold bg-green-50 text-green-700 px-2 py-1 rounded-md w-max">
+                              Paid: ₹{sub.amountPaid?.toLocaleString()}
+                            </span>
+                            <span className="text-xs font-bold bg-amber-50 text-amber-700 px-2 py-1 rounded-md w-max">
+                              Total: ₹{sub.totalAmount?.toLocaleString()}
+                            </span>
+                            <span className="text-xs font-bold bg-red-50 text-red-700 px-2 py-1 rounded-md w-max">
+                              Remaining: ₹{sub.remainingAmount?.toLocaleString()}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right space-x-2">
+                          <button 
+                            onClick={() => setSelectedClearance(sub)}
+                            className="px-4 py-2.5 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 rounded-xl transition-colors inline-flex items-center gap-2 font-bold text-xs"
+                          >
+                            <Wallet size={16} /> Update Payment
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Completed Clearances Box */}
+          <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-xl border border-white p-8 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+            
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="font-black text-2xl text-slate-800 flex items-center gap-3">
+                  <div className="p-2 bg-emerald-100 rounded-xl text-emerald-600">
+                    <Shield size={20} />
+                  </div>
+                  Completed Clearances
+                </h3>
+                <p className="text-sm font-semibold text-slate-400 mt-1">Fully paid and resolved transactions</p>
+              </div>
             </div>
-          )}
+            
+            {completedClearances.length === 0 ? (
+              <div className="bg-slate-50/50 rounded-[2rem] p-12 text-center border-2 border-dashed border-slate-200">
+                <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield size={32} />
+                </div>
+                <h3 className="text-lg font-black text-slate-700 mb-1">No completed clearances yet.</h3>
+                <p className="text-slate-500 font-medium text-sm">Clear pending payments to see them here.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse opacity-75 hover:opacity-100 transition-opacity">
+                  <thead>
+                    <tr className="bg-slate-50/50">
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Date</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Employee</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Student Info</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Final Financials</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {completedClearances.map(sub => (
+                      <tr key={sub.id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <Clock size={14} className="text-slate-400" />
+                            <span className="text-sm font-bold text-slate-700">{format(new Date(sub.date), 'dd MMM yyyy')}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-xs">
+                              {sub.employeeName.charAt(0)}
+                            </div>
+                            <span className="text-sm font-bold text-slate-600">{sub.employeeName}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-sm font-bold text-slate-600">{sub.studentName}</p>
+                          <p className="text-xs font-semibold text-slate-400">{sub.domain} • {sub.collegeName}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-md w-max border border-emerald-100">
+                              Fully Paid: ₹{sub.totalAmount?.toLocaleString()}
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
 
           {selectedClearance && (
             <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -1110,7 +1242,8 @@ export default function Performance() {
             </div>
           )}
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
