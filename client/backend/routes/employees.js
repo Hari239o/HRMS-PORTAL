@@ -53,7 +53,11 @@ router.get('/star-performers', authenticate, async (req, res) => {
         NOT: { starPerformer: null }
       },
       include: {
-        receivedReactions: true
+        receivedReactions: {
+          include: {
+            sender: { select: { name: true } }
+          }
+        }
       }
     });
 
