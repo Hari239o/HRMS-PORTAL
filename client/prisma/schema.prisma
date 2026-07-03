@@ -39,6 +39,8 @@ model Employee {
   leaves        Leave[]
   salaries      Salary[]
   jobReferrals  JobReferral[]
+  receivedReactions StarReaction[] @relation("ReceivedReactions")
+  sentReactions     StarReaction[] @relation("SentReactions")
 }
 
 model Team {
@@ -198,6 +200,18 @@ model ApprovalAuditLog {
   performedByRole String?
   details         Json?
   createdAt       DateTime @default(now())
+}
+
+model StarReaction {
+  id         String   @id @default(uuid())
+  receiverId String
+  receiver   Employee @relation("ReceivedReactions", fields: [receiverId], references: [id], onDelete: Cascade)
+  senderId   String
+  sender     Employee @relation("SentReactions", fields: [senderId], references: [id], onDelete: Cascade)
+  emoji      String
+  createdAt  DateTime @default(now())
+
+  @@unique([receiverId, senderId])
 }
 
 model Notification {

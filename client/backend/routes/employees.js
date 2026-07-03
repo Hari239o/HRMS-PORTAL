@@ -51,6 +51,9 @@ router.get('/star-performers', authenticate, async (req, res) => {
       where: { 
         starPerformer: { notIn: ['none', ''] },
         NOT: { starPerformer: null }
+      },
+      include: {
+        receivedReactions: true
       }
     });
 
@@ -59,6 +62,7 @@ router.get('/star-performers', authenticate, async (req, res) => {
       name: emp.name,
       department: emp.department,
       starPerformer: emp.starPerformer,
+      reactions: emp.receivedReactions,
       avatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60 * 24 * 7) : ''
     })));
 
@@ -571,13 +575,56 @@ router.patch('/:id/reset-device', authenticate, authorize(['admin', 'hr']), asyn
 router.patch('/:id/badge', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { starPerformer } = req.body;
   try {
+    const badgeStr = starPerformer || 'none';
+    if (badgeStr === 'none') {
+      await prisma.starReaction.deleteMany({
+        where: { receiverId: req.params.id }
+      });
+    }
+
     await prisma.employee.update({
       where: { id: req.params.id },
-      data: { starPerformer: starPerformer || 'none' }
+      data: { starPerformer: badgeStr }
     });
     res.json({ success: true, message: 'Recognition level adjusted.' });
   } catch (error) {
     console.error('Error adjusting badge:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/:id/react', authenticate, async (req, res) => {
+  const { emoji } = req.body;
+  const receiverId = req.params.id;
+  const senderId = req.user.id;
+
+  try {
+    if (!emoji) {
+      await prisma.starReaction.deleteMany({ where: { receiverId, senderId } });
+      return res.json({ success: true, message: 'Reaction removed' });
+    }
+
+    const existing = await prisma.starReaction.findFirst({
+      where: { receiverId, senderId }
+    });
+
+    if (existing) {
+      if (existing.emoji === emoji) {
+        await prisma.starReaction.delete({ where: { id: existing.id } });
+      } else {
+        await prisma.starReaction.update({
+          where: { id: existing.id },
+          data: { emoji }
+        });
+      }
+    } else {
+      await prisma.starReaction.create({
+        data: { receiverId, senderId, emoji }
+      });
+    }
+    res.json({ success: true, message: 'Reaction updated' });
+  } catch (error) {
+    console.error('Error reacting:', error);
     res.status(500).json({ error: error.message });
   }
 });
