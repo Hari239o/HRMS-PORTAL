@@ -302,17 +302,17 @@ router.get('/', authenticate, async (req, res) => {
   const { role, id } = req.user;
   try {
     let attendance = [];
-    if (role !== 'admin') {
+    if (role !== 'admin' && role !== 'hr') {
       attendance = await prisma.attendance.findMany({
         where: { employeeId: id },
         include: { employee: { select: { id: true, name: true, email: true, department: true } } },
         orderBy: { checkIn: 'desc' },
-        take: 60 // Limit to last 60 records to prevent massive payload lag
+        take: 180 // Increased to keep history to prevent massive payload lag
       });
     } else {
       attendance = await prisma.attendance.findMany({
         orderBy: { checkIn: 'desc' },
-        take: 100, // Reduced from 300 to improve initial load speed
+        take: 3000, // Increased significantly because 100 truncates yesterday's attendance for the entire company
         include: { employee: { select: { id: true, name: true, email: true, department: true } } }
       });
     }
@@ -325,7 +325,7 @@ router.get('/', authenticate, async (req, res) => {
     const currentTime = DateTime.now().setZone('Asia/Kolkata');
     const today = currentTime.toISODate();
 
-    if (role === 'admin') {
+    if (role === 'admin' || role === 'hr') {
       const allEmployees = await prisma.employee.findMany();
       const presentTodayIds = new Set(attendance.filter((a) => a.date === today).map((a) => a.employeeId));
       allEmployees.forEach((emp) => {
