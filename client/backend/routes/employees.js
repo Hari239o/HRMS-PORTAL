@@ -48,7 +48,10 @@ router.get('/', authenticate, authorize(['admin', 'hr']), async (req, res) => {
 router.get('/star-performers', authenticate, async (req, res) => {
   try {
     const performers = await prisma.employee.findMany({
-      where: { starPerformer: { in: ['week', 'month'] } }
+      where: { 
+        starPerformer: { notIn: ['none', ''] },
+        NOT: { starPerformer: null }
+      }
     });
 
     const formattedPerformers = await Promise.all(performers.map(async emp => ({
