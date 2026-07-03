@@ -6,6 +6,7 @@ export default function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [isIOSSafari, setIsIOSSafari] = useState(true); // default true to avoid flicker of error
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -22,6 +23,9 @@ export default function InstallPrompt() {
     const isIPod = !!ua.match(/iPod/i);
     if (isIPad || isIPhone || isIPod) {
       setIsIOS(true);
+      // Check if they are actually in Safari (not Chrome, Firefox, or in-app browser)
+      const isSafariBrowser = !!ua.match(/Version\/[\d\.]+.*Safari/) && !ua.match(/CriOS|FxiOS|EdgiOS/);
+      setIsIOSSafari(isSafariBrowser);
     }
 
     const handler = (e) => {
@@ -74,16 +78,22 @@ export default function InstallPrompt() {
       )}
 
       {isIOS && (
-        <div className="flex flex-col gap-2 w-full text-xs font-bold text-slate-600 bg-blue-50/50 border border-blue-100 p-3 rounded-2xl">
-          <div className="flex items-center gap-2">
-            <span className="w-5 h-5 flex items-center justify-center bg-white rounded-md shadow-sm border border-slate-100"><Share size={12} className="text-blue-500" /></span>
-            <span>Tap the <strong>Share</strong> button at the bottom</span>
+        isIOSSafari ? (
+          <div className="flex flex-col gap-2 w-full text-xs font-bold text-slate-600 bg-blue-50/50 border border-blue-100 p-3 rounded-2xl">
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 flex items-center justify-center bg-white rounded-md shadow-sm border border-slate-100"><Share size={12} className="text-blue-500" /></span>
+              <span>Tap the <strong>Share</strong> button at the bottom</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-5 flex items-center justify-center bg-white rounded-md shadow-sm border border-slate-100"><PlusSquare size={12} className="text-slate-700" /></span>
+              <span>Select <strong>Add to Home Screen</strong></span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-5 h-5 flex items-center justify-center bg-white rounded-md shadow-sm border border-slate-100"><PlusSquare size={12} className="text-slate-700" /></span>
-            <span>Select <strong>Add to Home Screen</strong></span>
+        ) : (
+          <div className="flex items-center gap-2 w-full text-xs font-bold text-rose-600 bg-rose-50 border border-rose-100 p-3 rounded-2xl">
+            <span>To install, please open this link in the <strong>Safari</strong> browser.</span>
           </div>
-        </div>
+        )
       )}
     </div>
   );
