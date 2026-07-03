@@ -392,11 +392,11 @@ export default function Dashboard() {
 
         {/* Wall of Fame (Employee View) */}
         {starPerformers.length > 0 && (
-          <div className="bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900 shadow-2xl rounded-3xl p-6 sm:p-8 mb-4 border border-indigo-500/30 relative overflow-hidden group">
+          <div className="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-3xl p-6 sm:p-8 mb-4 border border-slate-100 relative overflow-hidden group">
             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-yellow-400/10 blur-3xl group-hover:bg-yellow-400/20 transition-all duration-700"></div>
             
-            <h3 className="font-black text-xl text-white flex items-center gap-3 mb-6 relative z-10 tracking-tight">
-              <Star size={24} className="text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)] fill-yellow-400" /> 
+            <h3 className="font-black text-xl text-slate-800 flex items-center gap-3 mb-6 relative z-10 tracking-tight">
+              <Star size={24} className="text-yellow-500 drop-shadow-[0_0_15px_rgba(250,204,21,0.4)] fill-yellow-500" /> 
               Wall of Fame
             </h3>
             
@@ -409,21 +409,21 @@ export default function Dashboard() {
                 const isMonth = badgeType === 'month';
 
                 const cardBg = isMonth 
-                  ? 'bg-gradient-to-r from-purple-500/20 to-fuchsia-500/20 border-fuchsia-400/40 shadow-[0_4px_20px_rgba(217,70,239,0.15)] text-white' 
-                  : 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-cyan-400/40 shadow-[0_4px_20px_rgba(6,182,212,0.15)] text-white';
+                  ? 'bg-gradient-to-r from-amber-50 to-orange-50/50 border-amber-200 shadow-sm text-slate-800' 
+                  : 'bg-gradient-to-r from-blue-50 to-indigo-50/50 border-blue-200 shadow-sm text-slate-800';
                 
                 const hoverShadow = isFire 
-                  ? 'hover:shadow-orange-500/30' 
-                  : (isMonth ? 'hover:shadow-fuchsia-500/30' : 'hover:shadow-cyan-500/30');
+                  ? 'hover:shadow-orange-500/20' 
+                  : (isMonth ? 'hover:shadow-amber-500/20' : 'hover:shadow-blue-500/20');
 
                 return (
                   <div key={star.id} className={`${cardBg} backdrop-blur-sm border rounded-2xl p-4 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group/card relative overflow-hidden ${hoverShadow}`}>
-                    <div className={`absolute -right-6 -bottom-6 opacity-[0.05] transition-transform group-hover/card:scale-125 group-hover/card:rotate-12 duration-500 ${isFire ? 'text-orange-500' : (isMonth ? 'text-fuchsia-400' : 'text-cyan-400')}`}>
+                    <div className={`absolute -right-6 -bottom-6 opacity-[0.05] transition-transform group-hover/card:scale-125 group-hover/card:rotate-12 duration-500 ${isFire ? 'text-orange-500' : (isMonth ? 'text-amber-500' : 'text-blue-500')}`}>
                       {isFire ? <Flame size={100} /> : <Star size={100} className="fill-current" />}
                     </div>
                     
                     <div className="flex items-center gap-4 relative z-10">
-                      <div className={`w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center shadow-md ring-2 transition-all overflow-hidden shrink-0 font-black text-xl ${isFire ? 'ring-orange-400 group-hover/card:ring-orange-500 text-orange-500' : (isMonth ? 'ring-fuchsia-400 group-hover/card:ring-fuchsia-500 text-fuchsia-400' : 'ring-cyan-400 group-hover/card:ring-cyan-500 text-cyan-400')}`}>
+                      <div className={`w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-md ring-2 transition-all overflow-hidden shrink-0 font-black text-xl ${isFire ? 'ring-orange-300 group-hover/card:ring-orange-400 text-orange-500' : (isMonth ? 'ring-amber-300 group-hover/card:ring-amber-400 text-amber-500' : 'ring-blue-300 group-hover/card:ring-blue-400 text-blue-500')}`}>
                         {star.avatar ? (
                           <img src={star.avatar} alt={star.name} className="w-full h-full object-cover" />
                         ) : (
@@ -431,24 +431,24 @@ export default function Dashboard() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-black text-lg text-white truncate flex items-center gap-2">
+                        <p className="font-black text-lg text-slate-800 truncate flex items-center gap-2">
                           {star.name}
                           <span className={isFire ? 'animate-bounce' : 'animate-pulse'}>
                             {isFire ? '🔥' : '✨'}
                           </span>
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm ${isFire ? 'bg-orange-500/20 text-orange-300 border-orange-500/30' : (isMonth ? 'bg-fuchsia-500/30 text-fuchsia-200 border-fuchsia-400/40' : 'bg-cyan-500/20 text-cyan-300 border-cyan-400/30')}`}>
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm ${isFire ? 'bg-orange-100 text-orange-600 border-orange-200' : (isMonth ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-blue-100 text-blue-700 border-blue-200')}`}>
                             {badgeType}ly {theme}
                           </span>
                           {star.department && (
-                            <span className="text-[10px] text-slate-300 font-semibold truncate uppercase">{star.department}</span>
+                            <span className="text-[10px] text-slate-500 font-semibold truncate uppercase">{star.department}</span>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/10 relative z-10">
+                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-200/60 relative z-10">
                       {['👏', '❤️', '🔥', '🎉'].map(emoji => {
                         const reactions = star.reactions || [];
                         const count = reactions.filter(r => r.emoji === emoji).length;
@@ -461,14 +461,14 @@ export default function Dashboard() {
                         const titleAttr = reactedNames ? `${reactedNames} reacted with ${emoji}` : `React with ${emoji}`;
                         
                         if (count === 0 && !hasReacted) return (
-                          <button key={emoji} title={titleAttr} onClick={() => toggleReaction(star.id, emoji)} className="text-lg grayscale opacity-40 hover:grayscale-0 hover:opacity-100 hover:scale-125 transition-all">
+                          <button key={emoji} title={titleAttr} onClick={() => toggleReaction(star.id, emoji)} className="text-lg grayscale opacity-50 hover:grayscale-0 hover:opacity-100 hover:scale-125 transition-all">
                             {emoji}
                           </button>
                         );
                         
                         return (
-                          <button key={emoji} title={titleAttr} onClick={() => toggleReaction(star.id, emoji)} className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full transition-all hover:scale-110 ${hasReacted ? 'bg-white/20 text-white border border-white/30 shadow-sm' : 'bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10'}`}>
-                            {emoji} <span className="opacity-90">{count}</span>
+                          <button key={emoji} title={titleAttr} onClick={() => toggleReaction(star.id, emoji)} className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full transition-all hover:scale-110 ${hasReacted ? 'bg-blue-100 text-blue-700 border border-blue-200 shadow-sm' : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'}`}>
+                            {emoji} <span className="opacity-80">{count}</span>
                           </button>
                         );
                       })}
@@ -607,39 +607,62 @@ export default function Dashboard() {
                   const isMonth = badgeType === 'month';
 
                   const cardBg = isMonth 
-                    ? 'bg-gradient-to-r from-purple-500/20 to-fuchsia-500/20 border border-fuchsia-400/40 text-white' 
-                    : 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-cyan-400/40 text-white';
+                    ? 'bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 shadow-sm text-slate-800' 
+                    : 'bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 shadow-sm text-slate-800';
 
                   const hoverShadow = isFire 
-                    ? 'hover:border-orange-500 hover:shadow-orange-500/20' 
-                    : (isMonth ? 'hover:border-fuchsia-400 hover:shadow-fuchsia-500/20' : 'hover:border-cyan-400 hover:shadow-cyan-500/20');
+                    ? 'hover:border-orange-300 hover:shadow-orange-500/10' 
+                    : (isMonth ? 'hover:border-amber-300 hover:shadow-amber-500/10' : 'hover:border-blue-300 hover:shadow-blue-500/10');
 
                   return (
-                    <div key={star.id} className={`${cardBg} rounded-xl p-3 flex items-center justify-between group transition-all hover:shadow-md ${hoverShadow}`}>
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm ring-2 bg-slate-800 font-black text-lg ${isFire ? 'ring-orange-400 text-orange-500' : (isMonth ? 'ring-fuchsia-400 text-fuchsia-400' : 'ring-cyan-400 text-cyan-400')}`}>
-                          {star.avatar ? (
-                            <img src={star.avatar} alt={star.name} className="w-full h-full object-cover" />
-                          ) : (
-                            star.name.charAt(0)
-                          )}
+                    <div key={star.id} className={`${cardBg} rounded-xl p-3 flex flex-col gap-2 group transition-all hover:shadow-md ${hoverShadow}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm ring-2 bg-white font-black text-lg ${isFire ? 'ring-orange-300 text-orange-500' : (isMonth ? 'ring-amber-300 text-amber-500' : 'ring-blue-300 text-blue-500')}`}>
+                            {star.avatar ? (
+                              <img src={star.avatar} alt={star.name} className="w-full h-full object-cover" />
+                            ) : (
+                              star.name.charAt(0)
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm leading-tight text-slate-800 flex items-center gap-1">
+                              {star.name} {isFire ? '🔥' : '✨'}
+                            </p>
+                            <p className={`text-[10px] font-black uppercase tracking-widest ${isFire ? 'text-orange-500' : (isMonth ? 'text-amber-600' : 'text-blue-600')}`}>
+                              {badgeType}ly {theme}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-bold text-sm leading-tight text-white flex items-center gap-1">
-                            {star.name} {isFire ? '🔥' : '✨'}
-                          </p>
-                          <p className={`text-[10px] font-black uppercase tracking-widest ${isFire ? 'text-orange-400' : (isMonth ? 'text-fuchsia-300' : 'text-cyan-300')}`}>
-                            {badgeType}ly {theme}
-                          </p>
-                        </div>
+                        <button 
+                          onClick={() => removeStarPerformer(star.id)} 
+                          className="px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-bold bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-slate-200 hover:border-rose-200 rounded-lg transition-all opacity-0 group-hover:opacity-100" 
+                          title="Revoke Badge"
+                        >
+                          <UserX size={12} /> Revoke
+                        </button>
                       </div>
-                      <button 
-                        onClick={() => removeStarPerformer(star.id)} 
-                        className="px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-bold bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 border border-slate-200 hover:border-rose-200 rounded-lg transition-all opacity-0 group-hover:opacity-100" 
-                        title="Revoke Badge"
-                      >
-                        <UserX size={12} /> Revoke
-                      </button>
+
+                      {/* Admin Reactions View */}
+                      {(star.reactions && star.reactions.length > 0) && (
+                        <div className="pt-2 border-t border-slate-200/60 flex flex-wrap gap-1.5">
+                          {['👏', '❤️', '🔥', '🎉'].map(emoji => {
+                            const reactedNames = (star.reactions || [])
+                              .filter(r => r.emoji === emoji)
+                              .map(r => r.sender?.name?.split(' ')[0] || 'Someone')
+                              .join(', ');
+                            
+                            if (reactedNames) {
+                              return (
+                                <span key={emoji} className="bg-white/60 px-1.5 py-0.5 rounded border border-slate-200/60 text-[10px] text-slate-600 font-medium shadow-sm">
+                                  {emoji} <span className="text-slate-800">{reactedNames}</span>
+                                </span>
+                              );
+                            }
+                            return null;
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
