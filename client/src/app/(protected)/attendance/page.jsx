@@ -45,6 +45,7 @@ export default function Attendance() {
   const [selectedAttendanceId, setSelectedAttendanceId] = useState(null);
   const [requestCheckoutTime, setRequestCheckoutTime] = useState('');
   const [requestReason, setRequestReason] = useState('');
+  const [requestMissedDate, setRequestMissedDate] = useState('');
   
   const [currentCalendarDate, setCurrentCalendarDate] = useState(new Date());
 
@@ -195,21 +196,21 @@ export default function Attendance() {
   };
 
   const submitMissedCheckoutRequest = async () => {
-    if (!requestCheckoutTime || !requestReason) {
-      toast.error("Please provide both checkout time and a reason");
+    if (!requestMissedDate || !requestCheckoutTime || !requestReason) {
+      toast.error("Please provide date, checkout time and a reason");
       return;
     }
     try {
       await api.post('/api/approvals', {
         type: 'missed_checkout',
-        title: 'Missed Checkout Correction',
+        title: 'Missed Checkout / Attendance Correction',
         description: requestReason,
         relatedEntity: 'Attendance',
-        relatedId: selectedAttendanceId,
-        details: { checkoutTime: requestCheckoutTime }
+        details: { checkoutTime: requestCheckoutTime, missedDate: requestMissedDate }
       });
-      toast.success("Missed checkout request submitted successfully!");
+      toast.success("Attendance issue request submitted successfully!");
       setRequestModalOpen(false);
+      setRequestMissedDate('');
       setRequestCheckoutTime('');
       setRequestReason('');
       setSelectedAttendanceId(null);
@@ -365,17 +366,11 @@ export default function Attendance() {
           <div className="mt-6 flex justify-center w-full max-w-sm">
             <button 
               onClick={() => {
-                // Find most recent missed checkout
-                const todayStr = new Date().toLocaleDateString('en-CA');
-                const missed = history.find(r => !r.checkOut && r.date !== todayStr);
-                if (missed) {
-                  setSelectedAttendanceId(missed.id);
-                  setRequestModalOpen(true);
-                } else if (todayRecord && !todayRecord.checkOut) {
-                  toast.error("You haven't missed a checkout yet. You can punch out now.");
-                } else {
-                  toast.error("No missed checkouts found.");
-                }
+                setRequestMissedDate('');
+                setRequestCheckoutTime('');
+                setRequestReason('');
+                setSelectedAttendanceId(null);
+                setRequestModalOpen(true);
               }}
               className="w-full py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl transition-colors border border-rose-200 flex items-center justify-center gap-2 shadow-sm"
             >
@@ -734,9 +729,9 @@ export default function Attendance() {
           <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <div>
-                <h3 className="text-lg font-black text-slate-800">Missed Checkout</h3>
+                <h3 className="text-lg font-black text-slate-800">Attendance Issue</h3>
                 <p className="text-xs font-bold text-slate-500 mt-1">
-                  For: {history.find(r => r.id === selectedAttendanceId)?.date || 'Selected Date'}
+                  Report a missing punch or issue
                 </p>
               </div>
               <button onClick={() => setRequestModalOpen(false)} className="p-2 bg-white rounded-full text-slate-400 hover:text-rose-500 shadow-sm transition-colors">
@@ -744,6 +739,15 @@ export default function Attendance() {
               </button>
             </div>
             <div className="p-6 space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Missed Date</label>
+                <input 
+                  type="date" 
+                  value={requestMissedDate}
+                  onChange={e => setRequestMissedDate(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 font-medium text-slate-700 mb-4" 
+                />
+              </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Actual Checkout Time</label>
                 <input 
