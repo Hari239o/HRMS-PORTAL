@@ -8,8 +8,10 @@ export default function InstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
   const [isIOSSafari, setIsIOSSafari] = useState(true); // default true to avoid flicker of error
   const [dismissed, setDismissed] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
       setIsStandalone(true);
@@ -46,8 +48,8 @@ export default function InstallPrompt() {
     }
   };
 
-  // Only run in browser
-  if (typeof window === 'undefined') return null;
+  // Prevent hydration error and wait for component to mount
+  if (!mounted) return null;
   if (isStandalone || dismissed) return null;
   if (!deferredPrompt && !isIOS) return null; // Show nothing if not installable and not iOS
 
