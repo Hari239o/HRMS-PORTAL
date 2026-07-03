@@ -518,6 +518,17 @@ router.delete('/:id', authenticate, authorize(['admin', 'hr']), async (req, res)
     await safeDelete(prisma.callLog.deleteMany({ where: { employeeId: req.params.id } }));
     await safeDelete(prisma.followup.deleteMany({ where: { assignedEmployeeId: req.params.id } }));
     await safeDelete(prisma.target.deleteMany({ where: { employeeId: req.params.id } }));
+    await safeDelete(prisma.studentSubmission.deleteMany({ where: { employeeId: req.params.id } }));
+    
+    // Unassign team members before deleting the team to avoid constraint errors
+    const teamsLed = await prisma.team.findMany({ where: { leaderId: req.params.id } });
+    for (const team of teamsLed) {
+      await safeDelete(prisma.employee.updateMany({
+        where: { teamId: team.id },
+        data: { teamId: null }
+      }));
+    }
+    await safeDelete(prisma.team.deleteMany({ where: { leaderId: req.params.id } }));
     
     // Finally delete the employee
     await prisma.employee.delete({ where: { id: req.params.id } });
