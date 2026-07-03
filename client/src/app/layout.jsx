@@ -5,7 +5,8 @@ import AxiosInterceptor from '@/components/AxiosInterceptor';
 
 export const metadata = {
   title: 'Geonixa EMS Portal',
-  description: 'EMS by Geonixa',
+  description: 'Employee Management System by Geonixa - Streamline attendance, approvals, and team management.',
+  keywords: 'Geonixa, EMS, Employee Management, Attendance Portal, HRMS',
   manifest: '/manifest.json',
   icons: {
     apple: '/maskable-logo-v2.png',
@@ -14,6 +15,11 @@ export const metadata = {
     capable: true,
     statusBarStyle: 'default',
     title: 'Geonixa EMS',
+  },
+  openGraph: {
+    title: 'Geonixa EMS Portal',
+    description: 'Employee Management System by Geonixa - Streamline attendance, approvals, and team management.',
+    type: 'website',
   },
 };
 
