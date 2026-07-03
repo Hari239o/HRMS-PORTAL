@@ -339,10 +339,7 @@ router.get('/', authenticate, async (req, res) => {
       const attendanceMap = new Set(attendance.map(a => `${a.employeeId}_${a.date}`));
 
       allEmployees.forEach((emp) => {
-        const empJoinedDate = emp.createdAt ? DateTime.fromJSDate(emp.createdAt).setZone('Asia/Kolkata').startOf('day') : DateTime.fromISO('2000-01-01');
-        
         pastDates.forEach(({ date, isToday, dateTime }) => {
-          if (dateTime < empJoinedDate) return; 
           if (isToday && currentTime <= afterOffice) return; 
           
           const key = `${emp.id}_${date}`;
@@ -362,10 +359,8 @@ router.get('/', authenticate, async (req, res) => {
     } else {
       const emp = await prisma.employee.findUnique({ where: { id } });
       const attendanceMap = new Set(attendance.map(a => a.date));
-      const empJoinedDate = emp.createdAt ? DateTime.fromJSDate(emp.createdAt).setZone('Asia/Kolkata').startOf('day') : DateTime.fromISO('2000-01-01');
 
       pastDates.forEach(({ date, isToday, dateTime }) => {
-        if (dateTime < empJoinedDate) return;
         if (isToday && currentTime <= afterOffice) return;
         
         if (!attendanceMap.has(date)) {
