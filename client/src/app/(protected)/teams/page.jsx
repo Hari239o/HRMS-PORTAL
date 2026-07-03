@@ -328,7 +328,7 @@ export default function TeamsPage() {
                       onChange={(e) => setForm({...form, leaderId: e.target.value})}
                     >
                       <option value="">Select a Team Leader...</option>
-                      {employees.filter(emp => emp.role === 'employee').map(emp => (
+                      {employees.filter(emp => emp.role === 'team_leader').map(emp => (
                         <option key={emp.id} value={emp.id}>{emp.name}</option>
                       ))}
                     </select>
