@@ -635,6 +635,7 @@ const Employees = () => {
                     className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-800"
                   >
                     <option value="Sales">Sales</option>
+                    <option value="HR">HR</option>
                     <option value="Engineering">Engineering</option>
                     <option value="Digital Marketing">Digital Marketing</option>
                     <option value="Operations">Operations</option>
