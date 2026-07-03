@@ -325,32 +325,60 @@ router.get('/', authenticate, async (req, res) => {
     const currentTime = DateTime.now().setZone('Asia/Kolkata');
     const today = currentTime.toISODate();
 
+    const pastDates = [];
+    for (let i = 0; i <= 45; i++) {
+      const d = currentTime.minus({ days: i });
+      if (d.weekday !== 7) { // Skip Sunday
+        pastDates.push({ date: d.toISODate(), isToday: i === 0, dateTime: d.startOf('day') });
+      }
+    }
+
     if (role === 'admin' || role === 'hr') {
       const allEmployees = await prisma.employee.findMany();
-      const presentTodayIds = new Set(attendance.filter((a) => a.date === today).map((a) => a.employeeId));
+      
+      const attendanceMap = new Set(attendance.map(a => `${a.employeeId}_${a.date}`));
+
       allEmployees.forEach((emp) => {
-        if (!presentTodayIds.has(emp.id) && currentTime > afterOffice) {
+        const empJoinedDate = emp.createdAt ? DateTime.fromJSDate(emp.createdAt).setZone('Asia/Kolkata').startOf('day') : DateTime.fromISO('2000-01-01');
+        
+        pastDates.forEach(({ date, isToday, dateTime }) => {
+          if (dateTime < empJoinedDate) return; 
+          if (isToday && currentTime <= afterOffice) return; 
+          
+          const key = `${emp.id}_${date}`;
+          if (!attendanceMap.has(key)) {
+            attendance.push({
+              id: `absent_${emp.id}_${date}`,
+              employeeId: emp.id,
+              date: date,
+              status: 'Absent',
+              checkIn: null,
+              checkOut: null,
+              employee: emp
+            });
+          }
+        });
+      });
+    } else {
+      const emp = await prisma.employee.findUnique({ where: { id } });
+      const attendanceMap = new Set(attendance.map(a => a.date));
+      const empJoinedDate = emp.createdAt ? DateTime.fromJSDate(emp.createdAt).setZone('Asia/Kolkata').startOf('day') : DateTime.fromISO('2000-01-01');
+
+      pastDates.forEach(({ date, isToday, dateTime }) => {
+        if (dateTime < empJoinedDate) return;
+        if (isToday && currentTime <= afterOffice) return;
+        
+        if (!attendanceMap.has(date)) {
           attendance.push({
-            id: `absent_${emp.id}_${today}`,
-            employeeId: emp.id,
-            date: today,
+            id: `absent_${id}_${date}`,
+            employeeId: id,
+            date: date,
             status: 'Absent',
             checkIn: null,
             checkOut: null,
             employee: emp
           });
         }
-      });
-    } else if (attendance.length === 0 && currentTime > afterOffice) {
-      const emp = await prisma.employee.findUnique({ where: { id } });
-      attendance.push({
-        id: `absent_${id}_${today}`,
-        employeeId: id,
-        date: today,
-        status: 'Absent',
-        checkIn: null,
-        checkOut: null,
-        employee: emp
       });
     }
 
