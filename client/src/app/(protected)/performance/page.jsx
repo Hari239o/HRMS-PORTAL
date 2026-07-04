@@ -595,10 +595,13 @@ export default function Performance() {
                   </div>
                 </div>
                 <div className="group">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Upload Receipt/File (Optional)</label>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">
+                    Upload Receipt/File {editingId ? '(Optional)' : <span className="text-rose-500">*</span>}
+                  </label>
                   <input
                     type="file"
                     accept="image/*,.pdf"
+                    required={!editingId}
                     className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm cursor-pointer"
                     onChange={(e) => setForm({...form, file: e.target.files[0]})}
                   />

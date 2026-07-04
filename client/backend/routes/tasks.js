@@ -1,5 +1,5 @@
 const upload = require('../utils/uploadMiddleware');
-const { uploadStreamToGCS } = require('../utils/gcs');
+const { uploadStreamToGCS, generateSignedUrl } = require('../utils/gcs');
 const express = require('express');
 const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
@@ -212,14 +212,23 @@ router.get('/performance', authenticate, async (req, res) => {
       orderBy: { date: 'desc' }
     });
     
-    res.json({
-      target: target || { targetCount: 30, achievedCount: 0 },
-      submissions: submissions.map(s => ({
+    const processedSubmissions = await Promise.all(submissions.map(async s => {
+      let publicUrl = s.fileUrl;
+      if (publicUrl && publicUrl.startsWith('gcs://')) {
+        publicUrl = await generateSignedUrl(publicUrl, 60);
+      }
+      return {
         ...s,
+        fileUrl: publicUrl,
         date: s.date.toISOString(),
         createdAt: s.createdAt.toISOString(),
         updatedAt: s.updatedAt.toISOString()
-      }))
+      };
+    }));
+
+    res.json({
+      target: target || { targetCount: 30, achievedCount: 0 },
+      submissions: processedSubmissions
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -243,16 +252,21 @@ router.get('/submit/pending', authenticate, authorize(['admin', 'hr', 'manager',
     const employeeMap = {};
     employees.forEach(emp => employeeMap[emp.id] = emp.name);
 
-    const mapped = submissions.map(s => {
+    const mapped = await Promise.all(submissions.map(async s => {
       const employeeName = employeeMap[s.employeeId] || 'Admin / Unknown';
+      let publicUrl = s.fileUrl;
+      if (publicUrl && publicUrl.startsWith('gcs://')) {
+        publicUrl = await generateSignedUrl(publicUrl, 60);
+      }
       return {
         ...s,
         employeeName,
+        fileUrl: publicUrl,
         date: s.date.toISOString(),
         createdAt: s.createdAt.toISOString(),
         updatedAt: s.updatedAt.toISOString()
       };
-    });
+    }));
     res.json(mapped);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -279,16 +293,21 @@ router.get('/submit/clearances', authenticate, authorize(['admin', 'hr', 'manage
     const employeeMap = {};
     employees.forEach(emp => employeeMap[emp.id] = emp.name);
 
-    const mapped = submissions.map(s => {
+    const mapped = await Promise.all(submissions.map(async s => {
       const employeeName = employeeMap[s.employeeId] || 'Admin / Unknown';
+      let publicUrl = s.fileUrl;
+      if (publicUrl && publicUrl.startsWith('gcs://')) {
+        publicUrl = await generateSignedUrl(publicUrl, 60);
+      }
       return {
         ...s,
         employeeName,
+        fileUrl: publicUrl,
         date: s.date.toISOString(),
         createdAt: s.createdAt.toISOString(),
         updatedAt: s.updatedAt.toISOString()
       };
-    });
+    }));
 
     res.json(mapped);
   } catch (error) {
