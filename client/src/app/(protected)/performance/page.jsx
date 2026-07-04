@@ -55,6 +55,7 @@ export default function Performance() {
 
   const [employeeSearch, setEmployeeSearch] = useState('');
   const [postSalesMonthFilter, setPostSalesMonthFilter] = useState('');
+  const [postSalesEmployeeFilter, setPostSalesEmployeeFilter] = useState('');
 
   const exportToCSV = (dataList, filename) => {
     if (!dataList || dataList.length === 0) {
@@ -1087,10 +1088,21 @@ export default function Performance() {
 
       {isPostSales && (() => {
         const [filterYear, filterMonth] = postSalesMonthFilter ? postSalesMonthFilter.split('-') : [null, null];
-        const filteredClearances = postSalesMonthFilter
+        const filteredClearances = (postSalesMonthFilter || postSalesEmployeeFilter)
           ? clearances.filter(c => {
-              const cDate = new Date(c.date || c.createdAt);
-              return cDate.getFullYear() === parseInt(filterYear) && (cDate.getMonth() + 1) === parseInt(filterMonth);
+              let matchMonth = true;
+              let matchEmployee = true;
+              
+              if (postSalesMonthFilter) {
+                const cDate = new Date(c.date || c.createdAt);
+                matchMonth = cDate.getFullYear() === parseInt(filterYear) && (cDate.getMonth() + 1) === parseInt(filterMonth);
+              }
+              
+              if (postSalesEmployeeFilter) {
+                matchEmployee = c.employeeName?.toLowerCase().includes(postSalesEmployeeFilter.toLowerCase());
+              }
+              
+              return matchMonth && matchEmployee;
             })
           : clearances;
 
@@ -1099,6 +1111,7 @@ export default function Performance() {
         
         const totalRevenueCollected = filteredClearances.reduce((sum, c) => sum + (c.amountPaid || 0), 0);
         const totalRevenuePending = pendingClearances.reduce((sum, c) => sum + (c.remainingAmount || 0), 0);
+        const totalPaymentsRegistered = filteredClearances.length;
         
         return (
         <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700 mb-12">
@@ -1119,24 +1132,42 @@ export default function Performance() {
               </div>
             </div>
             
-            <div className="relative z-10 bg-slate-50 border border-slate-200 p-2 rounded-2xl flex items-center shadow-inner">
-              <input 
-                type="month" 
-                className="bg-transparent border-none text-slate-700 text-sm font-bold focus:ring-0 outline-none w-full pl-4"
-                value={postSalesMonthFilter}
-                onChange={(e) => setPostSalesMonthFilter(e.target.value)}
-              />
-              <button 
-                onClick={() => setPostSalesMonthFilter('')}
-                className="text-slate-500 hover:text-slate-800 px-4 py-2 text-[10px] font-black uppercase tracking-widest border-l border-slate-200 transition-colors ml-2"
-              >
-                All Time
-              </button>
+            <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full md:w-auto mt-4 md:mt-0">
+              <div className="bg-slate-50 border border-slate-200 p-2 rounded-2xl flex items-center shadow-inner flex-1 md:w-64">
+                <Search size={16} className="text-slate-400 ml-2" />
+                <input 
+                  type="text" 
+                  placeholder="Search Employee..."
+                  className="bg-transparent border-none text-slate-700 text-sm font-bold focus:ring-0 outline-none w-full pl-2"
+                  value={postSalesEmployeeFilter}
+                  onChange={(e) => setPostSalesEmployeeFilter(e.target.value)}
+                />
+                {postSalesEmployeeFilter && (
+                  <button onClick={() => setPostSalesEmployeeFilter('')} className="text-slate-400 hover:text-rose-500 mr-2 transition-colors">
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200 p-2 rounded-2xl flex items-center shadow-inner flex-1 md:w-auto">
+                <input 
+                  type="month" 
+                  className="bg-transparent border-none text-slate-700 text-sm font-bold focus:ring-0 outline-none w-full pl-4"
+                  value={postSalesMonthFilter}
+                  onChange={(e) => setPostSalesMonthFilter(e.target.value)}
+                />
+                <button 
+                  onClick={() => setPostSalesMonthFilter('')}
+                  className="text-slate-500 hover:text-slate-800 px-4 py-2 text-[10px] font-black uppercase tracking-widest border-l border-slate-200 transition-colors ml-2"
+                >
+                  All Time
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Dashboard Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex items-center gap-6 relative overflow-hidden group">
               <div className="absolute -right-4 -top-4 w-32 h-32 bg-emerald-50 rounded-full blur-3xl group-hover:bg-emerald-100 transition-all duration-500"></div>
               <div className="w-16 h-16 bg-emerald-50 text-emerald-500 border border-emerald-100 rounded-2xl flex items-center justify-center relative z-10">
@@ -1156,6 +1187,17 @@ export default function Performance() {
               <div className="relative z-10">
                 <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-1">Total Pending Revenue</p>
                 <h3 className="text-3xl font-black text-slate-800">₹{totalRevenuePending.toLocaleString()}</h3>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex items-center gap-6 relative overflow-hidden group">
+              <div className="absolute -right-4 -top-4 w-32 h-32 bg-blue-50 rounded-full blur-3xl group-hover:bg-blue-100 transition-all duration-500"></div>
+              <div className="w-16 h-16 bg-blue-50 text-blue-500 border border-blue-100 rounded-2xl flex items-center justify-center relative z-10">
+                <FileText size={32} />
+              </div>
+              <div className="relative z-10">
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-1">Payments Registered</p>
+                <h3 className="text-3xl font-black text-slate-800">{totalPaymentsRegistered}</h3>
               </div>
             </div>
           </div>
