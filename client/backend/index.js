@@ -13,6 +13,10 @@ const server = http.createServer(app);
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Office geofence: ${process.env.OFFICE_LAT || 'unset'}, ${process.env.OFFICE_LONG || 'unset'} (radius ${process.env.OFFICE_RADIUS || 'unset'}m)`);
+  
+  // Initialize cron jobs
+  const { initCronJobs } = require('./utils/cronJobs');
+  initCronJobs();
 });
 
 // Graceful Shutdown Logic for Cloud Run
