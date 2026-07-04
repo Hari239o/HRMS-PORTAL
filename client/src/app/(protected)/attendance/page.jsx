@@ -35,7 +35,7 @@ export default function Attendance() {
   const [scanning, setScanning] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [allEmployees, setAllEmployees] = useState([]);
-  const [allEmployees, setAllEmployees] = useState([]);
+  
 
   const [filterDay, setFilterDay] = useState('');
   const [filterMonth, setFilterMonth] = useState('');
