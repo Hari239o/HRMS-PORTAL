@@ -1099,7 +1099,7 @@ export default function Performance() {
               }
               
               if (postSalesEmployeeFilter) {
-                matchEmployee = c.employeeName?.toLowerCase().includes(postSalesEmployeeFilter.toLowerCase());
+                matchEmployee = (c.employeeName || '').toLowerCase().includes(postSalesEmployeeFilter.toLowerCase());
               }
               
               return matchMonth && matchEmployee;
