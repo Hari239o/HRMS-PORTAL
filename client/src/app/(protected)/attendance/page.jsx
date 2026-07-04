@@ -34,6 +34,8 @@ export default function Attendance() {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [allEmployees, setAllEmployees] = useState([]);
+  const [allEmployees, setAllEmployees] = useState([]);
 
   const [filterDay, setFilterDay] = useState('');
   const [filterMonth, setFilterMonth] = useState('');
@@ -49,13 +51,37 @@ export default function Attendance() {
   
   const [currentCalendarDate, setCurrentCalendarDate] = useState(new Date());
 
-  const filteredHistory = history.filter(row => {
+  let filteredHistory = history.filter(row => {
     let match = true;
     if (filterDay && row.date !== filterDay) match = false;
     if (filterMonth && !row.date.startsWith(filterMonth)) match = false;
     if (filterEmployee && row.employee?.name !== filterEmployee) match = false;
     return match;
   });
+
+  if (filterDay && hasAdminAccess(user) && allEmployees.length > 0) {
+    const presentIds = new Set(filteredHistory.map(r => r.employeeId));
+    const absentEmployees = allEmployees.filter(emp => !presentIds.has(emp.id) && emp.role !== 'admin');
+    
+    const dummyRecords = absentEmployees.map(emp => ({
+      id: `dummy-${emp.id}-${filterDay}`,
+      employeeId: emp.id,
+      employee: { name: emp.name, department: emp.department, role: emp.role },
+      date: filterDay,
+      checkIn: null,
+      checkOut: null,
+      status: 'Absent',
+      isDummy: true
+    }));
+
+    const finalDummyRecords = dummyRecords.filter(row => {
+      let match = true;
+      if (filterEmployee && row.employee?.name !== filterEmployee) match = false;
+      return match;
+    });
+
+    filteredHistory = [...filteredHistory, ...finalDummyRecords];
+  }
 
   const uniqueEmployees = [...new Set(history.map(row => row.employee?.name).filter(Boolean))];
   const membersPresent = [...new Set(filteredHistory.map(row => row.employeeId))].length;
@@ -99,6 +125,8 @@ export default function Attendance() {
       if (user && hasAdminAccess(user)) {
         const issuesRes = await api.get(`/api/approvals?status=pending&type=missed_checkout`);
         setPendingIssues(issuesRes.data.requests || []);
+        const empRes = await api.get(`/api/employees`);
+        setAllEmployees(empRes.data);
       }
 
       const holsRes = await api.get(`/api/holidays`);
