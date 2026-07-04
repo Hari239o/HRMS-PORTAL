@@ -56,6 +56,8 @@ export default function Performance() {
   const [employeeSearch, setEmployeeSearch] = useState('');
   const [postSalesMonthFilter, setPostSalesMonthFilter] = useState('');
   const [postSalesEmployeeFilter, setPostSalesEmployeeFilter] = useState('');
+  const [intakeSearchName, setIntakeSearchName] = useState('');
+  const [intakeSearchMonth, setIntakeSearchMonth] = useState('');
 
   const exportToCSV = (dataList, filename) => {
     if (!dataList || dataList.length === 0) {
@@ -206,6 +208,7 @@ export default function Performance() {
       file: null
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('transaction-form-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   
   const handleStudentSubmit = async (e) => {
@@ -510,7 +513,7 @@ export default function Performance() {
           
           
                     {/* DATA ENTRY FORM */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1" id="transaction-form-section">
             <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-xl border border-white p-8 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
               
@@ -674,10 +677,52 @@ export default function Performance() {
                 </button>
               </div>
               
+              <div className="p-4 bg-white border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div className="relative w-full md:w-64">
+                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input 
+                    type="text" 
+                    placeholder="Search by student name..."
+                    className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all"
+                    value={intakeSearchName}
+                    onChange={(e) => setIntakeSearchName(e.target.value)}
+                  />
+                  {intakeSearchName && (
+                    <button onClick={() => setIntakeSearchName('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition-colors">
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+                
+                <div className="relative w-full md:w-48">
+                  <input 
+                    type="month"
+                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all text-slate-600"
+                    value={intakeSearchMonth}
+                    onChange={(e) => setIntakeSearchMonth(e.target.value)}
+                  />
+                </div>
+              </div>
+              
               <div className="flex-1 p-6 space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar bg-slate-50/50">
-                {submissions.length > 0 ? submissions.map((sub) => {
-                  const percentComplete = sub.remainingAmount === 0 ? 100 : 10;
-                  return (
+                {(() => {
+                  const filteredSubmissions = submissions.filter(sub => {
+                    let matchName = true;
+                    let matchMonth = true;
+                    if (intakeSearchName) {
+                      matchName = sub.studentName?.toLowerCase().includes(intakeSearchName.toLowerCase());
+                    }
+                    if (intakeSearchMonth) {
+                      const [filterYear, filterMonth] = intakeSearchMonth.split('-');
+                      const subDate = new Date(sub.date || sub.createdAt);
+                      matchMonth = subDate.getFullYear() === parseInt(filterYear) && (subDate.getMonth() + 1) === parseInt(filterMonth);
+                    }
+                    return matchName && matchMonth;
+                  });
+
+                  return filteredSubmissions.length > 0 ? filteredSubmissions.map((sub) => {
+                    const percentComplete = sub.remainingAmount === 0 ? 100 : 10;
+                    return (
                     <div key={sub.id} className={`bg-white rounded-2xl p-5 border-2 transition-all shadow-sm hover:shadow-md ${sub.approvalStatus === 'Defaulted' ? 'border-rose-200 bg-rose-50/30' : sub.remainingAmount === 0 ? 'border-emerald-200' : 'border-slate-100 hover:border-blue-200'}`}>
                       <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
                         <div className="flex gap-4 items-start">
@@ -774,9 +819,10 @@ export default function Performance() {
                     <div className="p-4 bg-slate-100 rounded-full mb-3">
                       <ClipboardList size={32} className="opacity-50" />
                     </div>
-                    <p className="text-sm font-black tracking-wide">NO INTAKES LOGGED YET</p>
+                    <p className="text-sm font-black tracking-wide">NO INTAKES MATCH YOUR SEARCH</p>
                   </div>
-                )}
+                );
+                })()}
               </div>
             </div>
           </div>

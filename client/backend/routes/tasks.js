@@ -121,6 +121,9 @@ router.post('/submit', authenticate, upload.single('file'), async (req, res) => 
         amountPaid: parseFloat(amountPaid) || 0,
         remainingAmount: parseFloat(remainingAmount) || 0,
         remainingAmountDate: remainingAmountDate || '',
+        courseType: courseType || 'Live',
+        courseDuration: courseDuration || '1',
+        fileUrl: fileUrl,
         approvalStatus: 'Pending',
         date: new Date()
       }
