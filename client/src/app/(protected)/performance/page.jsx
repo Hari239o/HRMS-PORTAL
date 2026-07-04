@@ -57,6 +57,7 @@ export default function Performance() {
   const [employeeSearch, setEmployeeSearch] = useState('');
   const [postSalesMonthFilter, setPostSalesMonthFilter] = useState('');
   const [postSalesEmployeeFilter, setPostSalesEmployeeFilter] = useState('');
+  const [postSalesDateFilter, setPostSalesDateFilter] = useState('');
   const [intakeSearchName, setIntakeSearchName] = useState('');
   const [intakeSearchMonth, setIntakeSearchMonth] = useState('');
 
@@ -1150,21 +1151,29 @@ export default function Performance() {
 
       {isPostSales && (() => {
         const [filterYear, filterMonth] = postSalesMonthFilter ? postSalesMonthFilter.split('-') : [null, null];
-        const filteredClearances = (postSalesMonthFilter || postSalesEmployeeFilter)
+        const filteredClearances = (postSalesMonthFilter || postSalesEmployeeFilter || postSalesDateFilter)
           ? clearances.filter(c => {
               let matchMonth = true;
+              let matchDate = true;
               let matchEmployee = true;
               
+              const cDate = new Date(c.date || c.createdAt);
+
               if (postSalesMonthFilter) {
-                const cDate = new Date(c.date || c.createdAt);
                 matchMonth = cDate.getFullYear() === parseInt(filterYear) && (cDate.getMonth() + 1) === parseInt(filterMonth);
+              }
+
+              if (postSalesDateFilter) {
+                // Compare YYYY-MM-DD
+                const formattedCDate = cDate.toISOString().split('T')[0];
+                matchDate = formattedCDate === postSalesDateFilter;
               }
               
               if (postSalesEmployeeFilter) {
                 matchEmployee = (c.employeeName || '').toLowerCase().includes(postSalesEmployeeFilter.toLowerCase());
               }
               
-              return matchMonth && matchEmployee;
+              return matchMonth && matchDate && matchEmployee;
             })
           : clearances;
 
@@ -1194,8 +1203,8 @@ export default function Performance() {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full md:w-auto mt-4 md:mt-0">
-              <div className="bg-slate-50 border border-slate-200 p-2 rounded-2xl flex items-center shadow-inner flex-1 md:w-64">
+            <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full md:w-auto mt-4 md:mt-0 flex-wrap justify-end">
+              <div className="bg-slate-50 border border-slate-200 p-2 rounded-2xl flex items-center shadow-inner flex-1 min-w-[200px]">
                 <Search size={16} className="text-slate-400 ml-2" />
                 <input 
                   type="text" 
@@ -1211,18 +1220,42 @@ export default function Performance() {
                 )}
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 p-2 rounded-2xl flex items-center shadow-inner flex-1 md:w-auto">
+              <div className="bg-slate-50 border border-slate-200 p-2 rounded-2xl flex items-center shadow-inner flex-1 min-w-[150px]">
+                <input 
+                  type="date" 
+                  className="bg-transparent border-none text-slate-700 text-sm font-bold focus:ring-0 outline-none w-full pl-4"
+                  value={postSalesDateFilter}
+                  onChange={(e) => {
+                    setPostSalesDateFilter(e.target.value);
+                    if (e.target.value) setPostSalesMonthFilter(''); // Clear month if date is picked
+                  }}
+                />
+                {postSalesDateFilter && (
+                  <button onClick={() => setPostSalesDateFilter('')} className="text-slate-400 hover:text-rose-500 mr-2 transition-colors">
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200 p-2 rounded-2xl flex items-center shadow-inner flex-1 min-w-[150px]">
                 <input 
                   type="month" 
                   className="bg-transparent border-none text-slate-700 text-sm font-bold focus:ring-0 outline-none w-full pl-4"
                   value={postSalesMonthFilter}
-                  onChange={(e) => setPostSalesMonthFilter(e.target.value)}
+                  onChange={(e) => {
+                    setPostSalesMonthFilter(e.target.value);
+                    if (e.target.value) setPostSalesDateFilter(''); // Clear date if month is picked
+                  }}
                 />
                 <button 
-                  onClick={() => setPostSalesMonthFilter('')}
-                  className="text-slate-500 hover:text-slate-800 px-4 py-2 text-[10px] font-black uppercase tracking-widest border-l border-slate-200 transition-colors ml-2"
+                  onClick={() => {
+                    setPostSalesMonthFilter('');
+                    setPostSalesDateFilter('');
+                    setPostSalesEmployeeFilter('');
+                  }}
+                  className="text-slate-500 hover:text-slate-800 px-4 py-2 text-[10px] font-black uppercase tracking-widest border-l border-slate-200 transition-colors ml-2 whitespace-nowrap"
                 >
-                  All Time
+                  Clear All
                 </button>
               </div>
             </div>
