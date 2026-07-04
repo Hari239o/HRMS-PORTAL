@@ -64,7 +64,7 @@ export default function Attendance() {
     const absentEmployees = allEmployees.filter(emp => !presentIds.has(emp.id) && emp.role !== 'admin');
     
     const dummyRecords = absentEmployees.map(emp => ({
-      id: `dummy-${emp.id}-${filterDay}`,
+      id: `absent_${emp.id}_${filterDay}`,
       employeeId: emp.id,
       employee: { name: emp.name, department: emp.department, role: emp.role },
       date: filterDay,
