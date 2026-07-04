@@ -61,6 +61,12 @@ export default function Attendance() {
   const membersPresent = [...new Set(filteredHistory.map(row => row.employeeId))].length;
 
   useEffect(() => {
+    if (user && hasAdminAccess(user)) {
+      setFilterDay(new Date().toLocaleDateString('en-CA'));
+    }
+  }, [user]);
+
+  useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
