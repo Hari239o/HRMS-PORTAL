@@ -270,10 +270,17 @@ router.put('/:id/status', authenticate, async (req, res) => {
   }
   
   try {
-    if (id.startsWith('absent_')) {
-      const parts = id.split('_');
-      const employeeId = parts[1];
-      const date = parts.slice(2).join('_');
+    if (id.startsWith('absent_') || id.startsWith('dummy-')) {
+      let employeeId, date;
+      if (id.startsWith('absent_')) {
+        const parts = id.split('_');
+        employeeId = parts[1];
+        date = parts.slice(2).join('_');
+      } else {
+        const parts = id.split('-');
+        employeeId = parts[1];
+        date = parts.slice(2).join('-');
+      }
       
       const newAttendance = await prisma.attendance.create({
         data: {

@@ -84,7 +84,7 @@ export default function Attendance() {
   }
 
   const uniqueEmployees = [...new Set(history.map(row => row.employee?.name).filter(Boolean))];
-  const membersPresent = [...new Set(filteredHistory.map(row => row.employeeId))].length;
+  const membersPresent = [...new Set(filteredHistory.filter(r => r.status !== 'Absent' && r.status !== 'Weekly Off').map(row => row.employeeId))].length;
 
   useEffect(() => {
     if (user && hasAdminAccess(user)) {
