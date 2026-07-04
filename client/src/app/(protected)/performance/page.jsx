@@ -39,6 +39,7 @@ export default function Performance() {
     remainingAmountDate: '',
     courseType: 'Live',
     courseDuration: '1',
+    paymentDate: new Date().toISOString().split('T')[0],
     file: null
   });
 
@@ -205,6 +206,7 @@ export default function Performance() {
       remainingAmountDate: sub.remainingAmountDate ? sub.remainingAmountDate.split('T')[0] : '',
       courseType: sub.courseType || 'Live',
       courseDuration: sub.courseDuration || '1',
+      paymentDate: sub.paymentDate || new Date().toISOString().split('T')[0],
       file: null
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -593,6 +595,17 @@ export default function Performance() {
                       onChange={(e) => setForm({...form, courseDuration: e.target.value})}
                     />
                   </div>
+                </div>
+                <div className="group">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">Date of Payment <span className="text-rose-500">*</span></label>
+                  <input
+                    type="date"
+                    required
+                    readOnly
+                    className="w-full bg-gray-50 border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-500 focus:outline-none cursor-not-allowed shadow-sm"
+                    value={form.paymentDate}
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1">* Payments can only be logged for today's date.</p>
                 </div>
                 <div className="group">
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-blue-500">
@@ -1280,9 +1293,9 @@ export default function Performance() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Dates</th>
                       <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Employee</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student Info</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student & Course Info</th>
                       <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Financials</th>
                       <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
                     </tr>
@@ -1291,9 +1304,15 @@ export default function Performance() {
                     {pendingClearances.map(sub => (
                       <tr key={sub.id} className="hover:bg-slate-50/80 transition-colors group">
                         <td className="px-6 py-5">
-                          <div className="flex items-center gap-2">
-                            <Clock size={14} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
-                            <span className="text-sm font-bold text-slate-700">{format(new Date(sub.date), 'dd MMM yyyy')}</span>
+                          <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-black text-slate-400 uppercase">Payment:</span>
+                              <span className="text-sm font-bold text-slate-700">{sub.paymentDate || format(new Date(sub.date), 'dd MMM yyyy')}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-black text-slate-400 uppercase">Uploaded:</span>
+                              <span className="text-xs font-semibold text-slate-500">{format(new Date(sub.createdAt), 'dd MMM yyyy, HH:mm')}</span>
+                            </div>
                           </div>
                         </td>
                         <td className="px-6 py-5">
@@ -1307,6 +1326,7 @@ export default function Performance() {
                         <td className="px-6 py-5">
                           <p className="text-sm font-black text-slate-800">{sub.studentName}</p>
                           <p className="text-xs font-semibold text-slate-500 mt-1">{sub.domain} • {sub.collegeName}</p>
+                          <p className="text-xs font-semibold text-slate-500 mt-1">📞 {sub.phoneNumber}</p>
                           <div className="flex items-center gap-2 mt-2">
                             {sub.courseType && <span className="text-[9px] bg-purple-50 text-purple-600 border border-purple-100 px-2 py-0.5 rounded font-black uppercase tracking-wider">{sub.courseType} • {sub.courseDuration} Mon</span>}
                             {sub.fileUrl && <a href={sub.fileUrl} target="_blank" rel="noreferrer" className="text-[9px] bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded font-black uppercase tracking-wider hover:bg-blue-100 flex items-center gap-1 transition-colors"><LinkIcon size={10}/> Receipt</a>}
@@ -1376,9 +1396,9 @@ export default function Performance() {
                 <table className="w-full text-left border-collapse opacity-90 hover:opacity-100 transition-opacity">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Dates</th>
                       <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Employee</th>
-                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student Info</th>
+                      <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Student & Course Info</th>
                       <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Final Financials</th>
                       <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
                     </tr>
@@ -1387,9 +1407,15 @@ export default function Performance() {
                     {completedClearances.map(sub => (
                       <tr key={sub.id} className="hover:bg-slate-50/80 transition-colors group">
                         <td className="px-6 py-5">
-                          <div className="flex items-center gap-2">
-                            <Clock size={14} className="text-slate-400 group-hover:text-emerald-500 transition-colors" />
-                            <span className="text-sm font-bold text-slate-600">{format(new Date(sub.date), 'dd MMM yyyy')}</span>
+                          <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-black text-slate-400 uppercase">Payment:</span>
+                              <span className="text-sm font-bold text-slate-700">{sub.paymentDate || format(new Date(sub.date), 'dd MMM yyyy')}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-black text-slate-400 uppercase">Uploaded:</span>
+                              <span className="text-xs font-semibold text-slate-500">{format(new Date(sub.createdAt), 'dd MMM yyyy, HH:mm')}</span>
+                            </div>
                           </div>
                         </td>
                         <td className="px-6 py-5">
@@ -1403,6 +1429,7 @@ export default function Performance() {
                         <td className="px-6 py-5">
                           <p className="text-sm font-black text-slate-700">{sub.studentName}</p>
                           <p className="text-xs font-semibold text-slate-500 mt-1">{sub.domain} • {sub.collegeName}</p>
+                          <p className="text-xs font-semibold text-slate-500 mt-1">📞 {sub.phoneNumber}</p>
                           <div className="flex items-center gap-2 mt-2">
                             {sub.courseType && <span className="text-[9px] bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded font-black uppercase tracking-wider">{sub.courseType} • {sub.courseDuration} Mon</span>}
                             {sub.fileUrl && <a href={sub.fileUrl} target="_blank" rel="noreferrer" className="text-[9px] bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded font-black uppercase tracking-wider hover:bg-blue-100 flex items-center gap-1 transition-colors"><LinkIcon size={10}/> Receipt</a>}

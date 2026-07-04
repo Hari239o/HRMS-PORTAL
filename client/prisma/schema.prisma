@@ -166,6 +166,7 @@ model StudentSubmission {
   courseType          String?
   courseDuration      String?
   fileUrl             String?
+  paymentDate         String?
   lastPaymentDate     DateTime?
 }
 

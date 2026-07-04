@@ -58,7 +58,7 @@ router.post('/target', authenticate, async (req, res) => {
 });
 
 router.post('/submit', authenticate, upload.single('file'), async (req, res) => {
-  const { studentName, domain, collegeName, mailId, phoneNumber, totalAmount, amountPaid, remainingAmount, remainingAmountDate, courseType, courseDuration } = req.body;
+  const { studentName, domain, collegeName, mailId, phoneNumber, totalAmount, amountPaid, remainingAmount, remainingAmountDate, courseType, courseDuration, paymentDate } = req.body;
   let fileUrl = null;
   if (req.file) {
     try {
@@ -123,6 +123,7 @@ router.post('/submit', authenticate, upload.single('file'), async (req, res) => 
         remainingAmountDate: remainingAmountDate || '',
         courseType: courseType || 'Live',
         courseDuration: courseDuration || '1',
+        paymentDate: paymentDate || new Date().toISOString().split('T')[0],
         fileUrl: fileUrl,
         approvalStatus: 'Pending',
         date: new Date()
@@ -138,7 +139,7 @@ router.post('/submit', authenticate, upload.single('file'), async (req, res) => 
 
 router.put('/submit/:id', authenticate, upload.single('file'), async (req, res) => {
   const { id } = req.params;
-  const { studentName, domain, collegeName, mailId, phoneNumber, totalAmount, amountPaid, remainingAmount, remainingAmountDate, courseType, courseDuration } = req.body;
+  const { studentName, domain, collegeName, mailId, phoneNumber, totalAmount, amountPaid, remainingAmount, remainingAmountDate, courseType, courseDuration, paymentDate } = req.body;
   const employeeId = req.user.id;
   
   try {
@@ -188,6 +189,7 @@ router.put('/submit/:id', authenticate, upload.single('file'), async (req, res) 
         remainingAmountDate: remainingAmountDate || '',
         courseType: courseType || 'Live',
         courseDuration: courseDuration || '1',
+        paymentDate: paymentDate || new Date().toISOString().split('T')[0],
         fileUrl
       }
     });

@@ -93,10 +93,11 @@ export default function ApprovalsPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50/50">
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Date</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Dates</th>
                   <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Employee</th>
-                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Student Info</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Student & Course Info</th>
                   <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Financials</th>
+                  <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Document</th>
                   {isPostSales && <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">Actions</th>}
                 </tr>
               </thead>
@@ -104,9 +105,15 @@ export default function ApprovalsPage() {
                 {submissions.map(sub => (
                   <tr key={sub.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Clock size={14} className="text-slate-400" />
-                        <span className="text-sm font-bold text-slate-700">{format(new Date(sub.date), 'dd MMM yyyy')}</span>
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-black text-slate-400 uppercase">Payment:</span>
+                          <span className="text-sm font-bold text-slate-700">{sub.paymentDate || format(new Date(sub.date), 'dd MMM yyyy')}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-black text-slate-400 uppercase">Uploaded:</span>
+                          <span className="text-xs font-semibold text-slate-500">{format(new Date(sub.createdAt), 'dd MMM yyyy, HH:mm')}</span>
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -120,6 +127,8 @@ export default function ApprovalsPage() {
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-slate-800">{sub.studentName}</p>
                       <p className="text-xs font-semibold text-slate-500">{sub.domain} • {sub.collegeName}</p>
+                      <p className="text-xs font-semibold text-slate-500 mt-1">📞 {sub.phoneNumber}</p>
+                      <p className="text-xs font-bold text-blue-600 mt-0.5">{sub.courseType} • {sub.courseDuration} Month(s)</p>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
@@ -131,19 +140,28 @@ export default function ApprovalsPage() {
                         </span>
                       </div>
                     </td>
+                    <td className="px-6 py-4">
+                      {sub.fileUrl ? (
+                        <a href={sub.fileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors whitespace-nowrap">
+                          📄 View File
+                        </a>
+                      ) : (
+                        <span className="text-xs font-semibold text-slate-400">No Document</span>
+                      )}
+                    </td>
                     {isPostSales && (
-                    <td className="px-6 py-4 text-right space-x-2">
+                    <td className="px-6 py-4 text-right space-y-2">
                       <button 
                         onClick={() => handleApprove(sub.id)}
-                        className="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg transition-colors inline-flex items-center gap-1 font-bold text-xs"
+                        className="w-full justify-center p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg transition-colors inline-flex items-center gap-1 font-bold text-xs"
                       >
                         <CheckCircle2 size={16} /> Approve
                       </button>
                       <button 
                         onClick={() => handleReject(sub.id)}
-                        className="p-2 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-lg transition-colors inline-flex items-center gap-1 font-bold text-xs"
+                        className="w-full justify-center p-2 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 rounded-lg transition-colors inline-flex items-center gap-1 font-bold text-xs"
                       >
-                        <XCircle size={16} /> Reject
+                        <XCircle size={16} /> Reject as Invalid Date
                       </button>
                     </td>
                     )}
