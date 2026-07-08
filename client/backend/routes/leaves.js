@@ -109,6 +109,8 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
+const { triggerNotification } = require('../utils/knock');
+
 router.put('/:id/status', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { status, adminComment } = req.body;
   try {
@@ -116,10 +118,18 @@ router.put('/:id/status', authenticate, authorize(['admin', 'hr']), async (req, 
     if (adminComment) {
       updateData.adminComment = adminComment;
     }
-    await prisma.leave.update({
+    const leave = await prisma.leave.update({
       where: { id: req.params.id },
       data: updateData
     });
+
+    // Trigger Knock Notification for the employee
+    await triggerNotification('leave-status-update', leave.employeeId, {
+      leaveId: leave.id,
+      status: status,
+      adminComment: adminComment || ''
+    });
+
     res.json({ message: 'Status updated' });
   } catch (error) {
     res.status(500).json({ error: error.message });

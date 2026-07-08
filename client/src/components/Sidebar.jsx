@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { hasAdminAccess, isSuperAdmin, hasApproverAccess } from '@/utils/rbac';
+import NotificationBell from '@/components/NotificationBell';
 import { 
   LayoutDashboard, 
   CalendarCheck, 
@@ -202,9 +203,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <Settings size={18} />
               </button>
             )}
-            <button className={`flex-1 p-2 bg-white rounded-xl text-slate-500 hover:text-[#ff5a1f] hover:shadow-sm transition-all flex items-center justify-center border border-slate-200`} title="Notifications">
-              <Bell size={18} />
-            </button>
+            <div className="flex-1 flex justify-center items-center border border-slate-200 rounded-xl bg-white hover:shadow-sm transition-all">
+              <NotificationBell />
+            </div>
           </div>
           
           <button

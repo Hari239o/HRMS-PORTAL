@@ -7,6 +7,7 @@ import { Menu, QrCode, HelpCircle, Star } from 'lucide-react';
 import Sidebar from '@/components/Sidebar';
 import BottomNav from '@/components/BottomNav';
 import OrgStructureModal from '@/components/OrgStructureModal';
+import NotificationBell from '@/components/NotificationBell';
 
 export default function ProtectedLayout({ children }) {
   const { user, loading } = useAuth();
@@ -49,6 +50,9 @@ export default function ProtectedLayout({ children }) {
           </div>
           
           <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center hover:shadow-sm transition-all">
+              <NotificationBell />
+            </div>
             <button 
               onClick={() => setIsOrgModalOpen(true)}
               className="w-12 h-12 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm bg-slate-100 hover:ring-2 hover:ring-blue-400 transition-all cursor-pointer"
