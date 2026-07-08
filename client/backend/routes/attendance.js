@@ -179,13 +179,7 @@ router.post('/checkout', authenticate, upload.single('photo'), async (req, res) 
       return res.status(400).json({ error: `Geofencing failure: You are out of office range for checkout (${Math.round(distance)}m). Required: ${radius}m. Your Exact GPS: ${latitude}, ${longitude}` });
     }
 
-    const officeStartTime = '11:00';
-    const officeEndTime = '20:00';
-    const [endHour, endMinute] = officeEndTime.split(':').map(Number);
-    const shiftEnd = now.set({ hour: endHour, minute: endMinute, second: 0, millisecond: 0 });
-    if (now > shiftEnd) {
-      return res.status(400).json({ error: `Check-out is only allowed before ${officeEndTime}.` });
-    }
+
 
     const checkInTime = DateTime.fromJSDate(attendance.checkIn).setZone('Asia/Kolkata');
     const durationHours = now.diff(checkInTime, 'hours').hours;
