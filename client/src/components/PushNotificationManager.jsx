@@ -86,28 +86,31 @@ export default function PushNotificationManager({ user }) {
   if (permissionGranted || dismissed) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 z-[9999] bg-white dark:bg-gray-800 p-4 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-sm animate-in slide-in-from-bottom-5">
-      <div className="flex items-start gap-3">
-        <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full text-blue-600 dark:text-blue-400">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-        </div>
-        <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Enable Push Notifications</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
-            Get instant lock screen alerts for new issues, approvals, and holidays even when the app is closed.
-          </p>
-          <div className="flex justify-end gap-2">
-            <button 
-              onClick={() => setDismissed(true)}
-              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
-            >
-              Maybe later
-            </button>
+    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-300">
+      <div className="bg-white dark:bg-gray-900 w-full max-w-md rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className="p-8">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center mb-5 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <img src="/logo-only.png" alt="Geonixa" className="w-12 h-12 object-contain" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Stay Updated</h3>
+            <p className="text-gray-500 dark:text-gray-400 text-[15px] leading-relaxed mb-8 px-2">
+              Enable push notifications to get instant lock-screen alerts for new issues, approvals, and holidays even when the app is closed.
+            </p>
+          </div>
+          
+          <div className="flex flex-col gap-3">
             <button 
               onClick={handleRequestPermission}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-colors"
+              className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-600/20 transition-all active:scale-[0.98] text-[15px]"
             >
               Allow Notifications
+            </button>
+            <button 
+              onClick={() => setDismissed(true)}
+              className="w-full py-3.5 px-4 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium rounded-xl transition-all active:scale-[0.98] text-[15px]"
+            >
+              Maybe Later
             </button>
           </div>
         </div>
