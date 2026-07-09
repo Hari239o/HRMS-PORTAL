@@ -78,6 +78,24 @@ router.post('/', authenticate, async (req, res) => {
     });
 
     res.status(201).json({ id: newResignation.id, ...newResignation });
+
+    // Notify admins about new resignation
+    try {
+      const admins = await prisma.employee.findMany({ where: { role: 'admin' } });
+      for (const admin of admins) {
+        await prisma.notification.create({
+          data: {
+            userId: admin.id,
+            title: 'Resignation Submitted',
+            message: `Hey Admin! 🚨 Action Required: ${req.user.name || 'An employee'} has just submitted a resignation request.`,
+            type: 'resignation_creation',
+            data: { resignationId: newResignation.id }
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Failed to notify admins of resignation:', err);
+    }
   } catch (error) {
     console.error('Error submitting resignation:', error);
     res.status(500).json({ error: error.message });
@@ -98,9 +116,20 @@ router.patch('/:id', authenticate, authorize(['admin', 'hr']), async (req, res) 
     if (eligibleForRehire !== undefined) updateData.eligibleForRehire = eligibleForRehire;
     if (noticeWaived !== undefined) updateData.noticeWaived = noticeWaived;
 
-    await prisma.resignation.update({
+    const updatedResignation = await prisma.resignation.update({
       where: { id },
       data: updateData
+    });
+
+    // Notify employee about status update
+    await prisma.notification.create({
+      data: {
+        userId: updatedResignation.employeeId,
+        title: 'Resignation Status Updated',
+        message: `Hey there, your resignation request status has been updated to ${status}.${adminRemarks ? ' Remarks: ' + adminRemarks : ''}`,
+        type: 'resignation_status',
+        data: { resignationId: id, status }
+      }
     });
 
     res.json({ message: 'Resignation updated successfully', ...updateData });
@@ -128,6 +157,24 @@ router.patch('/:id/withdraw', authenticate, async (req, res) => {
       where: { id },
       data: { status: 'Withdrawn' }
     });
+
+    // Notify admins about withdrawal
+    try {
+      const admins = await prisma.employee.findMany({ where: { role: 'admin' } });
+      for (const admin of admins) {
+        await prisma.notification.create({
+          data: {
+            userId: admin.id,
+            title: 'Resignation Withdrawn',
+            message: `Hey Admin! Good news, ${req.user.name || 'An employee'} just withdrew their resignation request.`,
+            type: 'resignation_withdrawn',
+            data: { resignationId: id }
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Failed to notify admins of withdrawal:', err);
+    }
 
     res.json({ message: 'Resignation withdrawn successfully' });
   } catch (error) {

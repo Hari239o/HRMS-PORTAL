@@ -14,6 +14,25 @@ router.post('/', authenticate, authorize(['admin', 'hr']), async (req, res) => {
         type
       }
     });
+
+    // Notify everyone about the new holiday
+    try {
+      const employees = await prisma.employee.findMany();
+      for (const emp of employees) {
+        await prisma.notification.create({
+          data: {
+            userId: emp.id,
+            title: 'New Holiday Announced',
+            message: `Woohoo! 🎉 Geonixa Admin just announced a new Holiday: ${name} on ${new Date(date).toDateString()}!`,
+            type: 'holiday_announcement',
+            data: { holidayId: newHoliday.id, name, date }
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Failed to notify about new holiday:', e);
+    }
+
     res.status(201).json({ id: newHoliday.id, name, date, type });
   } catch (error) {
     res.status(400).json({ error: error.message });

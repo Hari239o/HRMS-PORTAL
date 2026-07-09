@@ -42,6 +42,24 @@ router.post('/', authenticate, upload.single('document'), async (req, res) => {
       });
     }
 
+    // Notify admins about new issue
+    try {
+      const admins = await prisma.employee.findMany({ where: { role: 'admin' } });
+      for (const admin of admins) {
+        await prisma.notification.create({
+          data: {
+            userId: admin.id,
+            title: 'New Helpdesk Issue',
+            message: `Hey Admin! 👋 There's a new task waiting for you at Geonixa. ${req.user.name || 'An employee'} just raised a Helpdesk Issue (${title}). Could you take a look?`,
+            type: 'problem_creation',
+            data: { problemId: problem.id }
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Failed to notify admins of new problem:', err);
+    }
+
     res.json({ id: problem.id });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -89,10 +107,22 @@ router.put('/:id/status', authenticate, authorize(['admin', 'hr']), async (req, 
     if (resolutionNotes) {
       updateData.resolutionNotes = resolutionNotes;
     }
-    await prisma.problem.update({
+    const updatedProblem = await prisma.problem.update({
       where: { id: req.params.id },
       data: updateData
     });
+    
+    // Notify employee about status update
+    await prisma.notification.create({
+      data: {
+        userId: updatedProblem.employeeId,
+        title: 'Issue Status Updated',
+        message: `Hey there! Your Helpdesk Issue has been updated to ${status} by Geonixa Admin.${resolutionNotes ? ' Notes: ' + resolutionNotes : ''}`,
+        type: 'problem_status',
+        data: { problemId: updatedProblem.id, status }
+      }
+    });
+
     res.json({ message: 'Status updated' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -125,6 +155,32 @@ router.post('/:id/comments', authenticate, async (req, res) => {
       where: { id: req.params.id },
       data: { comments: currentComments }
     });
+
+    // Notify the other party
+    if (req.user.role === 'admin') {
+      await prisma.notification.create({
+        data: {
+          userId: problem.employeeId,
+          title: 'New Reply on Issue',
+          message: `Hey there! Geonixa Admin just replied to your Helpdesk Issue.`,
+          type: 'problem_comment',
+          data: { problemId: problem.id }
+        }
+      });
+    } else {
+      const admins = await prisma.employee.findMany({ where: { role: 'admin' } });
+      for (const admin of admins) {
+        await prisma.notification.create({
+          data: {
+            userId: admin.id,
+            title: 'New Reply on Issue',
+            message: `${empName} just replied to their Helpdesk Issue.`,
+            type: 'problem_comment',
+            data: { problemId: problem.id }
+          }
+        });
+      }
+    }
 
     res.json({ message: 'Comment added', comment: newComment });
   } catch (error) {
