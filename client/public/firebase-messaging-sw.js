@@ -1,0 +1,28 @@
+importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAfX2Jl8WpirM2jYKEBIUohlbneU6KWBHc",
+  authDomain: "attendance-geonixa.firebaseapp.com",
+  projectId: "attendance-geonixa",
+  storageBucket: "attendance-geonixa.firebasestorage.app",
+  messagingSenderId: "36063007825",
+  appId: "1:36063007825:web:13b1693a27b88479dd9470",
+  measurementId: "G-W78R9G8RV6"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  
+  const notificationTitle = payload.notification?.title || payload.data?.title || 'New Notification';
+  const notificationOptions = {
+    body: payload.notification?.body || payload.data?.message || 'You have a new message.',
+    icon: '/geonixa-logo.png', // Fallback to a default icon
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
