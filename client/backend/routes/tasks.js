@@ -402,7 +402,7 @@ router.patch('/submit/:id/update-payment', authenticate, authorize(['admin', 'hr
           data: {
             userId: submission.employeeId,
             title: 'Full Payment Received',
-            message: `The full payment for student ${submission.studentName} has been received!`,
+            message: `Congrats buddy! 🏆 You are a Geonixa Star Performer! Full payment for ${submission.studentName} was just received. Keep up the amazing work!`,
             type: 'payment_completed'
           }
         });
@@ -417,7 +417,7 @@ router.patch('/submit/:id/update-payment', authenticate, authorize(['admin', 'hr
             data: {
               userId: employee.team.leaderId,
               title: 'Team Member Fully Paid Intake',
-              message: `${employee.name} has secured full payment for student ${submission.studentName}!`,
+              message: `Woohoo! 🎉 ${employee.name} is a Star Performer and just secured full payment for ${submission.studentName}!`,
               type: 'team_payment_completed'
             }
           });

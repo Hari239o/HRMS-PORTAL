@@ -107,7 +107,7 @@ router.post('/', authenticate, async (req, res) => {
       await createNotification({
         userId: admin.id,
         title: 'Approval request submitted',
-        message: `${emp.name || 'An employee'} submitted a ${type.replace('_', ' ')} request.`,
+        message: `Hey Admin! 👋 There\'s a new task waiting for you at Geonixa. ${emp.name || 'An employee'} just submitted a ${type.replace('_', ' ')} request. Could you take a look?`,
         type: 'approval',
         data: { requestId: request.id, requestType: type },
       });
@@ -200,7 +200,7 @@ router.post('/:id/comment', authenticate, ownerOrAdmin(async (req) => {
       await createNotification({
         userId: request.requestedBy,
         title: 'Approval request updated',
-        message: `Admin commented on your request: ${comment.slice(0, 80)}`,
+        message: `Hey there! Geonixa Admin just left a comment on your request: ${comment.slice(0, 80)}`,
         type: 'approval',
         data: { requestId: request.id, requestType: request.type },
       });
@@ -210,7 +210,7 @@ router.post('/:id/comment', authenticate, ownerOrAdmin(async (req) => {
         await createNotification({
           userId: admin.id,
           title: 'Comment added to approval request',
-          message: `${actor.name} commented on a ${request.type.replace('_', ' ')} request.`,
+          message: `Hey Admin! ${actor.name} just commented on a ${request.type.replace('_', ' ')} request. Check it out!`,
           type: 'approval',
           data: { requestId: request.id, requestType: request.type },
         });
@@ -290,7 +290,7 @@ router.post('/:id/approve', authenticate, authorize(['admin', 'hr']), async (req
     await createNotification({
       userId: updatedRequest.requestedBy,
       title: 'Approval request approved',
-      message: `Your ${updatedRequest.type.replace('_', ' ')} request has been approved.`,
+      message: `Great news! 🎉 Geonixa Admin has approved your ${updatedRequest.type.replace('_', ' ')} request. Have a wonderful day!`,
       type: 'approval',
       data: { requestId: updatedRequest.id, requestType: updatedRequest.type },
     });
@@ -313,7 +313,7 @@ router.post('/:id/reject', authenticate, authorize(['admin', 'hr']), async (req,
     await createNotification({
       userId: updatedRequest.requestedBy,
       title: 'Approval request rejected',
-      message: `Your ${updatedRequest.type.replace('_', ' ')} request was rejected: ${reason}`,
+      message: `Hey there, heads up from Geonixa Admin. Your ${updatedRequest.type.replace('_', ' ')} request was unfortunately rejected: ${reason}`,
       type: 'approval',
       data: { requestId: updatedRequest.id, requestType: updatedRequest.type },
     });
@@ -336,7 +336,7 @@ router.post('/:id/request-changes', authenticate, authorize(['admin', 'hr']), as
     await createNotification({
       userId: updatedRequest.requestedBy,
       title: 'Changes requested',
-      message: `More information is required for your ${updatedRequest.type.replace('_', ' ')} request.`,
+      message: `Hey there! We need a bit more info for your ${updatedRequest.type.replace('_', ' ')} request.`,
       type: 'approval',
       data: { requestId: updatedRequest.id, requestType: updatedRequest.type },
     });
