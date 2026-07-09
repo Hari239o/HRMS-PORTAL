@@ -2,7 +2,7 @@ importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js');
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAfX2Jl8WpirM2jYKEBIUohlbneU6KWBHc",
+  apiKey: "AIzaSyAfX2Jl8WpirM2jYKEBiUohlbneU6KWBHc",
   authDomain: "attendance-geonixa.firebaseapp.com",
   projectId: "attendance-geonixa",
   storageBucket: "attendance-geonixa.firebasestorage.app",

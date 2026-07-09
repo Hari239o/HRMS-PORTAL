@@ -2,7 +2,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getMessaging, isSupported } from "firebase/messaging";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAfX2Jl8WpirM2jYKEBIUohlbneU6KWBHc",
+  apiKey: "AIzaSyAfX2Jl8WpirM2jYKEBiUohlbneU6KWBHc",
   authDomain: "attendance-geonixa.firebaseapp.com",
   projectId: "attendance-geonixa",
   storageBucket: "attendance-geonixa.firebasestorage.app",
