@@ -16,11 +16,11 @@ export default function NotificationBell() {
   const notifButtonRef = useRef(null);
 
   // Use environment variables for Knock configuration
-  const knockApiKey = process.env.NEXT_PUBLIC_KNOCK_API_KEY || "pk_placeholder";
-  const knockFeedId = process.env.NEXT_PUBLIC_KNOCK_FEED_ID || "feed_placeholder";
+  const knockApiKey = process.env.NEXT_PUBLIC_KNOCK_PUBLIC_API_KEY;
+  const knockFeedId = process.env.NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID;
 
-  // If user is not loaded yet, just return a placeholder or nothing
-  if (!user || !user.id) return null;
+  // If user is not loaded yet, or missing keys, just return nothing
+  if (!user || !user.id || !knockApiKey || !knockFeedId) return null;
 
   return (
     <KnockProvider apiKey={knockApiKey} userId={user.id}>
