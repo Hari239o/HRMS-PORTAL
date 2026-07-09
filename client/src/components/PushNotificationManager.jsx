@@ -25,8 +25,8 @@ export default function PushNotificationManager({ user }) {
       const messaging = await setupMessaging();
       if (!messaging) return;
 
-      // Manually register the service worker to prevent race conditions
-      await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      // We no longer manually register firebase-messaging-sw.js here because next-pwa handles the PWA service worker.
+      // Next-PWA bundles client/worker/index.js into sw.js, which has our Firebase Messaging code.
       
       // CRITICAL: Wait until the service worker is fully active and ready!
       const swRegistration = await navigator.serviceWorker.ready;
