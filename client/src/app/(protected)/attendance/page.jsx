@@ -542,6 +542,7 @@ export default function Attendance() {
                 let bgColor = 'bg-slate-50 hover:bg-slate-100';
                 let textColor = 'text-slate-600';
                 let statusIcon = null;
+                let cellStyle = {};
 
                 if (isCurrentMonth) {
                   if (hasAdminAccess(user) && !filterEmployee) {
@@ -604,6 +605,7 @@ export default function Attendance() {
                 return (
                   <div 
                     key={idx} 
+                    style={cellStyle}
                     className={`relative flex flex-col items-center justify-center p-3 rounded-xl min-h-[70px] md:min-h-[90px] transition-colors border border-transparent cursor-default
                       ${isCurrentMonth ? bgColor : 'opacity-30 bg-slate-50'}
                       ${isTodayDate ? 'ring-2 ring-blue-500 ring-offset-2 font-black' : 'font-semibold'}

@@ -427,6 +427,7 @@ router.get('/', authenticate, async (req, res) => {
         officeLocation: { latitude: officeLat, longitude: officeLong },
       };
     }));
+    formatted.sort((a, b) => new Date(b.date) - new Date(a.date));
     res.json(formatted);
   } catch (error) {
     console.error('Get Attendance Error:', error);
