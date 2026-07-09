@@ -240,6 +240,7 @@ export default function Attendance() {
         title: 'Missed Checkout / Attendance Correction',
         description: requestReason,
         relatedEntity: 'Attendance',
+        relatedId: selectedAttendanceId,
         details: { checkoutTime: requestCheckoutTime, missedDate: requestMissedDate }
       });
       toast.success("Attendance issue request submitted successfully!");
@@ -592,13 +593,25 @@ export default function Attendance() {
                   });
 
                   if (holiday) {
-                    bgColor = 'bg-fuchsia-50 hover:bg-fuchsia-100 border border-fuchsia-200';
-                    textColor = 'text-fuchsia-700 font-bold';
-                    statusIcon = (
-                      <div className="absolute bottom-1 right-1 text-[9px] font-black text-fuchsia-600 bg-white/90 px-1 rounded shadow-sm border border-fuchsia-200" title={holiday.name}>
-                        🎉
-                      </div>
-                    );
+                    const rec = filteredHistory.find(r => r.date === dateStr);
+                    if (rec && rec.status === 'Weekly Off (Present)') {
+                      bgColor = 'border border-fuchsia-200';
+                      cellStyle = { background: 'linear-gradient(135deg, #d1fae5 50%, #fae8ff 50%)' };
+                      textColor = 'text-slate-800 font-bold';
+                      statusIcon = (
+                        <div className="absolute bottom-1 right-1 text-[9px] font-black text-fuchsia-600 bg-white/90 px-1 rounded shadow-sm border border-fuchsia-200" title={holiday.name}>
+                          🎉
+                        </div>
+                      );
+                    } else {
+                      bgColor = 'bg-fuchsia-50 hover:bg-fuchsia-100 border border-fuchsia-200';
+                      textColor = 'text-fuchsia-700 font-bold';
+                      statusIcon = (
+                        <div className="absolute bottom-1 right-1 text-[9px] font-black text-fuchsia-600 bg-white/90 px-1 rounded shadow-sm border border-fuchsia-200" title={holiday.name}>
+                          🎉
+                        </div>
+                      );
+                    }
                   }
                 }
                 
