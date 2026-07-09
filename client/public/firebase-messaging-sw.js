@@ -26,11 +26,38 @@ self.addEventListener('activate', (event) => {
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   
-  const notificationTitle = payload.notification?.title || payload.data?.title || 'New Notification';
+  const notificationTitle = payload.notification?.title || payload.data?.title || 'Geonixa HR Portal';
   const notificationOptions = {
-    body: payload.notification?.body || payload.data?.message || 'You have a new message.',
-    icon: '/geonixa-logo.png', // Fallback to a default icon
+    body: payload.notification?.body || payload.data?.message || 'You have a new notification.',
+    icon: '/logo-only.png',
+    badge: '/logo-only.png',
+    data: payload.data || {},
+    requireInteraction: true
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener('notificationclick', (event) => {
+  console.log('[firebase-messaging-sw.js] Notification clicked', event);
+  event.notification.close();
+
+  // Try to open the app or focus the existing tab
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      // If a window is already open, focus it
+      if (windowClients.length > 0) {
+        let client = windowClients[0];
+        for (let i = 0; i < windowClients.length; i++) {
+          if (windowClients[i].focused) {
+            client = windowClients[i];
+            break;
+          }
+        }
+        return client.focus();
+      }
+      // Otherwise open a new window
+      return clients.openWindow('/');
+    })
+  );
 });
