@@ -17,20 +17,19 @@ prisma.$use(async (params, next) => {
       if (!secretKey) return;
       
       try {
-        await fetch('https://api.knock.app/v1/workflows/in-app-feed/trigger', {
-          method: 'POST',
+        const axios = require('axios');
+        await axios.post('https://api.knock.app/v1/workflows/in-app-feed/trigger', {
+          recipients: [data.userId],
+          data: {
+            title: data.title,
+            message: data.message,
+            urlData: data.data || {}
+          }
+        }, {
           headers: {
             'Authorization': `Bearer ${secretKey}`,
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            recipients: [data.userId],
-            data: {
-              title: data.title,
-              message: data.message,
-              urlData: data.data || {}
-            }
-          })
+          }
         });
       } catch (err) {
         console.error('Knock API Error:', err);
