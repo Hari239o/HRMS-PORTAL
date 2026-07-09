@@ -9,6 +9,7 @@ import {
 } from "@knocklabs/react";
 import "@knocklabs/react/dist/index.css";
 import { useAuth } from "@/context/AuthContext";
+import PushNotificationManager from "./PushNotificationManager";
 
 export default function NotificationBell() {
   const { user } = useAuth();
@@ -35,6 +36,7 @@ export default function NotificationBell() {
             isVisible={isVisible}
             onClose={() => setIsVisible(false)}
           />
+          <PushNotificationManager user={user} />
         </div>
       </KnockFeedProvider>
     </KnockProvider>
