@@ -25,8 +25,12 @@ export default function PushNotificationManager({ user }) {
       const messaging = await setupMessaging();
       if (!messaging) return;
 
+      // Manually register the service worker to prevent race conditions
+      const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+
       const currentToken = await getToken(messaging, {
         vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+        serviceWorkerRegistration: swRegistration,
       });
 
       if (currentToken) {
