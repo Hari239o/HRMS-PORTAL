@@ -510,6 +510,7 @@ router.patch('/release/:salaryId', authenticate, authorize(['admin', 'hr']), asy
       }
     });
 
+    await prisma.notification.create({ data: { userId: salary.employeeId, title: 'Payslip Released', message: `Your payslip for ${salary.month} has been released.`, type: 'salary' } });
     res.json({ message: 'Payslip released and employee notified successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -552,6 +553,7 @@ router.post('/send-email', authenticate, authorize(['admin', 'hr']), async (req,
       });
     }
 
+    if (salary.status !== 'Released') { await prisma.notification.create({ data: { userId: salary.employeeId, title: 'Payslip Released', message: `Your payslip for ${salary.month} has been released and sent to your email.`, type: 'salary' } }); }
     res.json({ message: 'Professional payslip sent successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });

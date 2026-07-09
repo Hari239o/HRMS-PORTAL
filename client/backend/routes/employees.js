@@ -458,6 +458,9 @@ router.put('/:id', authenticate, authorize(['admin', 'hr']), async (req, res) =>
         accountNumber: accountNumber || ''
       }
     });
+    if (weekOff && empToUpdate.weekOff !== weekOff) {
+      await prisma.notification.create({ data: { userId: req.params.id, title: 'Weekly Off Updated', message: `Your weekly off day has been updated to ${weekOff}.`, type: 'weekoff' } });
+    }
     res.json({ message: 'Employee updated' });
   } catch (error) {
     console.error('Error updating employee:', error);
@@ -590,6 +593,9 @@ router.patch('/:id/badge', authenticate, authorize(['admin', 'hr']), async (req,
       where: { id: req.params.id },
       data: { starPerformer: badgeStr }
     });
+    if (badgeStr !== 'none') {
+      await prisma.notification.create({ data: { userId: req.params.id, title: 'Star Performer Badge Awarded!', message: `Congratulations! You have been recognized as a Star Performer: ${badgeStr}. Keep up the great work!`, type: 'performance' } });
+    }
     res.json({ success: true, message: 'Recognition level adjusted.' });
   } catch (error) {
     console.error('Error adjusting badge:', error);

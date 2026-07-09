@@ -146,6 +146,7 @@ router.post('/checkin', authenticate, upload.single('photo'), async (req, res) =
     } catch (e) {
       console.error('Failed to send admin notification:', e);
     }
+    await prisma.notification.create({ data: { userId: employeeId, title: 'Checked In Successfully', message: `You have checked in at ${now.toLocaleString({ hour: '2-digit', minute: '2-digit' })}. Status: ${status}`, type: 'attendance' } });
     res.status(201).json({ id: newAttendance.id, employeeId, date: today, status });
   } catch (error) {
     console.error('Checkin Error:', error);
@@ -244,6 +245,7 @@ router.post('/checkout', authenticate, upload.single('photo'), async (req, res) 
       console.error('Failed to send admin notification:', e);
     }
 
+    await prisma.notification.create({ data: { userId: employeeId, title: 'Checked Out Successfully', message: `You have checked out at ${now.toLocaleString({ hour: '2-digit', minute: '2-digit' })}. Status: ${finalStatus}`, type: 'attendance' } });
     res.json({ message: 'Checked out successfully' });
   } catch (error) {
     console.error('Checkout Error:', error);
