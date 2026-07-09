@@ -268,6 +268,7 @@ async function updateRequestStatus(requestId, status, performedBy, performedByNa
         where: { id: request.relatedId },
         data: { 
           checkOut: checkoutDate,
+          status: 'Present',
           adminEdited: true
         }
       });
