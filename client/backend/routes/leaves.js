@@ -67,6 +67,20 @@ router.post('/', authenticate, upload.single('document'), async (req, res) => {
           replyTo: empEmail
         });
       }
+
+      // Notify all admins via in-app notification
+      const admins = await prisma.employee.findMany({ where: { role: 'admin' } });
+      for (const admin of admins) {
+        await prisma.notification.create({
+          data: {
+            userId: admin.id,
+            title: 'New Leave Request',
+            message: `Hey Admin! 👋 There's a new task waiting for you at Geonixa. ${empName} just submitted a Leave request (${type}). Could you take a look?`,
+            type: 'leave_request',
+            data: { leaveId: newLeave.id, type }
+          }
+        });
+      }
     } catch (e) {
       console.error('Failed sending HR notification for leave apply:', e.message || e);
     }
@@ -109,8 +123,6 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
-const { triggerNotification } = require('../utils/knock');
-
 router.put('/:id/status', authenticate, authorize(['admin', 'hr']), async (req, res) => {
   const { status, adminComment } = req.body;
   try {
@@ -123,11 +135,15 @@ router.put('/:id/status', authenticate, authorize(['admin', 'hr']), async (req, 
       data: updateData
     });
 
-    // Trigger Knock Notification for the employee
-    await triggerNotification('leave-status-update', leave.employeeId, {
-      leaveId: leave.id,
-      status: status,
-      adminComment: adminComment || ''
+    // Trigger in-app Notification for the employee
+    await prisma.notification.create({
+      data: {
+        userId: leave.employeeId,
+        title: 'Leave Request Update',
+        message: `Hey there! Geonixa Admin has ${status.toLowerCase()} your ${leave.type} leave request.${adminComment ? ' Comment: ' + adminComment : ''}`,
+        type: 'leave_status',
+        data: { leaveId: leave.id, status }
+      }
     });
 
     res.json({ message: 'Status updated' });
