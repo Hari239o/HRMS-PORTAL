@@ -430,7 +430,7 @@ export default function Attendance() {
                 <CheckCircle size={24} />
               </div>
               <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Present</p>
-              <p className="text-4xl font-black text-slate-800 tracking-tight">{filteredHistory.filter(r => r.status === 'Present').length}</p>
+              <p className="text-4xl font-black text-slate-800 tracking-tight">{filteredHistory.filter(r => r.status === 'Present' || r.status === 'Weekly Off (Present)').length}</p>
             </div>
           </div>
           
@@ -547,7 +547,7 @@ export default function Attendance() {
                   if (hasAdminAccess(user) && !filterEmployee) {
                     // Aggregate View
                     const dayRecords = filteredHistory.filter(r => r.date === dateStr);
-                    const presentCount = dayRecords.filter(r => r.status === 'Present').length;
+                    const presentCount = dayRecords.filter(r => r.status === 'Present' || r.status === 'Weekly Off (Present)').length;
                     const halfDayCount = dayRecords.filter(r => r.status === 'Half Day').length;
                     const totalPunched = presentCount + halfDayCount;
 
@@ -576,7 +576,7 @@ export default function Attendance() {
                         bgColor = 'bg-yellow-100 hover:bg-yellow-200';
                         textColor = 'text-yellow-700';
                         statusIcon = <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 absolute bottom-2 right-2"></div>;
-                      } else if (record.status === 'Weekly Off' || record.status === 'Holiday') {
+                      } else if (record.status === 'Weekly Off' || record.status === 'Weekly Off (Present)' || record.status === 'Holiday') {
                         bgColor = 'bg-slate-100 hover:bg-slate-200';
                         textColor = 'text-slate-600';
                         statusIcon = <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl opacity-80">🎉</div>;
@@ -678,7 +678,7 @@ export default function Attendance() {
             const checkOutStr = row.checkOut ? new Date(row.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : '';
             const timeString = row.checkIn ? `${checkInStr} ➔ ${checkOutStr || '...'}` : 'No punch data';
 
-            const isWeeklyOff = row.status === 'Weekly Off';
+            const isWeeklyOff = row.status === 'Weekly Off' || row.status === 'Weekly Off (Present)';
             const statusColor = isWeeklyOff ? 'text-[#6b4c9a]' : (row.status === 'Absent' ? 'text-rose-500' : 'text-black');
             
             const isMissingCheckout = row.status === 'Absent' && row.checkIn && !row.checkOut;

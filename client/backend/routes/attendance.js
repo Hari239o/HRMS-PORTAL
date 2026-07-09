@@ -341,18 +341,17 @@ router.get('/', authenticate, async (req, res) => {
       const attendanceMap = new Set(attendance.map(a => `${a.employeeId}_${a.date}`));
 
       allEmployees.forEach((emp) => {
-        const empWeekOff = emp.weekOff || 'Sunday';
         pastDates.forEach(({ date, isToday, dateTime, weekdayName }) => {
           if (isToday && currentTime <= afterOffice) return; 
           
           const key = `${emp.id}_${date}`;
           if (!attendanceMap.has(key)) {
-            const isWeekOffOrHoliday = (weekdayName === empWeekOff) || holidaysSet.has(date);
+            const isWeekOffOrHoliday = holidaysSet.has(date);
             attendance.push({
               id: `absent_${emp.id}_${date}`,
               employeeId: emp.id,
               date: date,
-              status: isWeekOffOrHoliday ? 'Present' : 'Absent',
+              status: isWeekOffOrHoliday ? 'Weekly Off (Present)' : 'Absent',
               checkIn: null,
               checkOut: null,
               employee: emp
@@ -362,19 +361,18 @@ router.get('/', authenticate, async (req, res) => {
       });
     } else {
       const emp = await prisma.employee.findUnique({ where: { id } });
-      const empWeekOff = emp.weekOff || 'Sunday';
       const attendanceMap = new Set(attendance.map(a => a.date));
 
       pastDates.forEach(({ date, isToday, dateTime, weekdayName }) => {
         if (isToday && currentTime <= afterOffice) return;
         
         if (!attendanceMap.has(date)) {
-          const isWeekOffOrHoliday = (weekdayName === empWeekOff) || holidaysSet.has(date);
+          const isWeekOffOrHoliday = holidaysSet.has(date);
           attendance.push({
             id: `absent_${id}_${date}`,
             employeeId: id,
             date: date,
-            status: isWeekOffOrHoliday ? 'Present' : 'Absent',
+            status: isWeekOffOrHoliday ? 'Weekly Off (Present)' : 'Absent',
             checkIn: null,
             checkOut: null,
             employee: emp
