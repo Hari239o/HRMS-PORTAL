@@ -303,17 +303,20 @@ router.get('/', authenticate, async (req, res) => {
   const { role, id } = req.user;
   try {
     let attendance = [];
+        const date45DaysAgo = new Date();
+    date45DaysAgo.setDate(date45DaysAgo.getDate() - 45);
+    const dateString45DaysAgo = date45DaysAgo.toISOString().split('T')[0];
+
     if (role !== 'admin' && role !== 'hr') {
       attendance = await prisma.attendance.findMany({
-        where: { employeeId: id },
+        where: { employeeId: id, date: { gte: dateString45DaysAgo } },
         include: { employee: { select: { id: true, name: true, email: true, department: true } } },
-        orderBy: { checkIn: 'desc' },
-        take: 180 // Increased to keep history to prevent massive payload lag
+        orderBy: { checkIn: 'desc' }
       });
     } else {
       attendance = await prisma.attendance.findMany({
+        where: { date: { gte: dateString45DaysAgo } },
         orderBy: { checkIn: 'desc' },
-        take: 3000, // Increased significantly because 100 truncates yesterday's attendance for the entire company
         include: { employee: { select: { id: true, name: true, email: true, department: true } } }
       });
     }
