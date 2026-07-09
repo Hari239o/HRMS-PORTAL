@@ -1,10 +1,14 @@
-const { Knock } = require("@knocklabs/node");
+const axios = require('axios');
 
-let knockClient = null;
+const KNOCK_API_KEY = process.env.KNOCK_SECRET_API_KEY;
 
-if (process.env.KNOCK_SECRET_API_KEY) {
-  knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
-}
+const knockClient = KNOCK_API_KEY ? axios.create({
+  baseURL: 'https://api.knock.app/v1',
+  headers: {
+    'Authorization': `Bearer ${KNOCK_API_KEY}`,
+    'Content-Type': 'application/json'
+  }
+}) : null;
 
 /**
  * Triggers a Knock workflow for a specific user.
@@ -19,13 +23,13 @@ async function triggerNotification(workflowKey, recipientId, data = {}) {
   }
 
   try {
-    await knockClient.workflows.trigger(workflowKey, {
+    await knockClient.post(`/workflows/${workflowKey}/trigger`, {
       recipients: [recipientId],
       data: data,
     });
     console.log(`Knock notification [${workflowKey}] sent to ${recipientId}`);
   } catch (error) {
-    console.error("Failed to trigger Knock notification:", error);
+    console.error("Failed to trigger Knock notification:", error.response?.data || error.message);
   }
 }
 
@@ -37,9 +41,9 @@ async function triggerNotification(workflowKey, recipientId, data = {}) {
 async function identifyUser(userId, traits = {}) {
   if (!knockClient) return;
   try {
-    await knockClient.users.identify(userId, traits);
+    await knockClient.put(`/users/${userId}`, traits);
   } catch (error) {
-    console.error("Failed to identify Knock user:", error);
+    console.error("Failed to identify Knock user:", error.response?.data || error.message);
   }
 }
 
