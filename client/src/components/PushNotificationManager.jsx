@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useKnock } from "@knocklabs/react";
+import { useKnockClient } from "@knocklabs/react";
 import { getToken, onMessage } from "firebase/messaging";
 import { setupMessaging } from "../lib/firebase";
 import toast from "react-hot-toast";
 
 export default function PushNotificationManager({ user }) {
-  const knock = useKnock();
+  const knock = useKnockClient();
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
