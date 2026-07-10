@@ -83,7 +83,7 @@ router.get('/reminders', async (req, res) => {
         }
       }
     } 
-    // 3:00 PM - Keep Going Target
+    // 3:30 PM - Keep Going Target
     else if (currentHour === 15) {
       for (const emp of allEmployees) {
         const attendance = attendanceMap.get(emp.id);
