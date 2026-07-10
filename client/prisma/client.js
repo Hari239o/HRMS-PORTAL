@@ -37,10 +37,10 @@ prisma.$use(async (params, next) => {
     };
 
     if (params.action === 'create') {
-      triggerKnock(params.args.data);
+      await triggerKnock(params.args.data);
     } else if (params.action === 'createMany') {
       const records = Array.isArray(params.args.data) ? params.args.data : [params.args.data];
-      records.forEach(triggerKnock);
+      await Promise.all(records.map(triggerKnock));
     }
   }
 
