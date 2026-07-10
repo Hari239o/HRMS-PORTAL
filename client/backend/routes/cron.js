@@ -53,8 +53,8 @@ router.get('/reminders', async (req, res) => {
         }
       }
     } 
-    // 9:00 PM (21), 10:00 PM (22), 11:00 PM (23) Reminders (Punch Out)
-    else if ([21, 22, 23].includes(currentHour)) {
+    // 8:00 PM Reminder (Punch Out)
+    else if (currentHour === 20) {
       for (const emp of allEmployees) {
         const attendance = attendanceMap.get(emp.id);
         if (attendance && attendance.checkIn && !attendance.checkOut && attendance.status !== 'Absent') {

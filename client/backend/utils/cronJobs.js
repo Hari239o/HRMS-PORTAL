@@ -114,8 +114,8 @@ function initCronJobs() {
     }
   });
 
-  // Evening Punch Out Reminders (9 PM, 10 PM, 11 PM)
-  const eveningHours = [21, 22, 23];
+  // Evening Punch Out Reminders (8 PM)
+  const eveningHours = [20];
   eveningHours.forEach(hour => {
     schedule.scheduleJob({ rule: `0 ${hour} * * *`, tz: 'Asia/Kolkata' }, async () => {
       console.log(`Running ${hour}:00 punch-out reminder...`);
