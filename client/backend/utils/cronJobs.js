@@ -114,9 +114,9 @@ function initCronJobs() {
     }
   });
 
-  // Lunch Reminder (1:00 PM)
-  schedule.scheduleJob({ rule: '0 13 * * *', tz: 'Asia/Kolkata' }, async () => {
-    console.log('Running 1:00 PM lunch reminder...');
+  // Lunch Reminder (1:20 PM)
+  schedule.scheduleJob({ rule: '20 13 * * *', tz: 'Asia/Kolkata' }, async () => {
+    console.log('Running 1:20 PM lunch reminder...');
     try {
       const todayDate = new Date().toISOString().split('T')[0];
       const allEmployees = await prisma.employee.findMany({ where: { role: { not: 'admin' } } });
@@ -129,7 +129,7 @@ function initCronJobs() {
             data: {
               userId: emp.id,
               title: 'Lunch Time!',
-              message: `Hi ${emp.name}, it's 1:00 PM! Time to take a break, grab some lunch, and recharge yourself for the afternoon! 🍕`,
+              message: `Hey ${emp.name} I think you tired get lunch from 1:30 pm to 2:30 pm and come fast with full of energy to complete today task`,
               type: 'attendance'
             }
           });
