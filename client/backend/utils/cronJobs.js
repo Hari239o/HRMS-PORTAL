@@ -114,9 +114,9 @@ function initCronJobs() {
     }
   });
 
-  // Lunch Reminder (1:20 PM)
-  schedule.scheduleJob({ rule: '20 13 * * *', tz: 'Asia/Kolkata' }, async () => {
-    console.log('Running 1:20 PM lunch reminder...');
+  // Lunch Reminder (1:00 PM)
+  schedule.scheduleJob({ rule: '0 13 * * *', tz: 'Asia/Kolkata' }, async () => {
+    console.log('Running 1:00 PM lunch reminder...');
     try {
       const todayDate = new Date().toISOString().split('T')[0];
       const allEmployees = await prisma.employee.findMany({ where: { role: { not: 'admin' } } });
@@ -137,6 +137,32 @@ function initCronJobs() {
       }
     } catch (error) {
       console.error('Error in lunch reminder:', error);
+    }
+  });
+
+  // Tea Break Reminder (4:30 PM)
+  schedule.scheduleJob({ rule: '30 16 * * *', tz: 'Asia/Kolkata' }, async () => {
+    console.log('Running 4:30 PM tea break reminder...');
+    try {
+      const todayDate = new Date().toISOString().split('T')[0];
+      const allEmployees = await prisma.employee.findMany({ where: { role: { not: 'admin' } } });
+      const attendancesToday = await prisma.attendance.findMany({ where: { date: todayDate } });
+      
+      const attendanceMap = new Set(attendancesToday.filter(a => a.checkIn && !a.checkOut && a.status !== 'Absent').map(a => a.employeeId));
+      for (const emp of allEmployees) {
+        if (attendanceMap.has(emp.id)) {
+          await prisma.notification.create({
+            data: {
+              userId: emp.id,
+              title: 'Tea Break!',
+              message: `Hi ${emp.name}, it's time for a short Tea Break! Grab a cup of tea or coffee and relax for a few minutes! ☕`,
+              type: 'attendance'
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error in tea break reminder:', error);
     }
   });
 
