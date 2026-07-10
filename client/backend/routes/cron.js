@@ -52,6 +52,23 @@ router.get('/reminders', async (req, res) => {
           notificationsSent++;
         }
       }
+    }
+    // 1:00 PM Lunch Reminder
+    else if (currentHour === 13) {
+      for (const emp of allEmployees) {
+        const attendance = attendanceMap.get(emp.id);
+        if (attendance && attendance.checkIn && !attendance.checkOut && attendance.status !== 'Absent') {
+          await prisma.notification.create({
+            data: {
+              userId: emp.id,
+              title: 'Lunch Time!',
+              message: `Hi ${emp.name}, it's 1:00 PM! Time to take a break, grab some lunch, and recharge yourself for the afternoon! 🍕`,
+              type: 'attendance'
+            }
+          });
+          notificationsSent++;
+        }
+      }
     } 
     // 8:00 PM Reminder (Punch Out)
     else if (currentHour === 20) {

@@ -114,6 +114,32 @@ function initCronJobs() {
     }
   });
 
+  // Lunch Reminder (1:00 PM)
+  schedule.scheduleJob({ rule: '0 13 * * *', tz: 'Asia/Kolkata' }, async () => {
+    console.log('Running 1:00 PM lunch reminder...');
+    try {
+      const todayDate = new Date().toISOString().split('T')[0];
+      const allEmployees = await prisma.employee.findMany({ where: { role: { not: 'admin' } } });
+      const attendancesToday = await prisma.attendance.findMany({ where: { date: todayDate } });
+      
+      const attendanceMap = new Set(attendancesToday.filter(a => a.checkIn && !a.checkOut && a.status !== 'Absent').map(a => a.employeeId));
+      for (const emp of allEmployees) {
+        if (attendanceMap.has(emp.id)) {
+          await prisma.notification.create({
+            data: {
+              userId: emp.id,
+              title: 'Lunch Time!',
+              message: `Hi ${emp.name}, it's 1:00 PM! Time to take a break, grab some lunch, and recharge yourself for the afternoon! 🍕`,
+              type: 'attendance'
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error in lunch reminder:', error);
+    }
+  });
+
   // Evening Punch Out Reminders (8 PM)
   const eveningHours = [20];
   eveningHours.forEach(hour => {

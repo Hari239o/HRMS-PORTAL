@@ -245,7 +245,7 @@ router.post('/checkout', authenticate, upload.single('photo'), async (req, res) 
       console.error('Failed to send admin notification:', e);
     }
 
-    await prisma.notification.create({ data: { userId: employeeId, title: 'Checked Out Successfully', message: `You have checked out at ${now.toLocaleString({ hour: '2-digit', minute: '2-digit' })}. Status: ${finalStatus}`, type: 'attendance' } });
+    await prisma.notification.create({ data: { userId: employeeId, title: 'Checked Out Successfully', message: `You have checked out at ${now.toLocaleString({ hour: '2-digit', minute: '2-digit' })}. Status: ${finalStatus}. How was your day? We hope you had a great one! Take some rest and see you tomorrow!`, type: 'attendance' } });
     res.json({ message: 'Checked out successfully' });
   } catch (error) {
     console.error('Checkout Error:', error);
