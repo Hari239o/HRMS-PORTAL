@@ -117,6 +117,23 @@ router.get('/reminders', async (req, res) => {
         }
       }
     }
+    // 6:55 PM - One more hour to go
+    else if (currentHour === 18) {
+      for (const emp of allEmployees) {
+        const attendance = attendanceMap.get(emp.id);
+        if (attendance && attendance.checkIn && !attendance.checkOut && attendance.status !== 'Absent') {
+          await prisma.notification.create({
+            data: {
+              userId: emp.id,
+              title: 'One more hour to go! ⏰',
+              message: `Hi ${emp.name}, almost done! Just one more hour to go. Finish up your tasks and get ready to head home! 💪`,
+              type: 'attendance'
+            }
+          });
+          notificationsSent++;
+        }
+      }
+    }
     // 8:00 PM - Evening Punch Out (How was your day)
     else if (currentHour === 20) {
       for (const emp of allEmployees) {
