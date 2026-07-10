@@ -403,7 +403,7 @@ router.get('/', authenticate, async (req, res) => {
       
       if (!a.checkOut && a.checkIn && !a.adminEdited) {
         const isPastDay = a.date < today;
-        const isTodayAfterOffice = a.date === today && currentTime > afterOffice;
+        const isTodayAfterOffice = false; // Checkout allowed till midnight
         if (isPastDay || isTodayAfterOffice) {
           effectiveStatus = 'Absent';
           if (a.status !== 'Absent' && a.id && !a.id.toString().startsWith('absent_')) {
