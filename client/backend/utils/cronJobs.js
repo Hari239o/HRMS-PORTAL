@@ -87,6 +87,64 @@ function initCronJobs() {
       console.error('Error in afternoon holiday check:', error);
     }
   });
+
+  // Morning Punch In Reminder (11:00 AM)
+  schedule.scheduleJob({ rule: '0 11 * * *', tz: 'Asia/Kolkata' }, async () => {
+    console.log('Running 11:00 AM punch-in reminder...');
+    try {
+      const todayDate = new Date().toISOString().split('T')[0];
+      const allEmployees = await prisma.employee.findMany({ where: { role: { not: 'admin' } } });
+      const attendancesToday = await prisma.attendance.findMany({ where: { date: todayDate } });
+      
+      const attendanceMap = new Set(attendancesToday.map(a => a.employeeId));
+      for (const emp of allEmployees) {
+        if (!attendanceMap.has(emp.id)) {
+          await prisma.notification.create({
+            data: {
+              userId: emp.id,
+              title: 'Attendance Reminder',
+              message: `Hi ${emp.name}, you haven't punched in yet! Please check in before 11:05 AM to avoid a Half Day mark.`,
+              type: 'attendance'
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error in punch-in reminder:', error);
+    }
+  });
+
+  // Evening Punch Out Reminders (9 PM, 10 PM, 11 PM)
+  const eveningHours = [21, 22, 23];
+  eveningHours.forEach(hour => {
+    schedule.scheduleJob({ rule: `0 ${hour} * * *`, tz: 'Asia/Kolkata' }, async () => {
+      console.log(`Running ${hour}:00 punch-out reminder...`);
+      try {
+        const todayDate = new Date().toISOString().split('T')[0];
+        const allEmployees = await prisma.employee.findMany({ where: { role: { not: 'admin' } } });
+        const attendancesToday = await prisma.attendance.findMany({ where: { date: todayDate } });
+        
+        const attendanceMap = new Map();
+        attendancesToday.forEach(a => attendanceMap.set(a.employeeId, a));
+
+        for (const emp of allEmployees) {
+          const attendance = attendanceMap.get(emp.id);
+          if (attendance && attendance.checkIn && !attendance.checkOut && attendance.status !== 'Absent') {
+            await prisma.notification.create({
+              data: {
+                userId: emp.id,
+                title: 'Punch Out Reminder',
+                message: `Hi ${emp.name}, it's ${hour > 12 ? hour - 12 : hour}:00 PM. Please remember to punch out before midnight to avoid being marked absent for today!`,
+                type: 'attendance'
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.error(`Error in punch-out reminder at ${hour}:00:`, error);
+      }
+    });
+  });
 }
 
 module.exports = { initCronJobs };

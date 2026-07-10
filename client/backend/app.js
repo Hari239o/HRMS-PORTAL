@@ -91,6 +91,7 @@ app.use('/api/resignations', require('./routes/resignations'));
 app.use('/api/recruitment', require('./routes/recruitment'));
 app.use('/api/messages', messagesRoutes);
 app.use('/api/teams', require('./routes/teams'));
+app.use('/api/cron', require('./routes/cron'));
 
 // Fallback for Vercel Serverless where /api prefix is stripped from req.url
 app.use('/auth', authRoutes);
@@ -109,6 +110,7 @@ app.use('/resignations', require('./routes/resignations'));
 app.use('/recruitment', require('./routes/recruitment'));
 app.use('/messages', messagesRoutes);
 app.use('/teams', require('./routes/teams'));
+app.use('/cron', require('./routes/cron'));
 
 
 app.use((err, req, res, next) => {
