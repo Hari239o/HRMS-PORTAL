@@ -298,8 +298,7 @@ export default function Attendance() {
     </div>
   );
 
-  const calendarMonthStart = startOfMonth(currentCalendarDate);
-  const calendarMonthEnd = endOfMonth(calendarMonthStart);
+  // Reusing calendarMonthStart and calendarMonthEnd declared at the top of the component
   const calendarStartDate = startOfWeek(calendarMonthStart);
   const calendarEndDate = endOfWeek(calendarMonthEnd);
 
