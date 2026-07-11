@@ -747,7 +747,8 @@ export default function Attendance() {
             const isWeeklyOff = row.status === 'Weekly Off' || row.status === 'Weekly Off (Present)';
             const statusColor = isWeeklyOff ? 'text-[#6b4c9a]' : (row.status === 'Absent' ? 'text-rose-500' : 'text-black');
             
-            const isMissingCheckout = row.status === 'Absent' && row.checkIn && !row.checkOut;
+            const todayStr = new Date().toLocaleDateString('en-CA');
+            const isMissingCheckout = row.status === 'Absent' && row.checkIn && !row.checkOut && row.date < todayStr;
 
             return (
               <div key={row.id} className="flex px-5 py-4 md:px-8 hover:bg-slate-50 transition-colors group">

@@ -95,7 +95,7 @@ router.post('/checkin', authenticate, upload.single('photo'), async (req, res) =
     const limitTime = shiftStart.plus({ minutes: 5 });
     
     if (now > limitTime) {
-      status = 'Absent';
+      status = 'Half Day';
     } else if (maxPossibleHours < 5) {
       status = 'Absent';
     }
