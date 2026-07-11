@@ -25,11 +25,8 @@ export default function PushNotificationManager({ user }) {
       const messaging = await setupMessaging();
       if (!messaging) return;
 
-      // We no longer manually register firebase-messaging-sw.js here because next-pwa handles the PWA service worker.
-      // Next-PWA bundles client/worker/index.js into sw.js, which has our Firebase Messaging code.
-      
-      // CRITICAL: Wait until the service worker is fully active and ready!
-      const swRegistration = await navigator.serviceWorker.ready;
+      // Register the dedicated Firebase Messaging service worker explicitly to handle background lock-screen notifications
+      const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
 
       const currentToken = await getToken(messaging, {
         vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
