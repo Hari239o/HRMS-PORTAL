@@ -31,7 +31,7 @@ router.post('/target', authenticate, async (req, res) => {
       await prisma.target.update({
         where: { id: existing.id },
         data: { 
-          targetCount: targetCount || 30,
+          targetCount: targetCount ? parseInt(targetCount, 10) : 30,
           targetRevenue: req.body.targetRevenue ? parseFloat(req.body.targetRevenue) : existing.targetRevenue,
           title: title || existing.title,
           description: description || existing.description
@@ -42,7 +42,7 @@ router.post('/target', authenticate, async (req, res) => {
         data: {
           employeeId,
           month,
-          targetCount: targetCount || 30,
+          targetCount: targetCount ? parseInt(targetCount, 10) : 30,
           targetRevenue: req.body.targetRevenue ? parseFloat(req.body.targetRevenue) : 0,
           achievedCount: 0,
           achievedRevenue: 0,
