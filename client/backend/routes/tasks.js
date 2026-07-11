@@ -37,6 +37,14 @@ router.post('/target', authenticate, async (req, res) => {
           description: description || existing.description
         }
       });
+      await prisma.notification.create({
+        data: {
+          userId: employeeId,
+          title: 'Target Updated! 🎯',
+          message: `Your target for ${month} has been updated to ${targetCount || 30} leads.`,
+          type: 'target'
+        }
+      }).catch(err => console.error('Failed to create target update notification:', err));
     } else {
       await prisma.target.create({
         data: {
@@ -50,6 +58,14 @@ router.post('/target', authenticate, async (req, res) => {
           description
         }
       });
+      await prisma.notification.create({
+        data: {
+          userId: employeeId,
+          title: 'New Target Assigned! 🎯',
+          message: `A new target of ${targetCount || 30} leads has been set for you in ${month}.`,
+          type: 'target'
+        }
+      }).catch(err => console.error('Failed to create target assignment notification:', err));
     }
     res.json({ success: true, message: 'Workforce target saved.' });
   } catch (error) {
@@ -129,6 +145,29 @@ router.post('/submit', authenticate, upload.single('file'), async (req, res) => 
         date: new Date()
       }
     });
+
+    try {
+      const adminsAndPostSales = await prisma.employee.findMany({
+        where: {
+          role: {
+            in: ['admin', 'hr', 'manager', 'post_sales', 'post sales']
+          }
+        }
+      });
+      const submitter = req.user.name || 'An employee';
+      await Promise.all(adminsAndPostSales.map(admin => {
+        return prisma.notification.create({
+          data: {
+            userId: admin.id,
+            title: 'New Student Submission! 📝',
+            message: `${submitter} submitted a new student metric for ${studentName}.`,
+            type: 'submission'
+          }
+        }).catch(err => console.error(err));
+      }));
+    } catch (err) {
+      console.error('Failed to send submission notifications:', err);
+    }
 
     res.json({ success: true, message: 'Student metric recorded successfully.' });
   } catch (error) {
@@ -454,6 +493,15 @@ router.patch('/submit/:id/approve', authenticate, authorize(['admin', 'hr', 'man
       });
     }
 
+    await prisma.notification.create({
+      data: {
+        userId: submission.employeeId,
+        title: 'Submission Approved! 🎉',
+        message: `Your submission for ${submission.studentName} has been approved.`,
+        type: 'submission'
+      }
+    }).catch(err => console.error(err));
+
     res.json({ success: true, message: 'Transaction approved successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -480,6 +528,15 @@ router.patch('/submit/:id/reject', authenticate, authorize(['admin', 'hr', 'mana
       where: { id: req.params.id },
       data: { approvalStatus: 'Rejected' }
     });
+
+    await prisma.notification.create({
+      data: {
+        userId: submission.employeeId,
+        title: 'Submission Rejected! ❌',
+        message: `Your submission for ${submission.studentName} has been rejected.`,
+        type: 'submission'
+      }
+    }).catch(err => console.error(err));
 
     res.json({ success: true, message: 'Transaction rejected successfully' });
   } catch (error) {
