@@ -29,7 +29,7 @@ const permitRoles = (allowed = []) => {
 const ownerOrAdmin = (ownerId) => {
   return async (req, res, next) => {
     if (!req.user) return res.status(401).json({ error: 'Unauthenticated' });
-    if (req.user.role === 'admin') return next();
+    if (req.user.role === 'admin' || req.user.role === 'hr') return next();
 
     let id = null;
     try {

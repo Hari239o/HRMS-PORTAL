@@ -36,8 +36,38 @@ router.get('/reminders', async (req, res) => {
 
     let notificationsSent = 0;
 
+    // 12:00 AM Midnight - Mark missing check-outs as Absent
+    if (currentHour === 0) {
+      try {
+        const yesterday = now.minus({ days: 1 }).toISODate();
+        const missingCheckouts = await prisma.attendance.findMany({
+          where: {
+            checkOut: null,
+            date: yesterday,
+            status: {
+              not: 'Absent'
+            }
+          }
+        });
+
+        if (missingCheckouts.length > 0) {
+          await prisma.attendance.updateMany({
+            where: {
+              id: {
+                in: missingCheckouts.map(record => record.id)
+              }
+            },
+            data: {
+              status: 'Absent'
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error in midnight attendance check:', error);
+      }
+    }
     // 9:00 AM - Good Morning (Sent to all)
-    if (currentHour === 9) {
+    else if (currentHour === 9) {
       for (const emp of allEmployees) {
         await prisma.notification.create({
           data: {

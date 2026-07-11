@@ -50,6 +50,7 @@ export default function Attendance() {
   const [requestMissedDate, setRequestMissedDate] = useState('');
   
   const [currentCalendarDate, setCurrentCalendarDate] = useState(new Date());
+  const [remainingChances, setRemainingChances] = useState(4);
 
   let filteredHistory = history.filter(row => {
     let match = true;
@@ -131,6 +132,9 @@ export default function Attendance() {
 
       const holsRes = await api.get(`/api/holidays`);
       setHolidays(holsRes.data || []);
+
+      const chancesRes = await api.get(`/api/approvals/remaining-chances`);
+      setRemainingChances(chancesRes.data.remaining);
     } catch (err) {
       toast.error('Failed to fetch attendance data');
     } finally {
@@ -414,10 +418,18 @@ export default function Attendance() {
             </button>
           </div>
 
-          <div className="mt-4 bg-[#ff5a1f]/5 border border-[#ff5a1f]/10 rounded-2xl p-4 flex items-start gap-3 max-w-sm w-full shadow-sm">
-            <AlertCircle size={20} className="text-[#ff5a1f] flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-600 font-medium leading-relaxed">
-              Office hours are <span className="font-bold text-slate-800">11:00 AM to 8:00 PM</span>. Punching in after 11:05 AM is marked as a Half Day. Missing a punch out marks you Absent. Max 4 missed checkout requests allowed per month.
+          <div className="mt-4 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-2xl p-4 flex items-center justify-between max-w-sm w-full shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-black">
+                {remainingChances}
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-800">Missed Checkout Requests</p>
+                <p className="text-[10px] font-medium text-slate-500">Remaining chances this month</p>
+              </div>
+            </div>
+            <div className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg">
+              Out of 4
             </div>
           </div>
         </div>

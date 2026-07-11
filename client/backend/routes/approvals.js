@@ -46,7 +46,13 @@ function createTimelineEvent(action, user, comment = null, details = {}) {
 }
 
 async function getAdmins() {
-  return await prisma.employee.findMany({ where: { role: 'admin' } });
+  return await prisma.employee.findMany({ 
+    where: { 
+      role: {
+        in: ['admin', 'hr']
+      }
+    } 
+  });
 }
 
 router.post('/', authenticate, async (req, res) => {
@@ -107,7 +113,7 @@ router.post('/', authenticate, async (req, res) => {
       await createNotification({
         userId: admin.id,
         title: 'Approval request submitted',
-        message: `Hey Admin! 👋 There\'s a new task waiting for you at Geonixa. ${emp.name || 'An employee'} just submitted a ${type.replace('_', ' ')} request. Could you take a look?`,
+        message: `Hey! There's a new task waiting for you. ${emp.name || 'An employee'} just submitted a ${type.replace('_', ' ')} request. Could you take a look?`,
         type: 'approval',
         data: { requestId: request.id, requestType: type },
       });
@@ -120,12 +126,31 @@ router.post('/', authenticate, async (req, res) => {
   }
 });
 
+router.get('/remaining-chances', authenticate, async (req, res) => {
+  try {
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const requestsThisMonth = await prisma.approval.count({
+      where: {
+        type: 'missed_checkout',
+        requestedBy: req.user.id,
+        createdAt: {
+          gte: firstDayOfMonth
+        }
+      }
+    });
+    res.json({ remaining: Math.max(0, 4 - requestsThisMonth) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/', authenticate, async (req, res) => {
   try {
     const { status, type } = req.query;
     
     let whereClause = {};
-    if (req.user.role !== 'admin') {
+    if (req.user.role !== 'admin' && req.user.role !== 'hr') {
       whereClause.requestedBy = req.user.id;
     }
     if (status) {
@@ -196,11 +221,11 @@ router.post('/:id/comment', authenticate, ownerOrAdmin(async (req) => {
 
     await createAuditLog({ requestId: request.id, event: 'comment_added', performedBy: req.user.id, performedByName: actor.name, performedByRole: actor.role, details: { comment } });
 
-    if (req.user.role === 'admin') {
+    if (req.user.role === 'admin' || req.user.role === 'hr') {
       await createNotification({
         userId: request.requestedBy,
         title: 'Approval request updated',
-        message: `Hey there! Geonixa Admin just left a comment on your request: ${comment.slice(0, 80)}`,
+        message: `Hey there! Geonixa ${req.user.role === 'hr' ? 'HR' : 'Admin'} just left a comment on your request: ${comment.slice(0, 80)}`,
         type: 'approval',
         data: { requestId: request.id, requestType: request.type },
       });
@@ -210,7 +235,7 @@ router.post('/:id/comment', authenticate, ownerOrAdmin(async (req) => {
         await createNotification({
           userId: admin.id,
           title: 'Comment added to approval request',
-          message: `Hey Admin! ${actor.name} just commented on a ${request.type.replace('_', ' ')} request. Check it out!`,
+          message: `Hey! ${actor.name} just commented on a ${request.type.replace('_', ' ')} request. Check it out!`,
           type: 'approval',
           data: { requestId: request.id, requestType: request.type },
         });
@@ -290,7 +315,7 @@ router.post('/:id/approve', authenticate, authorize(['admin', 'hr']), async (req
     await createNotification({
       userId: updatedRequest.requestedBy,
       title: 'Approval request approved',
-      message: `Great news! 🎉 Geonixa Admin has approved your ${updatedRequest.type.replace('_', ' ')} request. Have a wonderful day!`,
+      message: `Great news! 🎉 Geonixa ${req.user.role === 'hr' ? 'HR' : 'Admin'} has approved your ${updatedRequest.type.replace('_', ' ')} request. Have a wonderful day!`,
       type: 'approval',
       data: { requestId: updatedRequest.id, requestType: updatedRequest.type },
     });
@@ -313,7 +338,7 @@ router.post('/:id/reject', authenticate, authorize(['admin', 'hr']), async (req,
     await createNotification({
       userId: updatedRequest.requestedBy,
       title: 'Approval request rejected',
-      message: `Hey there, heads up from Geonixa Admin. Your ${updatedRequest.type.replace('_', ' ')} request was unfortunately rejected: ${reason}`,
+      message: `Hey there, heads up from Geonixa ${req.user.role === 'hr' ? 'HR' : 'Admin'}. Your ${updatedRequest.type.replace('_', ' ')} request was unfortunately rejected: ${reason}`,
       type: 'approval',
       data: { requestId: updatedRequest.id, requestType: updatedRequest.type },
     });
