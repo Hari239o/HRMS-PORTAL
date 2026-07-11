@@ -85,6 +85,17 @@ export default function Attendance() {
   }
 
   const uniqueEmployees = [...new Set(history.map(row => row.employee?.name).filter(Boolean))];
+  
+  const calendarMonthStart = startOfMonth(currentCalendarDate);
+  const calendarMonthEnd = endOfMonth(currentCalendarDate);
+  
+  const currentMonthHistory = filteredHistory.filter(r => {
+    return r.date >= format(calendarMonthStart, 'yyyy-MM-dd') && r.date <= format(calendarMonthEnd, 'yyyy-MM-dd');
+  });
+
+  const presentCountForMonth = currentMonthHistory.filter(r => r.status === 'Present' || r.status === 'Weekly Off (Present)').length;
+  const absentCountForMonth = currentMonthHistory.filter(r => r.status === 'Absent').length;
+  const halfDayCountForMonth = currentMonthHistory.filter(r => r.status === 'Half Day').length;
   const membersPresent = [...new Set(filteredHistory.filter(r => r.status !== 'Absent' && r.status !== 'Weekly Off').map(row => row.employeeId))].length;
 
   useEffect(() => {
@@ -432,6 +443,35 @@ export default function Attendance() {
               Out of 4
             </div>
           </div>
+
+          {/* Employee Attendance Stats (Circles) */}
+          {(user.role !== 'admin' || filterEmployee) && (
+            <div className="flex justify-center gap-8 mt-6 max-w-sm w-full mx-auto">
+              {/* Present Circle */}
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full border-4 border-emerald-500/20 bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-lg shadow-sm">
+                  {presentCountForMonth}
+                </div>
+                <span className="text-[10px] font-bold text-slate-500 mt-1.5 uppercase tracking-wider">Present</span>
+              </div>
+
+              {/* Absent Circle */}
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full border-4 border-rose-500/20 bg-rose-50 text-rose-600 flex items-center justify-center font-black text-lg shadow-sm">
+                  {absentCountForMonth}
+                </div>
+                <span className="text-[10px] font-bold text-slate-500 mt-1.5 uppercase tracking-wider">Absent</span>
+              </div>
+
+              {/* Half Day Circle */}
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full border-4 border-yellow-500/20 bg-yellow-50 text-yellow-600 flex items-center justify-center font-black text-lg shadow-sm">
+                  {halfDayCountForMonth}
+                </div>
+                <span className="text-[10px] font-bold text-slate-500 mt-1.5 uppercase tracking-wider">Half Day</span>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         /* ADMIN DASHBOARD - STATS */
