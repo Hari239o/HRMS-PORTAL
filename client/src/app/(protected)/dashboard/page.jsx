@@ -507,6 +507,7 @@ export default function Dashboard() {
           <AppGridItem title="Separation" icon={UserX} link="/resignations" color="rose" />
           <AppGridItem title="Member" icon={Users} link={(user?.role === 'post_sales' || user?.role === 'post sales') ? "/employees" : "#"} color="teal" />
           <AppGridItem title="Team" icon={Users} link="/my-team" color="amber" />
+          <AppGridItem title="Connect" icon={MessageSquare} link="/chat" color="orange" />
         </div>
 
       </div>
@@ -543,6 +544,7 @@ export default function Dashboard() {
         <AppGridItem title="Separation" icon={UserX} link="/resignations" color="rose" />
         <AppGridItem title="Member" icon={Users} link="/employees" color="teal" />
         <AppGridItem title="Team" icon={Users} link="/my-team" color="amber" />
+        <AppGridItem title="Connect" icon={MessageSquare} link="/chat" color="orange" />
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6 mt-4">
