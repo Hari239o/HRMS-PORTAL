@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getMessaging, isSupported } from "firebase/messaging";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAfX2Jl8WpirM2jYKEBiUohlbneU6KWBHc",
@@ -13,6 +14,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+// Initialize Firestore
+const db = getFirestore(app);
 
 // Initialize Messaging
 let messaging = null;
@@ -31,4 +35,5 @@ export const setupMessaging = async () => {
   return messaging;
 };
 
-export { app };
+export { app, db };
+

@@ -29,6 +29,7 @@ import {
   ClipboardList,
   UserMinus,
   Smartphone,
+  MessageSquare,
   X
 } from 'lucide-react';
 
@@ -45,7 +46,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Performance', icon: Trophy, path: '/performance' },
     { name: 'Post Sales Task Box', icon: ClipboardList, path: '/approvals' },
     { name: 'HR Documents', icon: FileText, path: '/documents' },
+    { name: 'Internal Chat', icon: MessageSquare, path: '/chat' },
   ];
+
 
   const adminItems = [
     { name: 'Workforce Directory', icon: Users, path: '/employees' },
