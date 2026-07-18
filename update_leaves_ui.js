@@ -1,4 +1,7 @@
-"use client";
+const fs = require('fs');
+const path = require('path');
+
+const fileContent = `"use client";
 
 import { useState, useEffect } from 'react';
 import api from '@/utils/api';
@@ -49,7 +52,7 @@ const Leaves = () => {
 
   const fetchLeaves = async () => {
     try {
-      const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/leaves`);
+      const res = await api.get(\`\${process.env.NEXT_PUBLIC_API_URL || ''}/api/leaves\`);
       setLeaves(res.data);
     } catch (err) {
       toast.error('Failed to fetch leaves');
@@ -58,7 +61,7 @@ const Leaves = () => {
 
   const fetchProblems = async () => {
     try {
-      const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/problems`);
+      const res = await api.get(\`\${process.env.NEXT_PUBLIC_API_URL || ''}/api/problems\`);
       setProblems(res.data);
     } catch (err) {
       toast.error('Failed to fetch problems');
@@ -77,7 +80,7 @@ const Leaves = () => {
         formData.append('document', leaveFormData.document);
       }
       
-      await api.post(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/leaves`, formData, {
+      await api.post(\`\${process.env.NEXT_PUBLIC_API_URL || ''}/api/leaves\`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       toast.success('Leave application submitted successfully');
@@ -115,8 +118,8 @@ const Leaves = () => {
 
   const handleUpdateLeaveStatus = async (id, status) => {
     try {
-      await api.put(`/api/leaves/${id}/status`, { status });
-      toast.success(`Leave ${status}`);
+      await api.put(\`/api/leaves/\${id}/status\`, { status });
+      toast.success(\`Leave \${status}\`);
       fetchLeaves();
     } catch (err) {
       toast.error('Failed to update leave status');
@@ -125,8 +128,8 @@ const Leaves = () => {
 
   const handleUpdateProblemStatus = async (id, status) => {
     try {
-      await api.put(`/api/problems/${id}/status`, { status });
-      toast.success(`Problem marked as ${status}`);
+      await api.put(\`/api/problems/\${id}/status\`, { status });
+      toast.success(\`Problem marked as \${status}\`);
       fetchProblems();
     } catch (err) {
       toast.error('Failed to update problem status');
@@ -194,21 +197,21 @@ const Leaves = () => {
         <div className="flex bg-white p-1.5 rounded-2xl self-stretch sm:self-auto border border-gray-200 shadow-sm overflow-hidden">
           <button 
             onClick={() => { setActiveTab('leaves'); setSearchQuery(''); setStatusFilter('All'); }}
-            className={`flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 flex items-center justify-center gap-2 ${
+            className={\`flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 flex items-center justify-center gap-2 \${
               activeTab === 'leaves' 
                 ? 'bg-[#eb4917] text-white shadow-lg shadow-[#eb4917]/30 transform scale-100' 
                 : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
-            }`}
+            }\`}
           >
             <Calendar size={18} /> Leave Requests
           </button>
           <button 
             onClick={() => { setActiveTab('problems'); setSearchQuery(''); setStatusFilter('All'); }}
-            className={`flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 flex items-center justify-center gap-2 ${
+            className={\`flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 flex items-center justify-center gap-2 \${
               activeTab === 'problems' 
                 ? 'bg-[#eb4917] text-white shadow-lg shadow-[#eb4917]/30 transform scale-100' 
                 : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
-            }`}
+            }\`}
           >
             <ShieldAlert size={18} /> Helpdesk & Grievance
           </button>
@@ -307,11 +310,11 @@ const Leaves = () => {
                 
                 <div className="p-6 md:p-8 border-b border-gray-50 bg-gradient-to-r from-orange-50/40 to-white flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative">
                   <div className="flex items-center gap-4">
-                    <div className={`p-3.5 rounded-2xl shadow-sm ${
+                    <div className={\`p-3.5 rounded-2xl shadow-sm \${
                         leave.status === 'Approved' ? 'bg-green-100 text-green-600 border border-green-200' :
                         leave.status === 'Rejected' ? 'bg-red-100 text-red-600 border border-red-200' :
                         'bg-orange-100 text-[#eb4917] border border-orange-200'
-                      }`}>
+                      }\`}>
                         {leave.status === 'Approved' ? <CheckCircle2 size={26} /> :
                          leave.status === 'Rejected' ? <XCircle size={26} /> :
                          <Clock size={26} className="animate-pulse" />}
@@ -323,16 +326,16 @@ const Leaves = () => {
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <span className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm ${
+                    <span className={\`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm \${
                         leave.status === 'Approved' ? 'bg-green-50 text-green-700 border-green-200' :
                         leave.status === 'Rejected' ? 'bg-red-50 text-red-700 border-red-200' :
                         'bg-orange-50 text-[#eb4917] border-orange-200'
-                      }`}>
-                        <span className={`w-2 h-2 rounded-full ${
+                      }\`}>
+                        <span className={\`w-2 h-2 rounded-full \${
                           leave.status === 'Approved' ? 'bg-green-500' :
                           leave.status === 'Rejected' ? 'bg-red-500' :
                           'bg-[#eb4917] animate-ping'
-                        }`}></span>
+                        }\`}></span>
                         {leave.status}
                     </span>
                     <span className="px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider bg-gray-100 text-gray-600 border border-gray-200 shadow-sm">
@@ -431,11 +434,11 @@ const Leaves = () => {
                 
                 <div className="p-6 md:p-8 border-b border-gray-50 bg-gradient-to-r from-orange-50/40 to-white flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative">
                   <div className="flex items-center gap-4">
-                    <div className={`p-3.5 rounded-2xl shadow-sm ${
+                    <div className={\`p-3.5 rounded-2xl shadow-sm \${
                         problem.status === 'Resolved' ? 'bg-blue-100 text-blue-600 border border-blue-200' :
                         problem.status === 'Rejected' ? 'bg-gray-100 text-gray-600 border border-gray-200' :
                         'bg-red-100 text-red-600 border border-red-200'
-                      }`}>
+                      }\`}>
                         {problem.status === 'Resolved' ? <CheckCircle2 size={26} /> :
                          problem.status === 'Rejected' ? <XCircle size={26} /> :
                          <AlertTriangle size={26} className="animate-pulse" />}
@@ -447,23 +450,23 @@ const Leaves = () => {
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <span className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm ${
+                    <span className={\`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm \${
                         problem.status === 'Resolved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                         problem.status === 'Rejected' ? 'bg-gray-50 text-gray-700 border-gray-200' :
                         'bg-red-50 text-red-700 border-red-200'
-                      }`}>
-                        <span className={`w-2 h-2 rounded-full ${
+                      }\`}>
+                        <span className={\`w-2 h-2 rounded-full \${
                           problem.status === 'Resolved' ? 'bg-blue-500' :
                           problem.status === 'Rejected' ? 'bg-gray-500' :
                           'bg-red-500 animate-ping'
-                        }`}></span>
+                        }\`}></span>
                         {problem.status}
                     </span>
                     <span className="px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider bg-gray-900 text-white shadow-sm border border-gray-800">
                       {problem.category}
                     </span>
                     {problem.priority && (
-                      <span className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider border shadow-sm ${getPriorityColor(problem.priority)}`}>
+                      <span className={\`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider border shadow-sm \${getPriorityColor(problem.priority)}\`}>
                         {problem.priority}
                       </span>
                     )}
@@ -708,3 +711,7 @@ const Leaves = () => {
 };
 
 export default Leaves;
+`;
+
+fs.writeFileSync(path.join(__dirname, 'client/src/app/(protected)/leaves/page.jsx'), fileContent, 'utf-8');
+console.log('UI updated successfully!');
