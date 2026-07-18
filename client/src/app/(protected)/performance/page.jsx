@@ -848,25 +848,25 @@ export default function Performance() {
 
       {/* ADMIN CONTROL PANEL OVERHAUL */}
       {hasAdminAccess(user) && (
-        <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700 delay-500 mt-8">
+        <div className="space-y-6 animate-in slide-in-from-bottom-8 duration-700 delay-500 mt-8">
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-1">
-              <div className="bg-gradient-to-b from-white to-slate-50 rounded-3xl shadow-xl border border-white p-8 relative overflow-hidden h-full">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
-                <h3 className="font-black text-slate-800 text-xl flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-emerald-100 rounded-xl text-emerald-600">
-                    <Shield size={20} />
+              <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200 p-8 relative overflow-hidden h-full group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-slate-800 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                <h3 className="font-bold text-slate-800 text-lg flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-slate-100 rounded-lg text-slate-600 transition-transform duration-300 group-hover:scale-110">
+                    <Shield size={18} />
                   </div>
                   Provision Quota
                 </h3>
                 <form onSubmit={handleTargetAssign} className="space-y-5">
-                  <div className="group">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-emerald-500">Select Employee</label>
+                  <div className="group/input">
+                    <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 transition-colors group-focus-within/input:text-slate-800">Select Employee</label>
                     <div className="relative">
                       <select 
                         required 
-                        className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all shadow-sm appearance-none"
+                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 focus:border-slate-800 focus:ring-1 focus:ring-slate-800 outline-none transition-all appearance-none"
                         value={adminForm.employeeId}
                         onChange={(e) => setAdminForm({...adminForm, employeeId: e.target.value})}
                       >
@@ -878,120 +878,114 @@ export default function Performance() {
                       <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
                     </div>
                   </div>
-                  <div className="group">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-emerald-500">Target Baseline</label>
+                  <div className="group/input">
+                    <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 transition-colors group-focus-within/input:text-slate-800">Target Baseline</label>
                     <input 
                       type="number" 
                       required 
-                      className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-black text-slate-800 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all shadow-sm"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 focus:border-slate-800 focus:ring-1 focus:ring-slate-800 outline-none transition-all"
                       value={adminForm.targetCount}
                       onChange={(e) => setAdminForm({...adminForm, targetCount: e.target.value})}
                       placeholder="30"
                     />
                   </div>
-                  <div className="group">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 transition-colors group-focus-within:text-emerald-500">Select Month</label>
+                  <div className="group/input">
+                    <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 transition-colors group-focus-within/input:text-slate-800">Select Month</label>
                     <input 
                       type="month" 
                       required 
-                      className="w-full bg-white border-2 border-slate-100 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all shadow-sm"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 focus:border-slate-800 focus:ring-1 focus:ring-slate-800 outline-none transition-all"
                       value={adminForm.month}
                       onChange={(e) => setAdminForm({...adminForm, month: e.target.value})}
                     />
                   </div>
-                  <button type="submit" className="w-full mt-4 relative overflow-hidden group rounded-xl p-[2px]">
-                    <span className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl opacity-70 group-hover:opacity-100 blur-sm transition-opacity duration-300"></span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl"></span>
-                    <div className="relative flex items-center justify-center gap-2 bg-emerald-600 px-4 py-3.5 rounded-xl transition-all duration-300 group-hover:bg-opacity-0">
-                      <Shield size={16} className="text-white" />
-                      <span className="font-bold text-sm text-white tracking-wide">Set Quota Threshold</span>
-                    </div>
+                  <button type="submit" className="w-full mt-4 bg-slate-800 hover:bg-slate-900 text-white px-4 py-3 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2">
+                    <Shield size={16} className="animate-pulse" />
+                    <span className="font-semibold text-sm">Set Quota Threshold</span>
                   </button>
                 </form>
               </div>
             </div>
 
-            <div className="lg:col-span-2 relative rounded-3xl shadow-2xl border border-white/60 overflow-hidden bg-gradient-to-br from-blue-900 via-slate-900 to-blue-950 backdrop-blur-2xl">
-              <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at center, #6366f1 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
-              <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-              
-              <div className="p-8 border-b border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div className="lg:col-span-2 relative rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200 bg-white overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-1 bg-slate-800 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-right"></div>
+              <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 bg-slate-50/50">
                 <div>
-                  <h3 className="font-black text-2xl text-white flex items-center gap-3">
-                    <Users size={24} className="text-blue-400" /> Devices & Star Performers
+                  <h3 className="font-bold text-lg text-slate-800 flex items-center gap-3">
+                    <div className="p-2 bg-slate-100 rounded-lg text-slate-600 transition-transform duration-300 group-hover:scale-110">
+                       <Users size={18} />
+                    </div>
+                    Devices & Star Performers
                   </h3>
-                  <p className="text-blue-200/70 text-xs font-semibold mt-1">Manage workforce biometrics, badges, and device links</p>
+                  <p className="text-slate-500 text-xs font-medium mt-1">Manage workforce biometrics, badges, and device links</p>
                 </div>
-                <div className="relative max-w-xs w-full">
-                  <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400" />
+                <div className="relative max-w-xs w-full group/search">
+                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/search:text-slate-800 transition-colors" />
                   <input 
                     type="text" 
                     placeholder="Search workforce..." 
-                    className="w-full pl-11 pr-4 py-3 text-sm border-2 border-blue-500/30 rounded-xl outline-none focus:border-blue-400 transition-colors bg-white/5 backdrop-blur-md font-semibold text-white placeholder:text-blue-300/50"
+                    className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition-all bg-white text-slate-800 placeholder:text-slate-400"
                     value={employeeSearch}
                     onChange={(e) => setEmployeeSearch(e.target.value)}
                   />
                 </div>
               </div>
               
-              <div className="overflow-x-auto relative z-10 p-4">
+              <div className="overflow-x-auto relative z-10">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="text-blue-300 text-[10px] font-black uppercase tracking-widest border-b border-blue-500/20">
+                    <tr className="text-slate-500 text-[10px] font-semibold uppercase tracking-wider border-b border-slate-200 bg-white">
                       <th className="px-6 py-4">Employee Data</th>
                       <th className="px-6 py-4">Honor Badge</th>
                       <th className="px-6 py-4 text-center">Recognition Actions</th>
                       <th className="px-6 py-4 text-right">Security Pairing</th>
                     </tr>
                   </thead>
-                  <tbody className="text-xs font-medium text-slate-300">
+                  <tbody className="text-sm text-slate-600">
                     {filteredEmployees.length > 0 ? filteredEmployees.map((emp) => (
-                      <tr key={emp.id} className="hover:bg-white/5 transition-all border-b border-blue-500/10 last:border-0 group">
-                        <td className="px-6 py-5">
+                      <tr key={emp.id} className="hover:bg-slate-50 transition-colors duration-200 border-b border-slate-100 last:border-0 group/row">
+                        <td className="px-6 py-4">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/30">
+                            <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-600 transition-transform duration-300 group-hover/row:scale-110">
                               {emp.name.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-black text-sm text-white">{emp.name}</p>
-                              <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-0.5">{emp.department}</p>
+                              <p className="font-semibold text-slate-800">{emp.name}</p>
+                              <p className="text-[11px] font-medium text-slate-500 mt-0.5">{emp.department}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-5">
+                        <td className="px-6 py-4">
                           {emp.starPerformer && emp.starPerformer !== 'none' ? (
-                            <div className="relative inline-block">
-                              <div className="absolute inset-0 bg-amber-400 rounded-lg blur-md opacity-30"></div>
-                              <span className="relative px-3 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-black rounded-lg flex items-center gap-1.5 w-max border border-amber-400 shadow-xl uppercase tracking-widest text-[9px]">
-                                <Star size={12} className="fill-white" /> {emp.starPerformer} Star
-                              </span>
-                            </div>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 text-white font-medium rounded-md text-[11px] uppercase tracking-wider transition-all duration-300 hover:shadow-md">
+                              <Star size={12} className="fill-white" /> {emp.starPerformer} Star
+                            </span>
                           ) : (
-                            <span className="text-blue-400/50 font-bold text-[10px] uppercase tracking-widest bg-white/5 border border-white/5 px-3 py-1 rounded-md">None</span>
+                            <span className="text-slate-400 font-medium text-[11px] uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">None</span>
                           )}
                         </td>
-                        <td className="px-6 py-5 text-center">
-                          <div className="flex gap-2 items-center justify-center">
-                            <button onClick={() => grantBadge(emp.id, 'week')} className="px-3 py-1.5 bg-blue-500/20 text-blue-300 hover:bg-blue-500 hover:text-white border border-blue-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm transition-all hover:-translate-y-0.5">Week</button>
-                            <button onClick={() => grantBadge(emp.id, 'month')} className="px-3 py-1.5 bg-sky-500/20 text-sky-300 hover:bg-sky-500 hover:text-white border border-sky-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm transition-all hover:-translate-y-0.5">Month</button>
-                            <button onClick={() => grantBadge(emp.id, 'none')} className="px-3 py-1.5 bg-white/5 text-slate-400 hover:bg-rose-500 hover:text-white border border-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm transition-all hover:-translate-y-0.5">Clear</button>
+                        <td className="px-6 py-4 text-center">
+                          <div className="flex gap-2 items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-300">
+                            <button onClick={() => grantBadge(emp.id, 'week')} className="px-2.5 py-1 bg-white text-slate-600 hover:bg-slate-800 hover:text-white border border-slate-200 rounded text-[10px] font-semibold uppercase tracking-wider transition-colors duration-300">Week</button>
+                            <button onClick={() => grantBadge(emp.id, 'month')} className="px-2.5 py-1 bg-white text-slate-600 hover:bg-slate-800 hover:text-white border border-slate-200 rounded text-[10px] font-semibold uppercase tracking-wider transition-colors duration-300">Month</button>
+                            <button onClick={() => grantBadge(emp.id, 'none')} className="px-2.5 py-1 bg-white text-slate-500 hover:bg-red-500 hover:text-white hover:border-red-500 border border-slate-200 rounded text-[10px] font-semibold uppercase tracking-wider transition-colors duration-300">Clear</button>
                           </div>
                         </td>
-                        <td className="px-6 py-5 text-right">
+                        <td className="px-6 py-4 text-right">
                           {emp.deviceId ? (
                             <div className="flex items-center justify-end gap-3">
-                              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1.5 rounded-lg border border-emerald-500/30">
+                              <span className="flex items-center gap-1 text-[11px] font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
                                 <Smartphone size={12} /> Linked
                               </span>
                               <button 
                                 onClick={() => unlockDevice(emp.id)} 
-                                className="text-[10px] text-white bg-rose-500 hover:bg-rose-600 px-3 py-1.5 rounded-lg font-black uppercase tracking-widest flex items-center gap-1.5 shadow-lg shadow-rose-500/30 transition-all hover:-translate-y-0.5 border border-rose-400"
+                                className="text-[11px] text-red-600 bg-white hover:bg-red-50 hover:border-red-200 px-2.5 py-1 rounded-md font-medium uppercase tracking-wider flex items-center gap-1 transition-colors duration-300 border border-slate-200 opacity-0 group-hover/row:opacity-100"
                               >
-                                <X size={12} strokeWidth={3} /> Unlink
+                                <X size={12} /> Unlink
                               </button>
                             </div>
                           ) : (
-                            <span className="text-blue-400/50 font-bold text-[10px] uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 inline-flex items-center gap-1.5">
+                            <span className="text-slate-400 font-medium text-[11px] uppercase tracking-wider bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 inline-flex items-center gap-1.5">
                               <Smartphone size={12} className="opacity-50" /> Unpaired
                             </span>
                           )}
@@ -999,10 +993,10 @@ export default function Performance() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="4" className="text-center py-20 text-blue-300/50 font-semibold bg-white/5">
+                        <td colSpan="4" className="text-center py-16 text-slate-400 font-medium bg-slate-50/50">
                           <div className="flex flex-col items-center gap-3">
-                            <Users size={40} className="opacity-20" />
-                            <p>No workforce records found.</p>
+                            <Users size={32} className="opacity-30" />
+                            <p className="text-sm">No workforce records found.</p>
                           </div>
                         </td>
                       </tr>
@@ -1013,110 +1007,111 @@ export default function Performance() {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden mt-8">
-            <div className="p-8 border-b border-slate-100 bg-slate-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <h3 className="font-black text-2xl text-slate-800 flex items-center gap-3">
-                <div className="p-2 bg-blue-100 rounded-xl text-blue-600">
-                  <Star size={24} />
+          <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200 overflow-hidden mt-6 group">
+            <div className="absolute top-0 left-0 w-full h-1 bg-slate-800 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"></div>
+            <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <h3 className="font-bold text-lg text-slate-800 flex items-center gap-3">
+                <div className="p-2 bg-slate-100 rounded-lg text-slate-600 transition-transform duration-300 group-hover:scale-110">
+                  <Star size={18} />
                 </div>
                 Employee Intelligence Log
               </h3>
-              <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-                <div className="relative w-full md:w-72">
+              <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
+                <div className="relative w-full md:w-64 group/select">
                   <select 
-                    className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 transition-all shadow-sm appearance-none cursor-pointer"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm text-slate-700 outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition-all appearance-none cursor-pointer"
                     value={selectedEmpForIntakes}
                     onChange={(e) => fetchAdminIntakes(e.target.value)}
                   >
-                    <option value="">-- Master view: Select Employee --</option>
+                    <option value="">-- Select Employee --</option>
                     {employees.map(emp => (
                       <option key={emp.id} value={emp.id}>{emp.name}</option>
                     ))}
                   </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 font-bold text-xs">▼</div>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 font-bold text-[10px]">▼</div>
                 </div>
                 <button 
                   onClick={() => exportToCSV(adminIntakes, `intakes_export_${new Date().getTime()}.csv`)}
-                  className="flex w-full md:w-auto items-center justify-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-0.5"
+                  className="flex w-full md:w-auto items-center justify-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-200 transition-colors duration-300"
                 >
-                  <Download size={16} /> Export Data
+                  <Download size={16} /> Export
                 </button>
               </div>
             </div>
             
             {selectedEmpForIntakes ? (
-              <div className="overflow-x-auto p-4">
+              <div className="overflow-x-auto p-2">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-400 text-[10px] font-black uppercase tracking-wider">
-                      <th className="px-6 py-5">Entity</th>
-                      <th className="px-6 py-5">Contact Details</th>
-                      <th className="px-6 py-5">Financial State</th>
-                      <th className="px-6 py-5 text-center">Operations</th>
-                      <th className="px-6 py-5 text-right">Sys Info</th>
+                    <tr className="bg-white border-b border-slate-200 text-slate-500 text-[10px] font-semibold uppercase tracking-wider">
+                      <th className="px-6 py-4">Entity</th>
+                      <th className="px-6 py-4">Contact Details</th>
+                      <th className="px-6 py-4">Financial State</th>
+                      <th className="px-6 py-4 text-center">Operations</th>
+                      <th className="px-6 py-4 text-right">Sys Info</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50 text-xs font-medium text-slate-700">
+                  <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
                     {adminIntakes.length > 0 ? adminIntakes.map((sub) => (
-                      <tr key={sub.id} className={`transition-all group ${sub.approvalStatus === 'Defaulted' ? 'bg-red-200 hover:bg-red-300' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-green-200 hover:bg-green-300' : 'hover:bg-blue-50/30'}`}>
-                        <td className="px-6 py-5">
-                          <p className="font-black text-sm text-slate-800 mb-0.5">{sub.studentName}</p>
-                          <p className="font-bold text-blue-600 text-[10px] uppercase tracking-wide bg-blue-50 px-2 py-0.5 rounded w-max">{sub.domain}</p>
-                          <p className="text-[10px] text-slate-400 mt-1">{sub.collegeName}</p>
+                      <tr key={sub.id} className={`transition-colors duration-200 group/row ${sub.approvalStatus === 'Defaulted' ? 'bg-red-50 hover:bg-red-100' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-green-50 hover:bg-green-100' : 'hover:bg-slate-50'}`}>
+                        <td className="px-6 py-4">
+                          <p className="font-semibold text-slate-800 mb-0.5">{sub.studentName}</p>
+                          <p className="font-medium text-slate-600 text-[11px] uppercase tracking-wider bg-slate-100 border border-slate-200 px-2 py-0.5 rounded w-max">{sub.domain}</p>
+                          <p className="text-[11px] text-slate-500 mt-1">{sub.collegeName}</p>
                           {sub.approvalStatus === 'Defaulted' && (
                             <div className="mt-2">
-                              <span className="px-2 py-0.5 bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider rounded border border-rose-700 block w-max mb-1">Defaulted / Withdrawn</span>
-                              {sub.defaultWarning && <p className="mt-1 text-[10px] text-rose-700 font-bold max-w-[200px]">{sub.defaultWarning}</p>}
+                              <span className="px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-semibold uppercase tracking-wider rounded border border-red-200 block w-max mb-1">Defaulted / Withdrawn</span>
+                              {sub.defaultWarning && <p className="mt-1 text-[11px] text-red-600 font-medium max-w-[200px]">{sub.defaultWarning}</p>}
                             </div>
                           )}
                         </td>
-                        <td className="px-6 py-5">
-                          <p className="font-bold text-slate-700 mb-0.5">{sub.mailId}</p>
-                          <p className="text-[10px] text-slate-400">{sub.phoneNumber}</p>
+                        <td className="px-6 py-4">
+                          <p className="font-medium text-slate-700 mb-0.5">{sub.mailId}</p>
+                          <p className="text-[11px] text-slate-500">{sub.phoneNumber}</p>
                         </td>
-                        <td className="px-6 py-5">
-                          <div className="space-y-1 max-w-[200px]">
+                        <td className="px-6 py-4">
+                          <div className="space-y-1.5 max-w-[200px]">
                             {sub.remainingAmount > 0 ? (
                               <>
-                                <div className="flex justify-between items-center bg-slate-50 px-2 py-1.5 rounded">
-                                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Total</span>
-                                  <span className="font-black text-slate-800">₹{sub.totalAmount || 0}</span>
+                                <div className="flex justify-between items-center bg-white px-2 py-1 rounded border border-slate-200">
+                                  <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Total</span>
+                                  <span className="font-semibold text-slate-800">₹{sub.totalAmount || 0}</span>
                                 </div>
-                                <div className="flex justify-between items-center bg-emerald-50 px-2 py-1.5 rounded border border-emerald-100">
-                                  <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Cleared</span>
-                                  <span className="font-black text-emerald-700">₹{sub.amountPaid || 0}</span>
+                                <div className="flex justify-between items-center bg-green-50 px-2 py-1 rounded border border-green-200">
+                                  <span className="text-[10px] font-medium text-green-700 uppercase tracking-wider">Cleared</span>
+                                  <span className="font-semibold text-green-800">₹{sub.amountPaid || 0}</span>
                                 </div>
-                                <div className="flex justify-between items-center bg-rose-50 px-2 py-1.5 rounded border border-rose-100">
-                                  <span className="text-[9px] font-bold text-rose-500 uppercase tracking-widest truncate">Due {sub.remainingAmountDate ? `(${new Date(sub.remainingAmountDate).toLocaleDateString()})` : ''}</span>
-                                  <span className="font-black text-rose-600">₹{sub.remainingAmount}</span>
+                                <div className="flex justify-between items-center bg-red-50 px-2 py-1 rounded border border-red-200">
+                                  <span className="text-[10px] font-medium text-red-600 uppercase tracking-wider truncate">Due {sub.remainingAmountDate ? `(${new Date(sub.remainingAmountDate).toLocaleDateString()})` : ''}</span>
+                                  <span className="font-semibold text-red-700">₹{sub.remainingAmount}</span>
                                 </div>
                               </>
                             ) : (
-                              <div className="flex justify-between items-center bg-emerald-50 px-2 py-2 rounded border border-emerald-200 shadow-sm">
-                                <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest truncate">Total Amount Paid</span>
-                                <span className="font-black text-emerald-700">₹{sub.amountPaid || sub.totalAmount}</span>
+                              <div className="flex justify-between items-center bg-slate-800 px-2 py-1.5 rounded border border-slate-700 shadow-sm">
+                                <span className="text-[10px] font-medium text-slate-200 uppercase tracking-wider truncate">Fully Paid</span>
+                                <span className="font-semibold text-white">₹{sub.amountPaid || sub.totalAmount}</span>
                               </div>
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-5">
-                          <div className="flex flex-col gap-2 items-center">
-                            <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 shadow-inner w-max">
-                              <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Answered', true)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.callStatus === 'Answered' ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Answered</button>
-                              <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Dropped', true)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.callStatus === 'Dropped' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Missed</button>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-2 items-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-300">
+                            <div className="flex bg-slate-100 p-0.5 rounded border border-slate-200 w-max">
+                              <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Answered', true)} className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded transition-colors duration-200 ${sub.callStatus === 'Answered' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-white hover:text-slate-900'}`}>Answered</button>
+                              <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Dropped', true)} className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded transition-colors duration-200 ${sub.callStatus === 'Dropped' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-white hover:text-slate-900'}`}>Missed</button>
                             </div>
-                            <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 shadow-inner w-max">
-                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Paid', true)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Paid' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Collected</button>
-                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Dropped', true)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-md transition-all ${sub.paymentStatus === 'Dropped' ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20' : 'text-slate-500 hover:text-slate-800 hover:bg-white'}`}>Lost</button>
+                            <div className="flex bg-slate-100 p-0.5 rounded border border-slate-200 w-max">
+                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Paid', true)} className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded transition-colors duration-200 ${sub.paymentStatus === 'Paid' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-white hover:text-slate-900'}`}>Collected</button>
+                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Dropped', true)} className={`px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider rounded transition-colors duration-200 ${sub.paymentStatus === 'Dropped' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:bg-white hover:text-slate-900'}`}>Lost</button>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-5 text-right">
-                          <div className="flex flex-col items-end gap-3">
-                            <span className="text-slate-400 font-bold bg-slate-50 border border-slate-100 px-2 py-1 rounded text-[10px]">{new Date(sub.date).toLocaleDateString()}</span>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex flex-col items-end gap-2">
+                            <span className="text-slate-500 font-medium bg-white border border-slate-200 px-2 py-0.5 rounded text-[11px]">{new Date(sub.date).toLocaleDateString()}</span>
                             <button 
                               onClick={() => handleDeleteSubmission(sub.id, true)}
-                              className="w-8 h-8 rounded-full bg-white border border-slate-200 text-rose-400 flex items-center justify-center hover:bg-rose-500 hover:text-white hover:border-rose-500 hover:shadow-lg hover:shadow-rose-500/30 transition-all opacity-0 group-hover:opacity-100"
+                              className="p-1.5 rounded-md bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 transition-colors duration-200 opacity-0 group-hover/row:opacity-100"
                               title="Delete Record"
                             >
                               <Trash2 size={14} />
@@ -1126,12 +1121,12 @@ export default function Performance() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="5" className="text-center py-24 bg-slate-50/50">
+                        <td colSpan="5" className="text-center py-16 bg-slate-50/50">
                           <div className="flex flex-col items-center justify-center text-slate-400">
-                            <div className="p-4 bg-slate-100 rounded-full mb-4">
-                              <Star size={32} className="text-slate-300" />
+                            <div className="p-3 bg-slate-100 rounded-lg mb-3">
+                              <Star size={24} className="text-slate-300" />
                             </div>
-                            <p className="font-bold text-sm">No records found for this employee.</p>
+                            <p className="font-medium text-sm">No records found for this employee.</p>
                           </div>
                         </td>
                       </tr>
@@ -1140,9 +1135,9 @@ export default function Performance() {
                 </table>
               </div>
             ) : (
-              <div className="text-center py-24 bg-slate-50/50 flex flex-col items-center justify-center">
-                <Search size={48} className="text-blue-200 mb-4" />
-                <p className="text-slate-500 font-bold">Select a profile above to pull records</p>
+              <div className="text-center py-20 bg-slate-50/50 flex flex-col items-center justify-center border-t border-slate-100">
+                <Search size={32} className="text-slate-300 mb-3" />
+                <p className="text-slate-500 font-medium text-sm">Select a profile above to pull records</p>
               </div>
             )}
           </div>
