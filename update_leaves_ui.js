@@ -310,11 +310,11 @@ const Leaves = () => {
                 
                 <div className="p-6 md:p-8 border-b border-gray-50 bg-gradient-to-r from-orange-50/40 to-white flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative">
                   <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm overflow-hidden border shrink-0 ${
+                    <div className={\`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm overflow-hidden border shrink-0 \${
                         leave.status === 'Approved' ? 'bg-green-100 text-green-600 border-green-200' :
                         leave.status === 'Rejected' ? 'bg-red-100 text-red-600 border-red-200' :
                         'bg-orange-100 text-[#eb4917] border-orange-200'
-                      }`}>
+                      }\`}>
                         {leave.employee?.avatar ? (
                           <img src={leave.employee.avatar} alt={leave.employee?.name} className="w-full h-full object-cover" />
                         ) : (
@@ -440,11 +440,11 @@ const Leaves = () => {
                 
                 <div className="p-6 md:p-8 border-b border-gray-50 bg-gradient-to-r from-orange-50/40 to-white flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative">
                   <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm overflow-hidden border shrink-0 ${
+                    <div className={\`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm overflow-hidden border shrink-0 \${
                         problem.status === 'Resolved' ? 'bg-blue-100 text-blue-600 border-blue-200' :
                         problem.status === 'Rejected' ? 'bg-gray-100 text-gray-600 border-gray-200' :
                         'bg-red-100 text-red-600 border-red-200'
-                      }`}>
+                      }\`}>
                         {problem.employee?.avatar ? (
                           <img src={problem.employee.avatar} alt={problem.employee?.name} className="w-full h-full object-cover" />
                         ) : (
