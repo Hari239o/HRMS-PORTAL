@@ -91,7 +91,7 @@ router.get('/', authenticate, async (req, res) => {
         documentUrl: p.documentUrl ? await generateSignedUrl(p.documentUrl, 60) : null,
         createdAt: p.createdAt.toISOString(),
         updatedAt: p.updatedAt.toISOString(),
-        employee: { name: emp.name || 'Unknown', department: emp.department || 'Unknown' }
+        employee: { name: emp.name || 'Unknown', department: emp.department || 'Unknown', empId: emp.empId || 'UNKN' }
       };
     }));
     res.json(formatted);
