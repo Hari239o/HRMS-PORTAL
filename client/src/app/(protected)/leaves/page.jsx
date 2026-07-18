@@ -260,8 +260,8 @@ const Leaves = () => {
             className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#eb4917]/20 focus:border-[#eb4917] focus:bg-white transition-all text-sm font-bold text-gray-800 placeholder:text-gray-400 outline-none shadow-sm"
           />
         </div>
-        <div className="flex flex-col sm:flex-row w-full md:w-auto items-stretch sm:items-center gap-4 z-10">
-          <div className="relative w-full sm:w-auto sm:min-w-[160px]">
+        <div className="flex flex-row w-full md:w-auto items-stretch sm:items-center gap-4 z-10">
+          <div className="relative flex-1 sm:flex-none sm:w-auto sm:min-w-[160px]">
             <Filter className="absolute left-4 top-3.5 text-[#eb4917]" size={18} />
             <select 
               value={statusFilter}
@@ -279,7 +279,7 @@ const Leaves = () => {
             user.role !== 'admin' && (
               <button 
                 onClick={() => setShowLeaveForm(true)}
-                className="bg-[#eb4917] hover:bg-[#d43f10] text-white px-6 py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-[#eb4917]/30 transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto"
+                className="bg-[#eb4917] hover:bg-[#d43f10] text-white px-4 py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-[#eb4917]/30 transition-all duration-300 transform hover:-translate-y-1 flex-1 sm:flex-none sm:w-auto whitespace-nowrap"
               >
                 <Plus size={20} /> Apply Leave
               </button>
@@ -288,7 +288,7 @@ const Leaves = () => {
             user.role !== 'admin' && (
               <button 
                 onClick={() => setShowProblemForm(true)}
-                className="bg-[#eb4917] hover:bg-[#d43f10] text-white px-6 py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-[#eb4917]/30 transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto"
+                className="bg-[#eb4917] hover:bg-[#d43f10] text-white px-4 py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-[#eb4917]/30 transition-all duration-300 transform hover:-translate-y-1 flex-1 sm:flex-none sm:w-auto whitespace-nowrap"
               >
                 <MessageSquare size={20} /> Raise Issue
               </button>
