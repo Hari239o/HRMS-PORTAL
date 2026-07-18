@@ -944,17 +944,17 @@ export default function Performance() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="text-gray-500 text-xs font-bold uppercase tracking-wider border-b border-gray-200 bg-gray-50/80">
-                      <th className="px-8 py-5">Employee Data</th>
-                      <th className="px-8 py-5">Honor Badge</th>
-                      <th className="px-8 py-5 text-right">Security Pairing</th>
+                      <th className="px-4 md:px-8 py-4 md:py-5">Employee Data</th>
+                      <th className="px-4 md:px-8 py-4 md:py-5">Honor Badge</th>
+                      <th className="px-4 md:px-8 py-4 md:py-5 text-right">Security Pairing</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm text-gray-700 bg-white">
                     {filteredEmployees.length > 0 ? filteredEmployees.map((emp) => (
                       <tr key={emp.id} className="hover:bg-orange-50/40 transition-colors duration-200 border-b border-gray-100 last:border-0 group/row">
-                        <td className="px-8 py-5">
+                        <td className="px-4 md:px-8 py-4 md:py-5">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center font-bold text-[#eb4917] transition-transform duration-300 group-hover/row:scale-110 shadow-sm">
+                            <div className="w-10 h-10 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center font-bold text-[#eb4917] transition-transform duration-300 group-hover/row:scale-110 shadow-sm shrink-0">
                               {emp.name.charAt(0).toUpperCase()}
                             </div>
                             <div>
@@ -963,7 +963,7 @@ export default function Performance() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-8 py-5">
+                        <td className="px-4 md:px-8 py-4 md:py-5">
                           {emp.starPerformer && emp.starPerformer !== 'none' ? (
                             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-100 text-[#eb4917] border border-orange-200 font-bold rounded-lg text-xs uppercase tracking-wider transition-all duration-300 hover:shadow-md">
                               <Star size={14} className="fill-[#eb4917]" /> {emp.starPerformer} Star
@@ -972,7 +972,7 @@ export default function Performance() {
                             <span className="text-gray-400 font-semibold text-xs uppercase tracking-wider bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-lg">None</span>
                           )}
                         </td>
-                        <td className="px-8 py-5 text-right">
+                        <td className="px-4 md:px-8 py-4 md:py-5 text-right">
                           {emp.deviceId ? (
                             <div className="flex items-center justify-end gap-5">
                               <span className="flex items-center gap-1.5 text-xs font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">
@@ -1047,16 +1047,17 @@ export default function Performance() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-gray-200 text-gray-500 text-xs font-bold uppercase tracking-wider bg-gray-50">
-                      <th className="px-8 py-5">Entity</th>
-                      <th className="px-8 py-5">Contact Details</th>
-                      <th className="px-8 py-5">Financial State</th>
-                      <th className="px-8 py-5 text-right">Sys Info</th>
+                      <th className="px-4 md:px-8 py-4 md:py-5">Entity</th>
+                      <th className="px-4 md:px-8 py-4 md:py-5">Contact Details</th>
+                      <th className="px-4 md:px-8 py-4 md:py-5">Financial State</th>
+                      <th className="px-4 md:px-8 py-4 md:py-5 text-center">Operations</th>
+                      <th className="px-4 md:px-8 py-4 md:py-5 text-right">Sys Info</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
                     {adminIntakes.length > 0 ? adminIntakes.map((sub) => (
                       <tr key={sub.id} className={`transition-colors duration-200 group/row ${sub.approvalStatus === 'Defaulted' ? 'bg-red-50/50 hover:bg-red-50' : sub.approvalStatus === 'Approved' && sub.remainingAmount === 0 ? 'bg-green-50/50 hover:bg-green-50' : 'hover:bg-orange-50/30'}`}>
-                        <td className="px-8 py-5">
+                        <td className="px-4 md:px-8 py-4 md:py-5">
                           <p className="font-bold text-gray-900 text-base mb-1">{sub.studentName}</p>
                           <p className="font-bold text-[#eb4917] text-[10px] uppercase tracking-wider bg-orange-50 border border-orange-100 px-2.5 py-1 rounded-md w-max shadow-sm">{sub.domain}</p>
                           <p className="text-xs font-medium text-gray-500 mt-2">{sub.collegeName}</p>
@@ -1067,11 +1068,11 @@ export default function Performance() {
                             </div>
                           )}
                         </td>
-                        <td className="px-8 py-5">
+                        <td className="px-4 md:px-8 py-4 md:py-5">
                           <p className="font-semibold text-gray-800 mb-1">{sub.mailId}</p>
                           <p className="text-xs font-medium text-gray-500">{sub.phoneNumber}</p>
                         </td>
-                        <td className="px-8 py-5">
+                        <td className="px-4 md:px-8 py-4 md:py-5">
                           <div className="space-y-2 max-w-[220px]">
                             {sub.remainingAmount > 0 ? (
                               <>
@@ -1097,7 +1098,26 @@ export default function Performance() {
                           </div>
                         </td>
                         
-                        <td className="px-8 py-5 text-right">
+                        <td className="px-4 md:px-8 py-4 md:py-5 text-center">
+                          <div className="flex flex-col gap-2 items-center">
+                            {sub.callStatus ? (
+                              <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md border shadow-sm ${sub.callStatus === 'Answered' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-600 border-red-200'}`}>
+                                {sub.callStatus === 'Dropped' ? 'Missed' : sub.callStatus}
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-gray-50 text-gray-400 border border-gray-200">Call Pending</span>
+                            )}
+                            {sub.paymentStatus ? (
+                              <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md border shadow-sm ${sub.paymentStatus === 'Paid' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-600 border-red-200'}`}>
+                                {sub.paymentStatus === 'Paid' ? 'Collected' : 'Lost'}
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-gray-50 text-gray-400 border border-gray-200">Pay Pending</span>
+                            )}
+                          </div>
+                        </td>
+                        
+                        <td className="px-4 md:px-8 py-4 md:py-5 text-right">
                           <div className="flex flex-col items-end gap-3">
                             <span className="text-gray-500 font-bold bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg text-xs shadow-sm">{new Date(sub.date).toLocaleDateString()}</span>
                             <button 
@@ -1112,7 +1132,7 @@ export default function Performance() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="4" className="text-center py-20 bg-gray-50/50">
+                        <td colSpan="5" className="text-center py-20 bg-gray-50/50">
                           <div className="flex flex-col items-center justify-center text-gray-500">
                             <div className="p-4 bg-gray-100 rounded-2xl mb-4 shadow-inner">
                               <Star size={32} className="text-gray-400" />
