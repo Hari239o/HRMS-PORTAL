@@ -18,7 +18,7 @@ export default function BottomNav() {
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Attendance', icon: CalendarCheck, path: '/attendance' },
     { name: 'Leave', icon: FileText, path: '/leaves' },
-    { name: hasAdminAccess(user) ? 'DEVICE & TARGET' : 'Performance', icon: TrendingUp, path: '/performance' },
+    { name: hasAdminAccess(user) ? 'Device & Target' : 'Performance', icon: TrendingUp, path: '/performance' },
     { name: 'Profile', icon: User, path: '/profile' },
   ];
 
@@ -49,7 +49,7 @@ export default function BottomNav() {
                       <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
                     )}
                   </div>
-                  <span className={`text-[10px] tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}>
+                  <span className={`text-[9px] leading-[1.1] tracking-tight text-center ${isActive ? 'font-bold' : 'font-medium'}`}>
                     {item.name}
                   </span>
                 </button>
@@ -67,9 +67,15 @@ export default function BottomNav() {
                 }`}
               >
                 <div className={`p-1.5 rounded-full transition-colors duration-300 ${isActive ? 'bg-[#ff5a1f]/10' : ''}`}>
-                  <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                  {item.name === 'Profile' ? (
+                    <div className={`w-[22px] h-[22px] rounded-full overflow-hidden flex items-center justify-center ${isActive ? 'ring-2 ring-[#ff5a1f] ring-offset-1' : ''}`}>
+                      <img src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=ff5a1f&color=fff`} alt="Profile" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                  )}
                 </div>
-                <span className={`text-[10px] tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}>
+                <span className={`text-[9px] leading-[1.1] tracking-tight text-center ${isActive ? 'font-bold' : 'font-medium'}`}>
                   {item.name}
                 </span>
               </Link>
