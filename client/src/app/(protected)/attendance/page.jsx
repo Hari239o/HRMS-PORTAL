@@ -302,13 +302,49 @@ export default function Attendance() {
   const calendarStartDate = startOfWeek(calendarMonthStart);
   const calendarEndDate = endOfWeek(calendarMonthEnd);
 
+  };
+
+  const getFillPercentage = () => {
+    if (!todayRecord || !todayRecord.checkIn) return 0;
+    const checkInTime = new Date(todayRecord.checkIn).getTime();
+    const now = currentTime.getTime();
+    const elapsedHours = (now - checkInTime) / (1000 * 60 * 60);
+    return Math.min((elapsedHours / 8) * 100, 100);
+  };
+
+  const getElapsedTimeString = () => {
+    if (!todayRecord || !todayRecord.checkIn) return "00:00:00";
+    const checkInTime = new Date(todayRecord.checkIn).getTime();
+    const now = todayRecord.checkOut ? new Date(todayRecord.checkOut).getTime() : currentTime.getTime();
+    const diff = now - checkInTime;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const fillPercentage = getFillPercentage();
+  const topOffset = 100 - fillPercentage;
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 animate-in fade-in duration-500">
+      <div className="w-12 h-12 border-4 border-[#ff5a1f]/20 border-t-[#ff5a1f] rounded-full animate-spin"></div>
+      <p className="text-slate-500 font-bold tracking-widest uppercase text-xs">Loading Terminal...</p>
+    </div>
+  );
+
+  // Reusing calendarMonthStart and calendarMonthEnd declared at the top of the component
+  const calendarStartDate = startOfWeek(calendarMonthStart);
+  const calendarEndDate = endOfWeek(calendarMonthEnd);
+
   const calendarDays = eachDayOfInterval({
     start: calendarStartDate,
     end: calendarEndDate
   });
 
   return (
-    <div className="space-y-8 fade-in relative">
+    <>
+      <div className="space-y-8 fade-in relative">
       <style>{`
         @keyframes spin-wave {
           from { transform: translateX(-50%) rotate(0deg); }
@@ -915,6 +951,6 @@ export default function Attendance() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
