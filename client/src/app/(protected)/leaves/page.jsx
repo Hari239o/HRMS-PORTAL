@@ -173,7 +173,8 @@ const Leaves = () => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700 pb-12 relative">
+    <>
+      <div className="space-y-8 animate-in fade-in duration-700 pb-12 relative">
       
       {/* Animated Background Elements for Professional Look */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-[#eb4917]/10 rounded-full blur-[100px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '4s' }}></div>
@@ -513,6 +514,8 @@ const Leaves = () => {
         )}
       </div>
 
+      </div>
+
       {/* Leave Application Modal */}
       {showLeaveForm && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
@@ -683,7 +686,7 @@ const Leaves = () => {
         </div>
       )}
 
-    </div>
+    </>
   );
 };
 
