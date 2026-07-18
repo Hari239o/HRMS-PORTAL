@@ -317,8 +317,8 @@ const Leaves = () => {
                          <Clock size={26} className="animate-pulse" />}
                     </div>
                     <div>
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Leave Reference</span>
-                      <span className="text-lg font-black text-gray-800">#{leave.id?.slice(-6).toUpperCase() || 'REF-UNKN'}</span>
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Employee ID</span>
+                      <span className="text-lg font-black text-gray-800">{leave.employee?.empId || leave.employeeId?.slice(-5).toUpperCase() || 'UNKN'}</span>
                     </div>
                   </div>
                   
@@ -441,8 +441,8 @@ const Leaves = () => {
                          <AlertTriangle size={26} className="animate-pulse" />}
                     </div>
                     <div>
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Ticket ID</span>
-                      <span className="text-lg font-black text-gray-800">#TKT-{problem.id?.slice(-5).toUpperCase() || 'UNKN'}</span>
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Employee ID</span>
+                      <span className="text-lg font-black text-gray-800">{problem.employee?.empId || problem.employeeId?.slice(-5).toUpperCase() || 'UNKN'}</span>
                     </div>
                   </div>
                   
