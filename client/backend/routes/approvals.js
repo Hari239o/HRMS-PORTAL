@@ -2,6 +2,7 @@ const express = require('express');
 const prisma = require('../../prisma/client');
 const { authenticate, authorize } = require('../middleware/auth');
 const { ownerOrAdmin } = require('../middleware/rbac');
+const { generateSignedUrl } = require('../utils/gcs');
 
 async function createNotification({ userId, title, message, type, data }) {
   await prisma.notification.create({
@@ -165,7 +166,19 @@ router.get('/', authenticate, async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
 
-    res.json({ requests });
+    const enrichedRequests = await Promise.all(requests.map(async req => {
+      const emp = await prisma.employee.findUnique({ where: { id: req.requestedBy }});
+      if (emp) {
+        return { 
+          ...req, 
+          requestedByAvatar: emp.avatar ? await generateSignedUrl(emp.avatar, 60 * 24 * 7) : null,
+          requestedByEmpId: emp.empId || 'UNKN'
+        };
+      }
+      return req;
+    }));
+
+    res.json({ requests: enrichedRequests });
   } catch (err) {
     console.error('Fetching approval requests failed:', err);
     res.status(500).json({ error: err.message });
