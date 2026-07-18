@@ -848,29 +848,34 @@ export default function Performance() {
 
       {/* ADMIN CONTROL PANEL OVERHAUL */}
       {hasAdminAccess(user) && (
-        <div className="space-y-6 animate-in slide-in-from-bottom-8 duration-700 delay-500 mt-8 relative">
+        <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700 delay-500 mt-8 relative">
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
-            <div className="lg:col-span-1">
+          {/* Animated Background Bubbles */}
+          <div className="absolute -top-20 -left-20 w-96 h-96 bg-orange-400/20 rounded-full blur-[100px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '4s' }}></div>
+          <div className="absolute top-1/2 -right-20 w-80 h-80 bg-[#eb4917]/15 rounded-full blur-[80px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '6s', animationDelay: '2s' }}></div>
+          <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-red-400/15 rounded-full blur-[90px] animate-pulse pointer-events-none z-0" style={{ animationDuration: '5s', animationDelay: '1s' }}></div>
+
+          <div className="flex flex-col gap-8 relative z-10">
+            <div className="w-full">
               <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-200 p-8 relative overflow-hidden h-full group">
                 <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at center, #eaeaea 2px, transparent 0)", backgroundSize: "22px 22px", opacity: 0.5 }}></div>
                 <div className="absolute top-0 left-0 w-full h-1 bg-[#eb4917] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                 <div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-[#eb4917]/10 blur-2xl pointer-events-none"></div>
                 
-                <h3 className="font-bold text-gray-900 text-lg flex items-center gap-3 mb-6 relative z-10">
+                <h3 className="font-bold text-gray-900 text-xl flex items-center gap-3 mb-6 relative z-10">
                   <div className="p-2.5 bg-orange-50 rounded-xl text-[#eb4917] transition-transform duration-300 group-hover:scale-110 border border-orange-100 shadow-sm">
-                    <Shield size={18} strokeWidth={2.5} />
+                    <Shield size={20} strokeWidth={2.5} />
                   </div>
                   Provision Quota
                 </h3>
                 
-                <form onSubmit={handleTargetAssign} className="space-y-5 relative z-10">
-                  <div className="group/input">
+                <form onSubmit={handleTargetAssign} className="flex flex-col md:flex-row gap-5 relative z-10 items-end">
+                  <div className="group/input flex-1 w-full">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 transition-colors group-focus-within/input:text-[#eb4917]">Select Employee</label>
                     <div className="relative">
                       <select 
                         required 
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:border-[#eb4917] focus:ring-2 focus:ring-[#eb4917]/20 focus:bg-white outline-none transition-all appearance-none shadow-sm"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm text-gray-800 focus:border-[#eb4917] focus:ring-2 focus:ring-[#eb4917]/20 focus:bg-white outline-none transition-all appearance-none shadow-sm font-medium"
                         value={adminForm.employeeId}
                         onChange={(e) => setAdminForm({...adminForm, employeeId: e.target.value})}
                       >
@@ -879,39 +884,39 @@ export default function Performance() {
                           <option key={emp.id} value={emp.id}>{emp.name} ({emp.department})</option>
                         ))}
                       </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">▼</div>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 font-bold text-xs">▼</div>
                     </div>
                   </div>
-                  <div className="group/input">
+                  <div className="group/input flex-1 w-full">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 transition-colors group-focus-within/input:text-[#eb4917]">Target Baseline</label>
                     <input 
                       type="number" 
                       required 
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:border-[#eb4917] focus:ring-2 focus:ring-[#eb4917]/20 focus:bg-white outline-none transition-all shadow-sm"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm text-gray-800 focus:border-[#eb4917] focus:ring-2 focus:ring-[#eb4917]/20 focus:bg-white outline-none transition-all shadow-sm font-medium"
                       value={adminForm.targetCount}
                       onChange={(e) => setAdminForm({...adminForm, targetCount: e.target.value})}
                       placeholder="30"
                     />
                   </div>
-                  <div className="group/input">
+                  <div className="group/input flex-1 w-full">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 transition-colors group-focus-within/input:text-[#eb4917]">Select Month</label>
                     <input 
                       type="month" 
                       required 
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:border-[#eb4917] focus:ring-2 focus:ring-[#eb4917]/20 focus:bg-white outline-none transition-all shadow-sm"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 text-sm text-gray-800 focus:border-[#eb4917] focus:ring-2 focus:ring-[#eb4917]/20 focus:bg-white outline-none transition-all shadow-sm font-medium"
                       value={adminForm.month}
                       onChange={(e) => setAdminForm({...adminForm, month: e.target.value})}
                     />
                   </div>
-                  <button type="submit" className="w-full mt-6 bg-[#eb4917] hover:bg-[#d43f10] text-white px-4 py-3.5 rounded-xl transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-[#eb4917]/30 flex items-center justify-center gap-2 font-bold tracking-wide">
+                  <button type="submit" className="flex-1 w-full md:w-auto bg-[#eb4917] hover:bg-[#d43f10] text-white px-6 py-3.5 rounded-xl transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-[#eb4917]/40 flex items-center justify-center gap-2 font-bold tracking-wide h-full">
                     <Shield size={18} className="animate-pulse" />
-                    <span>Set Quota Threshold</span>
+                    <span className="whitespace-nowrap">Set Quota</span>
                   </button>
                 </form>
               </div>
             </div>
 
-            <div className="lg:col-span-2 relative rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-200 bg-white overflow-hidden group">
+            <div className="w-full relative rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-200 bg-white overflow-hidden group">
               <div className="absolute top-0 left-0 w-full h-1 bg-[#eb4917] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-right"></div>
               <div className="p-6 md:p-8 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 bg-gradient-to-br from-orange-50/50 to-white">
                 <div>
@@ -941,7 +946,6 @@ export default function Performance() {
                     <tr className="text-gray-500 text-xs font-bold uppercase tracking-wider border-b border-gray-200 bg-gray-50/80">
                       <th className="px-8 py-5">Employee Data</th>
                       <th className="px-8 py-5">Honor Badge</th>
-                      <th className="px-8 py-5 text-center">Recognition Actions</th>
                       <th className="px-8 py-5 text-right">Security Pairing</th>
                     </tr>
                   </thead>
@@ -968,28 +972,21 @@ export default function Performance() {
                             <span className="text-gray-400 font-semibold text-xs uppercase tracking-wider bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-lg">None</span>
                           )}
                         </td>
-                        <td className="px-8 py-5 text-center">
-                          <div className="flex gap-2 items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-300">
-                            <button onClick={() => grantBadge(emp.id, 'week')} className="px-3 py-1.5 bg-white text-gray-600 hover:bg-[#eb4917] hover:text-white border border-gray-200 hover:border-[#eb4917] rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-300 shadow-sm">Week</button>
-                            <button onClick={() => grantBadge(emp.id, 'month')} className="px-3 py-1.5 bg-white text-gray-600 hover:bg-[#d43f10] hover:text-white border border-gray-200 hover:border-[#d43f10] rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-300 shadow-sm">Month</button>
-                            <button onClick={() => grantBadge(emp.id, 'none')} className="px-3 py-1.5 bg-white text-gray-400 hover:bg-gray-100 hover:text-gray-700 border border-gray-200 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-300 shadow-sm">Clear</button>
-                          </div>
-                        </td>
                         <td className="px-8 py-5 text-right">
                           {emp.deviceId ? (
-                            <div className="flex items-center justify-end gap-3">
+                            <div className="flex items-center justify-end gap-5">
                               <span className="flex items-center gap-1.5 text-xs font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">
                                 <Smartphone size={14} /> Linked
                               </span>
                               <button 
                                 onClick={() => unlockDevice(emp.id)} 
-                                className="text-xs text-red-500 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 px-3 py-1.5 rounded-lg font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors duration-300 border border-gray-200 shadow-sm opacity-0 group-hover/row:opacity-100"
+                                className="text-xs text-white bg-[#eb4917] hover:bg-[#d43f10] px-4 py-2 rounded-xl font-bold uppercase tracking-wider flex items-center gap-2 transition-all duration-300 shadow-lg shadow-[#eb4917]/30 hover:-translate-y-0.5 animate-pulse"
                               >
-                                <X size={14} /> Unlink
+                                <X size={14} strokeWidth={2.5} /> Unlink Device
                               </button>
                             </div>
                           ) : (
-                            <span className="text-gray-500 font-bold text-xs uppercase tracking-wider bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 inline-flex items-center gap-1.5">
+                            <span className="text-gray-500 font-bold text-xs uppercase tracking-wider bg-gray-50 px-4 py-2 rounded-xl border border-gray-200 inline-flex items-center gap-2">
                               <Smartphone size={14} className="opacity-50" /> Unpaired
                             </span>
                           )}
