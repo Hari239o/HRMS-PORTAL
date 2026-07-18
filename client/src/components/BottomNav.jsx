@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { hasAdminAccess } from '@/utils/rbac';
 import { LayoutDashboard, CalendarCheck, FileText, TrendingUp, User, LogOut, Settings } from 'lucide-react';
 import { useState } from 'react';
 
@@ -17,7 +18,7 @@ export default function BottomNav() {
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Attendance', icon: CalendarCheck, path: '/attendance' },
     { name: 'Leave', icon: FileText, path: '/leaves' },
-    { name: 'Performance', icon: TrendingUp, path: '/performance' },
+    { name: hasAdminAccess(user) ? 'DEVICE & TARGET' : 'Performance', icon: TrendingUp, path: '/performance' },
     { name: 'Profile', icon: User, path: '/profile' },
   ];
 

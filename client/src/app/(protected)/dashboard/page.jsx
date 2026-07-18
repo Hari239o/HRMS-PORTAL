@@ -536,7 +536,7 @@ export default function Dashboard() {
         <AppGridItem title="Attendance" icon={CalendarDays} link="/attendance" color="emerald" />
         <AppGridItem title="Leave" icon={Calendar} link="/leaves" color="rose" />
         <AppGridItem title="Payroll" icon={Receipt} link="/salary" color="amber" />
-        <AppGridItem title="Performance" icon={TrendingUp} link="/performance" color="indigo" />
+        <AppGridItem title="DEVICE & TARGET" icon={TrendingUp} link="/performance" color="indigo" />
         <AppGridItem title="Holidays" icon={CalendarDays} link="/holidays" color="fuchsia" />
         <AppGridItem title="HR Documents" icon={FileText} link="/documents" color="cyan" />
         <AppGridItem title="HR Policies" icon={FileSpreadsheet} link="/hr-policies" color="purple" />

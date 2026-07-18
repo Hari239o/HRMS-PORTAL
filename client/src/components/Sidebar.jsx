@@ -43,7 +43,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Leave', icon: FileText, path: '/leaves' },
     { name: 'Separation', icon: UserMinus, path: '/resignations' },
     { name: 'Holidays', icon: CalendarDays, path: '/holidays' },
-    { name: 'Performance', icon: Trophy, path: '/performance' },
+    { name: hasAdminAccess(user) ? 'DEVICE & TARGET' : 'Performance', icon: Trophy, path: '/performance' },
     { name: 'Post Sales Task Box', icon: ClipboardList, path: '/approvals' },
     { name: 'HR Documents', icon: FileText, path: '/documents' },
     { name: 'Internal Chat', icon: MessageSquare, path: '/chat' },
