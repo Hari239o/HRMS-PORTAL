@@ -1050,7 +1050,6 @@ export default function Performance() {
                       <th className="px-8 py-5">Entity</th>
                       <th className="px-8 py-5">Contact Details</th>
                       <th className="px-8 py-5">Financial State</th>
-                      <th className="px-8 py-5 text-center">Operations</th>
                       <th className="px-8 py-5 text-right">Sys Info</th>
                     </tr>
                   </thead>
@@ -1097,18 +1096,7 @@ export default function Performance() {
                             )}
                           </div>
                         </td>
-                        <td className="px-8 py-5">
-                          <div className="flex flex-col gap-3 items-center opacity-0 group-hover/row:opacity-100 transition-opacity duration-300">
-                            <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-max shadow-sm">
-                              <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Answered', true)} className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all duration-200 ${sub.callStatus === 'Answered' ? 'bg-[#eb4917] text-white shadow-sm' : 'text-gray-600 hover:bg-white hover:text-gray-900'}`}>Answered</button>
-                              <button onClick={() => handleUpdateStatus(sub.id, 'callStatus', 'Dropped', true)} className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all duration-200 ${sub.callStatus === 'Dropped' ? 'bg-[#eb4917] text-white shadow-sm' : 'text-gray-600 hover:bg-white hover:text-gray-900'}`}>Missed</button>
-                            </div>
-                            <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200 w-max shadow-sm">
-                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Paid', true)} className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all duration-200 ${sub.paymentStatus === 'Paid' ? 'bg-[#eb4917] text-white shadow-sm' : 'text-gray-600 hover:bg-white hover:text-gray-900'}`}>Collected</button>
-                              <button onClick={() => handleUpdateStatus(sub.id, 'paymentStatus', 'Dropped', true)} className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all duration-200 ${sub.paymentStatus === 'Dropped' ? 'bg-[#eb4917] text-white shadow-sm' : 'text-gray-600 hover:bg-white hover:text-gray-900'}`}>Lost</button>
-                            </div>
-                          </div>
-                        </td>
+                        
                         <td className="px-8 py-5 text-right">
                           <div className="flex flex-col items-end gap-3">
                             <span className="text-gray-500 font-bold bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-lg text-xs shadow-sm">{new Date(sub.date).toLocaleDateString()}</span>
@@ -1124,7 +1112,7 @@ export default function Performance() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan="5" className="text-center py-20 bg-gray-50/50">
+                        <td colSpan="4" className="text-center py-20 bg-gray-50/50">
                           <div className="flex flex-col items-center justify-center text-gray-500">
                             <div className="p-4 bg-gray-100 rounded-2xl mb-4 shadow-inner">
                               <Star size={32} className="text-gray-400" />
