@@ -383,8 +383,12 @@ const Leaves = () => {
                     <div>
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">Requested By</span>
                       <div className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
-                        <div className="w-14 h-14 rounded-full bg-orange-100 text-[#eb4917] font-black flex items-center justify-center text-xl border border-orange-200 shadow-sm shrink-0">
-                          {getInitials(leave.employee?.name || 'Unknown')}
+                        <div className="w-14 h-14 rounded-full bg-orange-100 text-[#eb4917] font-black flex items-center justify-center text-xl border border-orange-200 shadow-sm shrink-0 overflow-hidden">
+                          {leave.employee?.avatar ? (
+                            <img src={leave.employee.avatar} alt={leave.employee?.name} className="w-full h-full object-cover" />
+                          ) : (
+                            getInitials(leave.employee?.name || 'Unknown')
+                          )}
                         </div>
                         <div className="min-w-0">
                           <p className="text-base font-black text-gray-900 truncate">{leave.employee?.name || 'Unknown Employee'}</p>
@@ -490,8 +494,12 @@ const Leaves = () => {
                     <div>
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">Reported By</span>
                       <div className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm group-hover:shadow-md transition-all">
-                        <div className="w-14 h-14 rounded-full bg-gray-100 text-gray-600 font-black flex items-center justify-center text-xl border border-gray-200 shadow-sm shrink-0">
-                          {getInitials(problem.employee?.name || 'Unknown')}
+                        <div className="w-14 h-14 rounded-full bg-orange-100 text-[#eb4917] font-black flex items-center justify-center text-xl border border-orange-200 shadow-sm shrink-0 overflow-hidden">
+                          {problem.employee?.avatar ? (
+                            <img src={problem.employee.avatar} alt={problem.employee?.name} className="w-full h-full object-cover" />
+                          ) : (
+                            getInitials(problem.employee?.name || 'Unknown')
+                          )}
                         </div>
                         <div className="min-w-0">
                           <p className="text-base font-black text-gray-900 truncate">{problem.employee?.name || 'Unknown User'}</p>

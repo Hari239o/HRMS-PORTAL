@@ -954,8 +954,12 @@ export default function Performance() {
                       <tr key={emp.id} className="hover:bg-orange-50/40 transition-colors duration-200 border-b border-gray-100 last:border-0 group/row">
                         <td className="px-4 md:px-8 py-4 md:py-5">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center font-bold text-[#eb4917] transition-transform duration-300 group-hover/row:scale-110 shadow-sm shrink-0">
-                              {emp.name.charAt(0).toUpperCase()}
+                            <div className="w-10 h-10 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center font-bold text-[#eb4917] transition-transform duration-300 group-hover/row:scale-110 shadow-sm shrink-0 overflow-hidden">
+                              {emp.avatar ? (
+                                <img src={emp.avatar} alt={emp.name} className="w-full h-full object-cover" />
+                              ) : (
+                                emp.name.charAt(0).toUpperCase()
+                              )}
                             </div>
                             <div>
                               <p className="font-bold text-gray-900 text-base">{emp.name}</p>

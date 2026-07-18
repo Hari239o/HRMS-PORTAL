@@ -114,7 +114,7 @@ router.get('/', authenticate, async (req, res) => {
         documentUrl: l.documentUrl ? await generateSignedUrl(l.documentUrl, 60) : null,
         fromDate: l.fromDate.toISOString().split('T')[0], // format back for frontend
         toDate: l.toDate.toISOString().split('T')[0],
-        employee: { name: emp.name || 'Unknown', department: emp.department || 'Unknown', empId: emp.empId || 'UNKN' }
+        employee: { name: emp.name || 'Unknown', department: emp.department || 'Unknown', empId: emp.empId || 'UNKN', avatar: emp.avatar || null }
       };
     }));
     res.json(formatted);
