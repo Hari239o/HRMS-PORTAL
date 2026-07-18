@@ -421,7 +421,7 @@ export default function Attendance() {
                 setSelectedAttendanceId(null);
                 setRequestModalOpen(true);
               }}
-              className="w-full py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl transition-colors border border-rose-200 flex items-center justify-center gap-2 shadow-sm"
+              className="w-full py-4 bg-gradient-to-r from-rose-500 to-[#eb4917] hover:from-rose-600 hover:to-[#d43f10] text-white font-black rounded-2xl transition-all duration-300 border border-transparent flex items-center justify-center gap-2 shadow-xl shadow-rose-500/30 hover:shadow-2xl hover:shadow-rose-500/40 hover:-translate-y-1 tracking-wide uppercase text-sm"
             >
               <AlertCircle size={18} />
               Raise Attendance Issue
@@ -860,6 +860,8 @@ export default function Attendance() {
             </div>
           )}
         </div>
+      </div>
+
       </div>
 
       {/* Missed Checkout Request Modal */}
