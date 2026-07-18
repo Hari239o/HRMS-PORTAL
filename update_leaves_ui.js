@@ -328,16 +328,16 @@ const Leaves = () => {
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <span className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm ${
+                    <span className={\`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm \${
                         leave.status === 'Approved' ? 'bg-green-50 text-green-700 border-green-200' :
                         leave.status === 'Rejected' ? 'bg-red-50 text-red-700 border-red-200' :
                         'bg-orange-50 text-[#eb4917] border-orange-200'
-                      }`}>
-                        <span className={`w-2 h-2 rounded-full ${
+                      }\`}>
+                        <span className={\`w-2 h-2 rounded-full \${
                           leave.status === 'Approved' ? 'bg-green-500' :
                           leave.status === 'Rejected' ? 'bg-red-500' :
                           'bg-[#eb4917] animate-ping'
-                        }`}></span>
+                        }\`}></span>
                         {leave.status}
                     </span>
                     <span className="px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider bg-gray-100 text-gray-600 border border-gray-200 shadow-sm">
