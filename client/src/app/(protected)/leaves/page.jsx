@@ -248,7 +248,7 @@ const Leaves = () => {
       )}
 
       {/* Toolbar (Search & Filter) */}
-      <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-xl flex flex-col md:flex-row gap-5 justify-between relative z-10 items-center group">
+      <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-xl flex flex-col md:flex-row gap-5 justify-between relative z-10 items-stretch md:items-center group">
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle at center, #eaeaea 2px, transparent 0)", backgroundSize: "22px 22px", opacity: 0.3 }}></div>
         <div className="flex-1 relative w-full z-10">
           <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
@@ -260,8 +260,8 @@ const Leaves = () => {
             className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#eb4917]/20 focus:border-[#eb4917] focus:bg-white transition-all text-sm font-bold text-gray-800 placeholder:text-gray-400 outline-none shadow-sm"
           />
         </div>
-        <div className="flex w-full md:w-auto items-center gap-4 z-10">
-          <div className="relative flex-1 md:flex-none">
+        <div className="flex flex-col sm:flex-row w-full md:w-auto items-stretch sm:items-center gap-4 z-10">
+          <div className="relative w-full sm:w-auto sm:min-w-[160px]">
             <Filter className="absolute left-4 top-3.5 text-[#eb4917]" size={18} />
             <select 
               value={statusFilter}
@@ -279,7 +279,7 @@ const Leaves = () => {
             user.role !== 'admin' && (
               <button 
                 onClick={() => setShowLeaveForm(true)}
-                className="bg-[#eb4917] hover:bg-[#d43f10] text-white px-6 py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-[#eb4917]/30 transition-all duration-300 transform hover:-translate-y-1 shrink-0 w-full md:w-auto"
+                className="bg-[#eb4917] hover:bg-[#d43f10] text-white px-6 py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-[#eb4917]/30 transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto"
               >
                 <Plus size={20} /> Apply Leave
               </button>
@@ -288,7 +288,7 @@ const Leaves = () => {
             user.role !== 'admin' && (
               <button 
                 onClick={() => setShowProblemForm(true)}
-                className="bg-[#eb4917] hover:bg-[#d43f10] text-white px-6 py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-[#eb4917]/30 transition-all duration-300 transform hover:-translate-y-1 shrink-0 w-full md:w-auto"
+                className="bg-[#eb4917] hover:bg-[#d43f10] text-white px-6 py-3.5 rounded-2xl text-sm font-black flex items-center justify-center gap-2 shadow-lg shadow-[#eb4917]/30 transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto"
               >
                 <MessageSquare size={20} /> Raise Issue
               </button>
