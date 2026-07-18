@@ -310,14 +310,16 @@ const Leaves = () => {
                 
                 <div className="p-6 md:p-8 border-b border-gray-50 bg-gradient-to-r from-orange-50/40 to-white flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative">
                   <div className="flex items-center gap-4">
-                    <div className={\`p-3.5 rounded-2xl shadow-sm \${
-                        leave.status === 'Approved' ? 'bg-green-100 text-green-600 border border-green-200' :
-                        leave.status === 'Rejected' ? 'bg-red-100 text-red-600 border border-red-200' :
-                        'bg-orange-100 text-[#eb4917] border border-orange-200'
-                      }\`}>
-                        {leave.status === 'Approved' ? <CheckCircle2 size={26} /> :
-                         leave.status === 'Rejected' ? <XCircle size={26} /> :
-                         <Clock size={26} className="animate-pulse" />}
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm overflow-hidden border shrink-0 ${
+                        leave.status === 'Approved' ? 'bg-green-100 text-green-600 border-green-200' :
+                        leave.status === 'Rejected' ? 'bg-red-100 text-red-600 border-red-200' :
+                        'bg-orange-100 text-[#eb4917] border-orange-200'
+                      }`}>
+                        {leave.employee?.avatar ? (
+                          <img src={leave.employee.avatar} alt={leave.employee?.name} className="w-full h-full object-cover" />
+                        ) : (
+                          getInitials(leave.employee?.name || 'Unknown')
+                        )}
                     </div>
                     <div>
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Employee ID</span>
@@ -326,16 +328,16 @@ const Leaves = () => {
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <span className={\`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm \${
+                    <span className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border shadow-sm ${
                         leave.status === 'Approved' ? 'bg-green-50 text-green-700 border-green-200' :
                         leave.status === 'Rejected' ? 'bg-red-50 text-red-700 border-red-200' :
                         'bg-orange-50 text-[#eb4917] border-orange-200'
-                      }\`}>
-                        <span className={\`w-2 h-2 rounded-full \${
+                      }`}>
+                        <span className={`w-2 h-2 rounded-full ${
                           leave.status === 'Approved' ? 'bg-green-500' :
                           leave.status === 'Rejected' ? 'bg-red-500' :
                           'bg-[#eb4917] animate-ping'
-                        }\`}></span>
+                        }`}></span>
                         {leave.status}
                     </span>
                     <span className="px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider bg-gray-100 text-gray-600 border border-gray-200 shadow-sm">
@@ -438,14 +440,16 @@ const Leaves = () => {
                 
                 <div className="p-6 md:p-8 border-b border-gray-50 bg-gradient-to-r from-orange-50/40 to-white flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative">
                   <div className="flex items-center gap-4">
-                    <div className={\`p-3.5 rounded-2xl shadow-sm \${
-                        problem.status === 'Resolved' ? 'bg-blue-100 text-blue-600 border border-blue-200' :
-                        problem.status === 'Rejected' ? 'bg-gray-100 text-gray-600 border border-gray-200' :
-                        'bg-red-100 text-red-600 border border-red-200'
-                      }\`}>
-                        {problem.status === 'Resolved' ? <CheckCircle2 size={26} /> :
-                         problem.status === 'Rejected' ? <XCircle size={26} /> :
-                         <AlertTriangle size={26} className="animate-pulse" />}
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm overflow-hidden border shrink-0 ${
+                        problem.status === 'Resolved' ? 'bg-blue-100 text-blue-600 border-blue-200' :
+                        problem.status === 'Rejected' ? 'bg-gray-100 text-gray-600 border-gray-200' :
+                        'bg-red-100 text-red-600 border-red-200'
+                      }`}>
+                        {problem.employee?.avatar ? (
+                          <img src={problem.employee.avatar} alt={problem.employee?.name} className="w-full h-full object-cover" />
+                        ) : (
+                          getInitials(problem.employee?.name || 'Unknown')
+                        )}
                     </div>
                     <div>
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">Employee ID</span>
