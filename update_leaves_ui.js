@@ -373,10 +373,14 @@ const Leaves = () => {
                       <p className="text-sm md:text-base text-gray-600 leading-relaxed font-semibold bg-white border border-gray-100 p-6 rounded-2xl shadow-sm">
                         {leave.reason}
                       </p>
-                      {leave.documentUrl && (
+                      {leave.documentUrl ? (
                         <a href={leave.documentUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 text-xs font-black text-[#eb4917] hover:text-white bg-orange-50 hover:bg-[#eb4917] px-5 py-2.5 rounded-xl border border-orange-200 hover:border-[#eb4917] transition-all duration-300 w-max shadow-sm transform hover:-translate-y-0.5">
                           <Paperclip size={16} /> View Attached Document
                         </a>
+                      ) : (
+                        <div className="mt-5 inline-flex items-center gap-2 text-xs font-black text-gray-400 bg-gray-50 px-5 py-2.5 rounded-xl border border-gray-100 cursor-not-allowed w-max shadow-sm">
+                          <Paperclip size={16} /> No Document Attached
+                        </div>
                       )}
                     </div>
                   </div>
