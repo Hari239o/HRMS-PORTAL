@@ -843,7 +843,10 @@ export default function Performance() {
               </div>
             </div>
           </div>
-        </div      {/* ADMIN CONTROL PANEL OVERHAUL */}
+        </div>
+      )}
+
+      {/* ADMIN CONTROL PANEL OVERHAUL */}
       {hasAdminAccess(user) && (
         <div className="space-y-6 animate-in slide-in-from-bottom-8 duration-700 delay-500 mt-8 relative">
           
@@ -1147,8 +1150,6 @@ export default function Performance() {
             )}
             </div>
           </div>
-        </div>
-      )}>
         </div>
       )}
 
