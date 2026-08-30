@@ -6,12 +6,25 @@ export default function GlobalSplash() {
   const [show, setShow] = useState(true);
   
   useEffect(() => {
-    // Fallback timeout in case video fails to load or play (e.g., low power mode)
-    const timer = setTimeout(() => {
+    // Only show splash screen once per session
+    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+    if (hasSeenSplash) {
       setShow(false);
-    }, 4500); 
+      return;
+    }
+
+    // Fallback timeout in case video fails to load or play (increased to 15s to ensure full video plays)
+    const timer = setTimeout(() => {
+      handleVideoEnd();
+    }, 15000); 
+    
     return () => clearTimeout(timer);
   }, []);
+
+  const handleVideoEnd = () => {
+    sessionStorage.setItem('hasSeenSplash', 'true');
+    setShow(false);
+  };
 
   if (!show) return null;
 
@@ -22,7 +35,8 @@ export default function GlobalSplash() {
         muted
         playsInline
         className="w-full h-full object-cover pointer-events-none"
-        onEnded={() => setShow(false)}
+        onEnded={handleVideoEnd}
+        onError={handleVideoEnd}
       >
         <source src="/splash-animation.mp4" type="video/mp4" />
       </video>
