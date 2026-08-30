@@ -21,7 +21,7 @@ export default function GlobalSplash() {
         autoPlay
         muted
         playsInline
-        className="w-full h-full object-contain pointer-events-none"
+        className="w-full h-full object-cover pointer-events-none"
         onEnded={() => setShow(false)}
       >
         <source src="/splash-animation.mp4" type="video/mp4" />
