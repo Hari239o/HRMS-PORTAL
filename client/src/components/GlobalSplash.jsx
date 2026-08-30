@@ -34,7 +34,7 @@ export default function GlobalSplash() {
         autoPlay
         muted
         playsInline
-        className="w-full h-full object-cover pointer-events-none"
+        className="w-full h-full object-contain pointer-events-none"
         onEnded={handleVideoEnd}
         onError={handleVideoEnd}
       >
