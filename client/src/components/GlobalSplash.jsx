@@ -34,7 +34,7 @@ export default function GlobalSplash() {
         autoPlay
         muted
         playsInline
-        className="w-full h-full object-contain pointer-events-none"
+        className="w-full h-full object-contain pointer-events-none mix-blend-multiply contrast-125 brightness-110"
         onEnded={handleVideoEnd}
         onError={handleVideoEnd}
       >
