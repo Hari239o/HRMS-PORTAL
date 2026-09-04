@@ -66,17 +66,27 @@ export default function PushNotificationManager({ user }) {
   };
 
   const handleRequestPermission = () => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          console.log("Notification permission granted.");
-          setPermissionGranted(true);
-          initializePush();
-        } else {
-          console.log("Unable to get permission to notify.");
+    if (typeof window !== "undefined") {
+      if ("Notification" in window) {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            console.log("Notification permission granted.");
+            setPermissionGranted(true);
+            initializePush();
+          } else {
+            console.log("Unable to get permission to notify.");
+            setDismissed(true);
+          }
+        }).catch(err => {
+          console.log("Notification permission error:", err);
           setDismissed(true);
-        }
-      });
+        });
+      } else {
+        // Fallback for native WebViews (like Capacitor) where the web Notification API is unavailable
+        console.log("Web Notification API is not supported on this device. Dismissing.");
+        setDismissed(true);
+        // Note: For native push notifications on Android, @capacitor/push-notifications plugin is required
+      }
     }
   };
 
