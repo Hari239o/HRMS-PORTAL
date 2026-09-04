@@ -12,6 +12,8 @@
     "postinstall": "prisma generate && prisma db push --accept-data-loss"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/core": "^8.5.1",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@google-cloud/secret-manager": "^6.2.0",
     "@google-cloud/storage": "^7.21.0",
@@ -54,6 +56,8 @@
     "uuid": "^14.0.1"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.6.9",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "autoprefixer": "^10.4.18",

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GEONIXA EMS</string>
+    <string name="title_activity_main">GEONIXA EMS</string>
+    <string name="package_name">com.geonixa.ems</string>
+    <string name="custom_url_scheme">com.geonixa.ems</string>
+</resources>

@@ -38,7 +38,7 @@ export default function GlobalSplash() {
         onEnded={handleVideoEnd}
         onError={handleVideoEnd}
       >
-        <source src="/splash-animation.mp4" type="video/mp4" />
+        <source src="/splash video.mp4" type="video/mp4" />
       </video>
     </div>
   );

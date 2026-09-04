@@ -1,0 +1,17 @@
+{
+  "appId": "com.geonixa.ems",
+  "appName": "GEONIXA EMS",
+  "webDir": "public",
+  "server": {
+    "url": "https://ems.geonixa.com/",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "backgroundColor": "#ffffff",
+      "splashFullScreen": true,
+      "splashImmersive": true
+    }
+  }
+}
