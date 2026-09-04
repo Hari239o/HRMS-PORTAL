@@ -34,6 +34,7 @@ export default function GlobalSplash() {
         autoPlay
         muted
         playsInline
+        poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
         className="w-full h-full object-contain pointer-events-none mix-blend-multiply contrast-125 brightness-110"
         onEnded={handleVideoEnd}
         onError={handleVideoEnd}
