@@ -11,11 +11,20 @@ export default function PushNotificationManager({ user }) {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    // Check if permission is already granted
-    if (typeof window !== "undefined" && "Notification" in window) {
-      if (Notification.permission === "granted") {
-        setPermissionGranted(true);
-        initializePush();
+    // Check if permission is already granted or dismissed
+    if (typeof window !== "undefined") {
+      const hasDismissed = localStorage.getItem("push_notification_dismissed");
+      if (hasDismissed === "true") {
+        setDismissed(true);
+      }
+
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          setPermissionGranted(true);
+          initializePush();
+        } else if (Notification.permission === "denied") {
+          setDismissed(true);
+        }
       }
     }
   }, []);
@@ -75,10 +84,12 @@ export default function PushNotificationManager({ user }) {
             initializePush();
           } else {
             console.log("Unable to get permission to notify.");
+            localStorage.setItem("push_notification_dismissed", "true");
             setDismissed(true);
           }
         }).catch(err => {
           console.log("Notification permission error:", err);
+          localStorage.setItem("push_notification_dismissed", "true");
           setDismissed(true);
         });
       } else {
@@ -114,7 +125,12 @@ export default function PushNotificationManager({ user }) {
               Allow Notifications
             </button>
             <button 
-              onClick={() => setDismissed(true)}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  localStorage.setItem("push_notification_dismissed", "true");
+                }
+                setDismissed(true);
+              }}
               className="w-full py-3.5 px-4 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium rounded-xl transition-all active:scale-[0.98] text-[15px]"
             >
               Maybe Later
