@@ -154,7 +154,6 @@ export default function PushNotificationManager({ user }) {
 
   if (!isClient) return null;
   if (permissionGranted || dismissed) return null;
-  if (typeof window !== "undefined" && window.Capacitor && window.Capacitor.isNativePlatform()) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-300">

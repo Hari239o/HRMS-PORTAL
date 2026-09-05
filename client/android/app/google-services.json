@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "36063007825",
+    "project_id": "attendance-geonixa",
+    "storage_bucket": "attendance-geonixa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36063007825:android:9f09819ec320469cdd9470",
+        "android_client_info": {
+          "package_name": "com.geonixa.ems"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "36063007825-2hhce8h2p6jlocebl5fvlfav80bnji4v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1lHbHFYhwxQZRLveuKyNU9fq4zoC9_wY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "36063007825-2hhce8h2p6jlocebl5fvlfav80bnji4v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
