@@ -23,6 +23,12 @@ if (!admin.apps.length) {
 
   if (serviceAccount) {
     try {
+      // CRITICAL: Delete this environment variable before initializing Firebase Admin, 
+      // otherwise google-auth-library will attempt to read the file and crash on Vercel
+      if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+        delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
+      }
+      
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
       });
