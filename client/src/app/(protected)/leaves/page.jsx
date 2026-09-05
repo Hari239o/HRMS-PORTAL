@@ -30,6 +30,7 @@ const Leaves = () => {
     reason: '',
     document: null
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Problems State
   const [problems, setProblems] = useState([]);
@@ -67,6 +68,8 @@ const Leaves = () => {
 
   const handleLeaveSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const formData = new FormData();
       formData.append('type', leaveFormData.type);
@@ -86,6 +89,8 @@ const Leaves = () => {
       fetchLeaves();
     } catch (err) {
       toast.error('Failed to submit leave application');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -592,7 +597,7 @@ const Leaves = () => {
               </div>
               <div className="flex gap-4 pt-6 border-t border-gray-100">
                 <button type="button" onClick={() => setShowLeaveForm(false)} className="flex-1 px-5 py-4 bg-gray-100 border-2 border-transparent text-gray-700 text-sm font-black rounded-2xl hover:bg-gray-200 transition-colors">Cancel</button>
-                <button type="submit" className="flex-1 px-5 py-4 bg-[#eb4917] text-white text-sm font-black rounded-2xl hover:bg-[#d43f10] shadow-lg shadow-[#eb4917]/30 transition-all hover:-translate-y-1">Submit Request</button>
+                <button type="submit" disabled={isSubmitting} className={`flex-1 px-5 py-4 text-white text-sm font-black rounded-2xl transition-all ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#eb4917] hover:bg-[#d43f10] shadow-lg shadow-[#eb4917]/30 hover:-translate-y-1'}`}>{isSubmitting ? 'Submitting...' : 'Submit Request'}</button>
               </div>
             </form>
           </div>

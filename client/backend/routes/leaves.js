@@ -4,6 +4,7 @@ const { authenticate, authorize } = require('../middleware/auth');
 const { sendEmail } = require('../utils/email');
 const upload = require('../utils/uploadMiddleware');
 const { uploadStreamToGCS, generateSignedUrl } = require('../utils/gcs');
+const { triggerNotification } = require('../utils/knock');
 const router = express.Router();
 
 router.post('/', authenticate, upload.single('document'), async (req, res) => {
@@ -80,6 +81,16 @@ router.post('/', authenticate, upload.single('document'), async (req, res) => {
             data: { leaveId: newLeave.id, type }
           }
         });
+        // Trigger Knock for admins
+        try {
+          await triggerNotification('in-app-feed', admin.id, {
+            title: 'New Leave Request',
+            message: `Hey Admin! 👋 ${empName} just submitted a Leave request (${type}).`,
+            url: '/leaves'
+          });
+        } catch (err) {
+          console.warn('Knock failed:', err.message);
+        }
       }
     } catch (e) {
       console.error('Failed sending HR notification for leave apply:', e.message || e);
@@ -145,6 +156,16 @@ router.put('/:id/status', authenticate, authorize(['admin', 'hr']), async (req, 
         data: { leaveId: leave.id, status }
       }
     });
+
+    try {
+      await triggerNotification('in-app-feed', leave.employeeId, {
+        title: 'Leave Request Update',
+        message: `Geonixa Admin has ${status.toLowerCase()} your ${leave.type} leave request.`,
+        url: '/leaves'
+      });
+    } catch (err) {
+      console.warn('Knock failed:', err.message);
+    }
 
     res.json({ message: 'Status updated' });
   } catch (error) {
