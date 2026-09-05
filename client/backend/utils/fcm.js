@@ -4,29 +4,41 @@ const path = require('path');
 
 // Initialize Firebase Admin with the same credentials used for GCS
 if (!admin.apps.length) {
-  const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  if (serviceAccountPath) {
+  let serviceAccount = null;
+  
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
     try {
-      const fullPath = path.resolve(__dirname, '..', serviceAccountPath);
-      const serviceAccount = require(fullPath);
+      serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+    } catch (e) {
+      console.error('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON for FCM');
+    }
+  } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    try {
+      const fullPath = path.resolve(__dirname, '..', process.env.GOOGLE_APPLICATION_CREDENTIALS);
+      serviceAccount = require(fullPath);
+    } catch (e) {
+      console.error('Failed to load local credential file for FCM');
+    }
+  }
+
+  if (serviceAccount) {
+    try {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
       });
       console.log('Firebase Admin initialized successfully via cert.');
     } catch (err) {
-      console.error('Failed to initialize Firebase Admin with specific cert:', err.message);
-      // Fallback to applicationDefault if cert fails
-      try {
-        admin.initializeApp({
-          credential: admin.credential.applicationDefault()
-        });
-        console.log('Firebase Admin initialized via applicationDefault().');
-      } catch (e) {
-        console.error('Firebase Admin complete failure:', e.message);
-      }
+      console.error('Failed to initialize Firebase Admin:', err.message);
     }
   } else {
-    console.warn('No GOOGLE_APPLICATION_CREDENTIALS found. Firebase Admin Push may not work.');
+    try {
+      admin.initializeApp({
+        credential: admin.credential.applicationDefault()
+      });
+      console.log('Firebase Admin initialized via applicationDefault().');
+    } catch (e) {
+      console.error('Firebase Admin complete failure:', e.message);
+    }
   }
 }
 
