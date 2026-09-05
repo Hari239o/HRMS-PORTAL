@@ -4,18 +4,30 @@ const path = require('path');
 
 // Initialize Firebase Admin with the same credentials used for GCS
 if (!admin.apps.length) {
+  // CRITICAL: Delete this environment variable before initializing Firebase Admin, 
+  // otherwise google-auth-library will attempt to read the non-existent file on Vercel and crash
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  }
+
   let serviceAccount = null;
   
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
     try {
       serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
     } catch (e) {
-      console.error('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON for FCM');
+      console.error('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON for FCM:', e.message);
     }
-  } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  } else {
+    // Try to load from a local file if we aren't on Vercel and JSON isn't provided
     try {
-      const fullPath = path.resolve(__dirname, '..', process.env.GOOGLE_APPLICATION_CREDENTIALS);
-      serviceAccount = require(fullPath);
+      // Find the json file in the client directory
+      const fs = require('fs');
+      const files = fs.readdirSync(path.resolve(__dirname, '..', '..'));
+      const jsonFile = files.find(f => f.endsWith('.json') && f.includes('geonixa-hrportal'));
+      if (jsonFile) {
+        serviceAccount = require(path.resolve(__dirname, '..', '..', jsonFile));
+      }
     } catch (e) {
       console.error('Failed to load local credential file for FCM');
     }
@@ -23,12 +35,6 @@ if (!admin.apps.length) {
 
   if (serviceAccount) {
     try {
-      // CRITICAL: Delete this environment variable before initializing Firebase Admin, 
-      // otherwise google-auth-library will attempt to read the file and crash on Vercel
-      if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-        delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
-      }
-      
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
       });
