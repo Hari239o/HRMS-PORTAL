@@ -4,64 +4,104 @@ import { useKnockClient } from "@knocklabs/react";
 import { getToken, onMessage } from "firebase/messaging";
 import { setupMessaging } from "../lib/firebase";
 import toast from "react-hot-toast";
+import { Capacitor } from '@capacitor/core';
+import { PushNotifications } from '@capacitor/push-notifications';
 
 export default function PushNotificationManager({ user }) {
   const knock = useKnockClient();
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Check if permission is already granted or dismissed
-    if (typeof window !== "undefined") {
-      const hasDismissed = localStorage.getItem("push_notification_dismissed");
-      if (hasDismissed === "true") {
-        setDismissed(true);
-      }
+    setIsClient(true);
+    const hasDismissed = localStorage.getItem("push_notification_dismissed");
+    if (hasDismissed === "true") {
+      setDismissed(true);
+    }
+    checkPermission();
+  }, []);
 
-      if ("Notification" in window) {
+  const syncTokenToKnock = async (token) => {
+    const fcmChannelId = process.env.NEXT_PUBLIC_KNOCK_FCM_CHANNEL_ID;
+    if (fcmChannelId) {
+      await knock.user.setChannelData({
+        channelId: fcmChannelId,
+        channelData: {
+          tokens: [token],
+        },
+      });
+      console.log("FCM token synced to Knock successfully.");
+    }
+  };
+
+  const checkPermission = async () => {
+    if (Capacitor.isNativePlatform()) {
+      // Native App (Capacitor)
+      try {
+        const { receive } = await PushNotifications.checkPermissions();
+        if (receive === 'granted') {
+          setPermissionGranted(true);
+          initializeNativePush();
+        } else if (receive === 'denied') {
+          setDismissed(true);
+        }
+      } catch (err) {
+        console.error("Native push error: ", err);
+      }
+    } else {
+      // Web Browser
+      if (typeof window !== "undefined" && "Notification" in window) {
         if (Notification.permission === "granted") {
           setPermissionGranted(true);
-          initializePush();
+          initializeWebPush();
         } else if (Notification.permission === "denied") {
           setDismissed(true);
         }
       }
     }
-  }, []);
+  };
 
-  const initializePush = async () => {
+  const initializeNativePush = async () => {
+    try {
+      await PushNotifications.addListener('registration', (token) => {
+        console.log("Native Push Registration Token: ", token.value);
+        syncTokenToKnock(token.value);
+      });
+
+      await PushNotifications.addListener('registrationError', (error) => {
+        console.error("Native Push Registration Error: ", JSON.stringify(error));
+      });
+
+      await PushNotifications.addListener('pushNotificationReceived', (notification) => {
+        toast.success(`${notification.title}: ${notification.body}`, {
+          icon: '🔔',
+          duration: 5000,
+        });
+      });
+
+      await PushNotifications.register();
+    } catch (err) {
+      console.error("Error initializing native push: ", err);
+    }
+  };
+
+  const initializeWebPush = async () => {
     try {
       const messaging = await setupMessaging();
       if (!messaging) return;
 
-      // Register the dedicated Firebase Messaging service worker explicitly to handle background lock-screen notifications
       const swRegistration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-
       const currentToken = await getToken(messaging, {
         vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         serviceWorkerRegistration: swRegistration,
       });
 
       if (currentToken) {
-        console.log("FCM Token acquired!");
-        // Sync token to Knock
-        const fcmChannelId = process.env.NEXT_PUBLIC_KNOCK_FCM_CHANNEL_ID;
-        if (fcmChannelId) {
-          await knock.user.setChannelData({
-            channelId: fcmChannelId,
-            channelData: {
-              tokens: [currentToken],
-            },
-          });
-          console.log("FCM token synced to Knock successfully.");
-        } else {
-          console.error("Missing NEXT_PUBLIC_KNOCK_FCM_CHANNEL_ID in env.");
-        }
-      } else {
-        console.log("No registration token available. Request permission to generate one.");
+        console.log("Web FCM Token acquired!");
+        await syncTokenToKnock(currentToken);
       }
 
-      // Handle incoming messages when the app is in the foreground
       onMessage(messaging, (payload) => {
         console.log("Message received. ", payload);
         toast.success(`${payload.notification?.title}: ${payload.notification?.body}`, {
@@ -70,37 +110,49 @@ export default function PushNotificationManager({ user }) {
         });
       });
     } catch (err) {
-      console.error("An error occurred while retrieving token or syncing with Knock. ", err);
+      console.error("Error initializing web push: ", err);
     }
   };
 
-  const handleRequestPermission = () => {
-    if (typeof window !== "undefined") {
-      if ("Notification" in window) {
-        Notification.requestPermission().then((permission) => {
+  const handleRequestPermission = async () => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const { receive } = await PushNotifications.requestPermissions();
+        if (receive === 'granted') {
+          setPermissionGranted(true);
+          initializeNativePush();
+        } else {
+          localStorage.setItem("push_notification_dismissed", "true");
+          setDismissed(true);
+        }
+      } catch (err) {
+        console.error("Error requesting native permissions: ", err);
+        localStorage.setItem("push_notification_dismissed", "true");
+        setDismissed(true);
+      }
+    } else {
+      if (typeof window !== "undefined" && "Notification" in window) {
+        try {
+          const permission = await Notification.requestPermission();
           if (permission === "granted") {
-            console.log("Notification permission granted.");
             setPermissionGranted(true);
-            initializePush();
+            initializeWebPush();
           } else {
-            console.log("Unable to get permission to notify.");
             localStorage.setItem("push_notification_dismissed", "true");
             setDismissed(true);
           }
-        }).catch(err => {
-          console.log("Notification permission error:", err);
+        } catch (err) {
           localStorage.setItem("push_notification_dismissed", "true");
           setDismissed(true);
-        });
+        }
       } else {
-        // Fallback for native WebViews (like Capacitor) where the web Notification API is unavailable
-        console.log("Web Notification API is not supported on this device. Dismissing.");
+        localStorage.setItem("push_notification_dismissed", "true");
         setDismissed(true);
-        // Note: For native push notifications on Android, @capacitor/push-notifications plugin is required
       }
     }
   };
 
+  if (!isClient) return null;
   if (permissionGranted || dismissed) return null;
 
   return (
