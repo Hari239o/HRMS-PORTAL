@@ -38,9 +38,23 @@ prisma.$use(async (params, next) => {
 
     if (params.action === 'create') {
       await triggerKnock(params.args.data);
+      try {
+        const { sendDirectPushNotification } = require('../utils/fcm');
+        await sendDirectPushNotification(params.args.data.userId, params.args.data.title, params.args.data.message, params.args.data.data || {});
+      } catch (err) {
+        console.error('Direct FCM Error:', err);
+      }
     } else if (params.action === 'createMany') {
       const records = Array.isArray(params.args.data) ? params.args.data : [params.args.data];
-      await Promise.all(records.map(triggerKnock));
+      await Promise.all(records.map(async (record) => {
+        await triggerKnock(record);
+        try {
+          const { sendDirectPushNotification } = require('../utils/fcm');
+          await sendDirectPushNotification(record.userId, record.title, record.message, record.data || {});
+        } catch (err) {
+          console.error('Direct FCM Error:', err);
+        }
+      }));
     }
   }
 
