@@ -122,11 +122,13 @@ export default function PushNotificationManager({ user }) {
           setPermissionGranted(true);
           initializeNativePush();
         } else {
+          alert("Notifications are blocked by your device. Please go to your phone's Settings -> Apps -> Geonixa -> Notifications, and turn them on manually.");
           localStorage.setItem("push_notification_dismissed", "true");
           setDismissed(true);
         }
       } catch (err) {
         console.error("Error requesting native permissions: ", err);
+        alert("Unable to request notifications. Please enable them manually in your phone's Settings.");
         localStorage.setItem("push_notification_dismissed", "true");
         setDismissed(true);
       }
@@ -138,6 +140,7 @@ export default function PushNotificationManager({ user }) {
             setPermissionGranted(true);
             initializeWebPush();
           } else {
+            alert("Browser notifications blocked. Please enable them in your browser settings.");
             localStorage.setItem("push_notification_dismissed", "true");
             setDismissed(true);
           }
