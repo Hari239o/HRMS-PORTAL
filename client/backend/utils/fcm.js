@@ -12,19 +12,19 @@ if (!admin.apps.length) {
 
   let serviceAccount = null;
   
-  if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+  if (process.env.FIREBASE_FCM_CREDENTIALS_JSON) {
     try {
-      serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+      serviceAccount = JSON.parse(process.env.FIREBASE_FCM_CREDENTIALS_JSON);
     } catch (e) {
-      console.error('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON for FCM:', e.message);
+      console.error('Failed to parse FIREBASE_FCM_CREDENTIALS_JSON for FCM:', e.message);
     }
   } else {
     // Try to load from a local file if we aren't on Vercel and JSON isn't provided
     try {
-      // Find the json file in the client directory
+      // Find the json file in the client directory (root of the workspace)
       const fs = require('fs');
       const files = fs.readdirSync(path.resolve(__dirname, '..', '..'));
-      const jsonFile = files.find(f => f.endsWith('.json') && f.includes('geonixa-hrportal'));
+      const jsonFile = files.find(f => f.endsWith('.json') && f.includes('attendance-geonixa'));
       if (jsonFile) {
         serviceAccount = require(path.resolve(__dirname, '..', '..', jsonFile));
       }
